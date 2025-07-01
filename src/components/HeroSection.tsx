@@ -16,33 +16,12 @@ const HeroSection = () => {
     }
   };
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
 
-  const imageVariants = {
-    hidden: { scale: 0.9, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        ease: "backOut"
-      }
-    }
-  };
+
 
   const dotVariants = {
     hidden: { opacity: 0 },
-    visible: (i) => ({
+    visible: (i:number) => ({
       opacity: 0.05,
       transition: {
         delay: i * 0.005,
@@ -81,7 +60,9 @@ const HeroSection = () => {
         >
           {/* Left Content */}
           <div className="space-y-8">
-            <motion.div className="space-y-4" variants={itemVariants}>
+            <motion.div className="space-y-4"  initial={{ y: 20, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeInOut" }}>
               <p className="text-gray-300 text-lg tracking-wider uppercase">
                 Welcome to our Simpo Planet Studio Label
               </p>
@@ -94,14 +75,18 @@ const HeroSection = () => {
             
             <motion.p 
               className="text-gray-300 text-lg max-w-md leading-relaxed"
-              variants={itemVariants}
+               initial={{ y: 20, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               Master the art of discipline, strength, and technique. Our expert instructors guide you through traditional martial arts training in a supportive environment.
             </motion.p>
             
             <motion.div 
               className="flex flex-col sm:flex-row gap-6 items-start"
-              variants={itemVariants}
+              initial={{ y: 20, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <motion.button 
                 className="bg-red-500 cursor-pointer rounded-lg text-white px-8 py-4 text-lg font-semibold hover:bg-red-600 transition-colors"
@@ -124,7 +109,9 @@ const HeroSection = () => {
           {/* Right Content - Martial Artist Image */}
           <motion.div 
             className="relative"
-            variants={imageVariants}
+           initial={{ y: 20, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeInOut" }}
           >
             <div className="relative w-full h-96 md:h-[500px] bg-gradient-to-br rounded-lg overflow-hidden">
               <div className="absolute inset-0"></div>

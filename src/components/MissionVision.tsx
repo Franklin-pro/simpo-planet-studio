@@ -1,20 +1,9 @@
 import { Target, Eye, Heart, Shield } from "lucide-react";
 import { motion } from 'framer-motion';
-import type { Variant, Transition } from 'framer-motion';
+
 
 const MissionVisionSection = () => {
-  const cardVariants:Variant = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i:number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-        delay: i * 0.2
-      } as Transition
-    })
-  };
+
 
   return (
     <section className="py-20 bg-gray-900 text-white">
@@ -39,8 +28,9 @@ const MissionVisionSection = () => {
           {/* Mission */}
           <motion.div
             custom={0}
-            variants={cardVariants}
-            initial="hidden"
+         initial={{ y: 20, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeInOut" }}
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             className="bg-gray-800 p-8 rounded-lg"
@@ -61,8 +51,9 @@ const MissionVisionSection = () => {
           {/* Vision */}
           <motion.div
             custom={1}
-            variants={cardVariants}
-            initial="hidden"
+             initial={{ y: 20, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeInOut" }}
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             className="bg-gray-800 p-8 rounded-lg"
@@ -101,8 +92,9 @@ const MissionVisionSection = () => {
               <motion.div
                 key={index}
                 custom={index}
-                variants={cardVariants}
-                initial="hidden"
+                initial={{ y: 20, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeInOut" }}
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
                 className="text-center"

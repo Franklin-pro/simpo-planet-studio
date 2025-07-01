@@ -40,15 +40,7 @@ const images = [
 ];
 
 export default function ArtGallery() {
-  const [selectedImage, setSelectedImage] = useState(
-    null as {
-      src: string;
-      title: string;
-      category: string;
-      type: string;
-      index: number;
-    } | null
-  );
+  const [selectedImage, setSelectedImage] = useState(null as any);
   const [filter, setFilter] = useState("All");
   const [likedImages, setLikedImages] = useState(new Set());
 
@@ -65,15 +57,6 @@ export default function ArtGallery() {
       newLiked.add(index);
     }
     setLikedImages(newLiked);
-  };
-
-  const gridVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: (i: number) => ({
-      opacity: 1,
-      scale: 1,
-      transition: { delay: i * 0.1, duration: 0.6, ease: "easeOut" },
-    }),
   };
 
   const getGridClass = (index: number) => {
@@ -113,13 +96,13 @@ export default function ArtGallery() {
 
           {/* Category Filter */}
           <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.map((category) => (
+            {categories.map((category, i) => (
               <motion.button
                 key={category}
                 onClick={() => setFilter(category)}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
                 className={`px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 ${
                   filter === category
                     ? "bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg shadow-purple-500/25"
@@ -140,10 +123,9 @@ export default function ArtGallery() {
             {filteredImages.map((image, index) => (
               <motion.div
                 key={index}
-                custom={index}
-                initial="hidden"
-                whileInView="visible"
-                variants={gridVariants}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
                 viewport={{ once: true, amount: 0.2 }}
                 className={`group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-sm transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 cursor-pointer ${getGridClass(
                   index

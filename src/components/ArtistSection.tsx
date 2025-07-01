@@ -1,4 +1,3 @@
-
 import { Facebook, Twitter, Youtube } from 'lucide-react';
 import { motion } from 'framer-motion';
 import mclay from '../assets/mclay.jpeg';
@@ -25,7 +24,7 @@ const ArtistSection = () => {
       name: "MCLAY",
       age: "23 years old",
       management: "Simpo Planet Label",
-        description: "An accomplished martial artist with a focus on self-defense techniques. She brings a wealth of knowledge and experience to her students.",
+      description: "An accomplished martial artist with a focus on self-defense techniques. She brings a wealth of knowledge and experience to her students.",
       image: mclay,
       socials: {
         facebook: "#",
@@ -38,8 +37,8 @@ const ArtistSection = () => {
       name: "Kristine Cox",
       age: "24 years old",
       management: "Simpo Planet Label",
-        description: "An experienced martial artist specializing in Taekwondo and Karate. She has a unique approach to training that emphasizes both physical and mental strength.",
-        image: skilibombe,
+      description: "An experienced martial artist specializing in Taekwondo and Karate. She has a unique approach to training that emphasizes both physical and mental strength.",
+      image: skilibombe,
       socials: {
         facebook: "#",
         twitter: "#",
@@ -51,7 +50,7 @@ const ArtistSection = () => {
       name: "Alec Whitten",
       age: "21 years old",
       management: "Simpo Planet Label",
-        description: "An experienced martial artist with a focus on traditional techniques and a strong commitment to student development.",
+      description: "An experienced martial artist with a focus on traditional techniques and a strong commitment to student development.",
       image: "https://images.unsplash.com/photo-1527576539890-dfa815648363?w=400&h=400&fit=crop&crop=face",
       socials: {
         facebook: "#",
@@ -74,15 +73,6 @@ const ArtistSection = () => {
     }
   ];
 
- const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.2, duration: 0.6, ease: 'easeOut' }
-    })
-  };
-
   return (
     <section id="artists" className="py-20 bg-gray-900 text-white">
       <div className="container mx-auto px-4">
@@ -102,10 +92,9 @@ const ArtistSection = () => {
           {artists.map((teacher, index) => (
             <motion.div
               key={teacher.id}
-              custom={index}
-              initial="hidden"
-              whileInView="visible"
-              variants={cardVariants}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2, duration: 0.6, ease: 'easeOut' }}
               viewport={{ once: true, amount: 0.2 }}
               className="group space-y-1 hover:scale-[1.03] transition-transform duration-300"
             >
