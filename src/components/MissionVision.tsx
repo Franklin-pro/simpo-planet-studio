@@ -19,8 +19,9 @@ const MissionVisionSection = () => {
             Our <span className="text-red-500">Mission & Vision</span>
           </h2>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Dedicated to empowering individuals through martial arts training,
-            discipline, and character development.
+           Our mission is to provide a platform for upcoming singers and music
+            producers to thrive, while our vision is to become a leading music
+            label known for innovation and excellence in the industry.
           </p>
         </motion.div>
 
