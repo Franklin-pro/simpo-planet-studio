@@ -213,7 +213,7 @@ const ContactSection = () => {
                 <motion.textarea
                   rows={4}
                   className="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-red-500 focus:outline-none resize-none"
-                  placeholder="Tell us about your martial arts goals..."
+                  placeholder="Tell us about your studio label goals..."
                   whileFocus={{ scale: 1.01, borderColor: "#ef4444" }}
                 ></motion.textarea>
               </motion.div>

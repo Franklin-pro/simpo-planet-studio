@@ -25,7 +25,7 @@ const Footer = () => {
               />
             </div>
             <p className="text-gray-400">
-              Master the art of discipline, strength, and technique at our premier martial arts school.
+           Through our state-of-the-art Simpo Studio, we provide a creative space for new singers and music producers to grow and share their voices with the world.
             </p>
             <div className="flex space-x-4">
               {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
@@ -50,7 +50,7 @@ const Footer = () => {
           >
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              {['Home', 'About Us', 'Programs', 'Testimonials', 'Contact'].map((link, index) => (
+              {['Home', 'About', 'Music', 'Gallery', 'Contact'].map((link, index) => (
                 <motion.li
                   key={index}
                   whileHover={{ x: 5 }}
@@ -76,7 +76,7 @@ const Footer = () => {
           >
             <h4 className="text-lg font-semibold mb-4">Programs</h4>
             <ul className="space-y-2">
-              {['Karate', 'Taekwondo', 'Kung Fu', 'Mixed Martial Arts', 'Private Lessons'].map((program, index) => (
+              {['Label', 'Freestyle', 'Podcast', 'competition', 'Cypher '].map((program, index) => (
                 <motion.li
                   key={index}
                   whileHover={{ x: 5 }}

@@ -79,7 +79,7 @@ const HeroSection = () => {
   animate={{ y: 0, opacity: 1 }}
   transition={{ duration: 0.5, ease: "easeInOut" }}
             >
-              Master the art of discipline, strength, and technique. Our expert instructors guide you through traditional martial arts training in a supportive environment.
+              Simpo Planet is a dynamic music label based in East Africa, Rwanda, dedicated to discovering and nurturing emerging talent in the music industry.
             </motion.p>
             
             <motion.div 
