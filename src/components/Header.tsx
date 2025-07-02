@@ -7,11 +7,7 @@ import light from '../assets/SIMPO-Logo.jpeg';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    element?.scrollIntoView({ behavior: 'smooth' });
-    setIsMenuOpen(false);
-  };
+
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/15 backdrop-blur-sm">
@@ -49,7 +45,6 @@ const Header = () => {
             </a>
             <a
             href='/contacts'
-              onClick={() => scrollToSection('contact')}
               className="text-white hover:text-red-500 transition-colors"
             >
               Contact Us
@@ -90,12 +85,12 @@ const Header = () => {
             >
              Musics
             </a>
-              <button 
-                onClick={() => scrollToSection('gallery')}
+              <a
+               href='/gallery'
                 className="text-white hover:text-red-500 transition-colors text-left"
               >
                 Gallery
-              </button>
+              </a>
               <a
               href="/contacts"
               className="text-white hover:text-red-500 transition-colors"

@@ -21,9 +21,9 @@ const ArtistSection = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 container mx-auto">
-          {artists.map((teacher, index: number) => (
+          {artists.map((artist, index: number) => (
             <motion.div
-              key={teacher.id}
+              key={artist.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{
@@ -34,11 +34,11 @@ const ArtistSection = () => {
               viewport={{ once: true, amount: 0.2 }}
               className="group space-y-1 hover:scale-[1.03] transition-transform duration-300"
             >
-              <Link to={`/teacher/${teacher.id}`} className="block">
+              <Link to={`/artist/${artist.id}`} className="block">
                 <div className="relative mb-6 overflow-hidden cursor-pointer">
                   <img
-                    src={teacher.image}
-                    alt={teacher.name}
+                    src={artist.image}
+                    alt={artist.name}
                     className="w-full h-80 object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
                   />
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -49,73 +49,73 @@ const ArtistSection = () => {
                 </div>
               </Link>
 
-              <h3 className="text-2xl font-bold">{teacher.name}</h3>
-              <p className="text-lg">Age: {teacher.age}</p>
+              <h3 className="text-2xl font-bold">{artist.name}</h3>
+              <p className="text-lg">Age: {artist.age}</p>
               <span className="font-semibold text-red-500">
-                Management: {teacher.management}
+                Management: {artist.management}
               </span>
-              <p className="truncate mb-4">{teacher.description}</p>
+              <p className="truncate mb-4">{artist.description}</p>
               <div className="flex justify-center md:justify-start space-x-4">
                 {/* Instagram */}
-                {teacher.socials.instagram &&
-                  teacher.socials.instagram !== "#" && (
+                {artist.socials.instagram &&
+                  artist.socials.instagram !== "#" && (
                     <a
-                      href={teacher.socials.instagram}
+                      href={artist.socials.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
-                      aria-label={`${teacher.name} Instagram`}
+                      aria-label={`${artist.name} Instagram`}
                     >
                       <Instagram size={20} />
                     </a>
                   )}
 
                 {/* Twitter */}
-                {teacher.socials.twitter && teacher.socials.twitter !== "#" && (
+                {artist.socials.twitter && artist.socials.twitter !== "#" && (
                   <a
-                    href={teacher.socials.twitter}
+                    href={artist.socials.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
-                    aria-label={`${teacher.name} Twitter`}
+                    aria-label={`${artist.name} Twitter`}
                   >
                     <Twitter size={20} />
                   </a>
                 )}
 
                 {/* TikTok */}
-                {teacher.socials.tiktok && teacher.socials.tiktok !== "#" && (
+                {artist.socials.tiktok && artist.socials.tiktok !== "#" && (
                   <a
-                    href={teacher.socials.tiktok}
+                    href={artist.socials.tiktok}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
-                    aria-label={`${teacher.name} TikTok`}
+                    aria-label={`${artist.name} TikTok`}
                   >
                     <Disc size={20} />
                   </a>
                 )}
 
                 {/* YouTube */}
-                {teacher.socials.youtube && teacher.socials.youtube !== "#" && (
+                {artist.socials.youtube && artist.socials.youtube !== "#" && (
                   <a
-                    href={teacher.socials.youtube}
+                    href={artist.socials.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
-                    aria-label={`${teacher.name} YouTube`}
+                    aria-label={`${artist.name} YouTube`}
                   >
                     <Youtube size={20} />
                   </a>
                 )}
-                {teacher.socials.facebook &&
-                  teacher.socials.facebook !== "#" && (
+                {artist.socials.facebook &&
+                  artist.socials.facebook !== "#" && (
                     <a
-                      href={teacher.socials.facebook}
+                      href={artist.socials.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
-                      aria-label={`${teacher.name} Facebook`}
+                      aria-label={`${artist.name} Facebook`}
                     >
                       <Facebook size={20} />
                     </a>
