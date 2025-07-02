@@ -47,9 +47,12 @@ const ArtistDetails = () => {
           <div className="bg-blue-950 rounded-2xl mt-8 overflow-hidden mb-8">
             <div className="relative p-8 md:p-12">
               {/* Decorative Elements */}
-              <div className="absolute top-[-32px] right-[-75px] h-96 w-96 opacity-20">
-                <div className="w-full h-full bg-white rounded-full transform rotate-12"></div>
-              </div>
+            {/* Right Decorative Element */}
+<div className="absolute top-[-32px] right-[-75px] h-96 w-96 opacity-20 hidden md:block">
+  <div className="w-full h-full bg-white rounded-full transform rotate-12"></div>
+</div>
+
+
 
               <div className="flex flex-col md:flex-row justify-center items-center relative z-10">
                 <div className="md:w-1/3 mb-6 md:mb-0">
@@ -143,9 +146,10 @@ const ArtistDetails = () => {
                   </div>
                 </div>
               </div>
-                   <div className="absolute top-[-32px] left-[-75px]  h-96 w-96 opacity-20">
-                <div className="w-full h-full bg-white rounded-full transform rotate-12"></div>
-              </div>
+             {/* Left Decorative Element */}
+<div className="absolute top-[-32px] left-[-75px] h-96 w-96 opacity-20 hidden md:block">
+  <div className="w-full h-full bg-white rounded-full transform rotate-12"></div>
+</div>
             </div>
           </div>
 
