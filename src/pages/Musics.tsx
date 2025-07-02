@@ -67,6 +67,13 @@ const Musics = () => {
         >
           Latest <span className='text-red-500'>Musics</span>
         </motion.h3>
+        <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-center text-gray-400 mb-8">
+            Discover the latest tracks from our talented artists. Click on any music to listen and enjoy!
+          </motion.p>
 
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 py-4 sm:grid-cols-2 grid-cols-1 2xl:grid-cols-4 2xl:gap-10 xl:gap-8 gap-6 justify-start">
