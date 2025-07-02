@@ -23,38 +23,39 @@ const Header = () => {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <button 
-              onClick={() => scrollToSection('home')}
+            <a
+              href='/'
               className="text-white hover:text-red-500 transition-colors"
             >
               Home
-            </button>
-            <button 
-              onClick={() => scrollToSection('about')}
+            </a>
+            <a
+              href="/abouts"
               className="text-white hover:text-red-500 transition-colors"
             >
               About us
-            </button>
-            <button 
-              onClick={() => scrollToSection('gallery')}
+            </a>
+            <a
+             href='/gallery'
               className="text-white hover:text-red-500 transition-colors"
             >
               Gallery
-            </button>
-            <button 
-              onClick={() => scrollToSection('testimonials')}
+            </a>
+            <a
+            href='/musics'
               className="text-white hover:text-red-500 transition-colors"
             >
               Musics
-            </button>
-            <button 
+            </a>
+            <a
+            href='/contacts'
               onClick={() => scrollToSection('contact')}
               className="text-white hover:text-red-500 transition-colors"
             >
               Contact Us
-            </button>
-            <button className="bg-red-500 rounded-lg cursor-pointer text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors">
-              GET STARTED
+            </a>
+            <button className="bg-red-500 uppercase rounded-lg cursor-pointer text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors">
+              Join Now
             </button>
           </nav>
 
@@ -71,38 +72,38 @@ const Header = () => {
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 border-t border-gray-700 pt-4">
             <div className="flex flex-col space-y-4">
-              <button 
-                onClick={() => scrollToSection('home')}
-                className="text-white hover:text-red-500 transition-colors text-left"
-              >
-                Home
-              </button>
-              <button 
-                onClick={() => scrollToSection('about')}
-                className="text-white hover:text-red-500 transition-colors text-left"
-              >
-                About us
-              </button>
-              <button 
-                onClick={() => scrollToSection('programs')}
-                className="text-white hover:text-red-500 transition-colors text-left"
-              >
-                Programs
-              </button>
+                 <a
+              href="/"
+              className="text-white hover:text-red-500 transition-colors"
+            >
+             Home
+            </a>
+                  <a
+              href="/abouts"
+              className="text-white hover:text-red-500 transition-colors"
+            >
+              About us
+            </a>
+                   <a
+              href="/musics"
+              className="text-white hover:text-red-500 transition-colors"
+            >
+             Musics
+            </a>
               <button 
                 onClick={() => scrollToSection('gallery')}
                 className="text-white hover:text-red-500 transition-colors text-left"
               >
                 Gallery
               </button>
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className="text-white hover:text-red-500 transition-colors text-left"
-              >
-                Contact Us
-              </button>
-              <button className="bg-red-500 text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors w-fit">
-                GET STARTED
+              <a
+              href="/contacts"
+              className="text-white hover:text-red-500 transition-colors"
+            >
+              Contact us
+            </a>
+              <button className="bg-red-500 uppercase rounded-md text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors w-fit">
+                Join Now
               </button>
             </div>
           </nav>

@@ -1,8 +1,17 @@
-import { Phone, Mail, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Twitter, Instagram, Youtube, Music, Disc } from 'lucide-react';
 import light from '../assets/SIMPO-Logo.jpeg';
 import { motion } from 'framer-motion';
 
 const Footer = () => {
+  const socialLinks = [
+    { Icon: Facebook, url: 'https://www.facebook.com/share/16Lfs1mjre/' },
+    { Icon: Twitter, url: '#' }, // You can add your Twitter link here
+    { Icon: Instagram, url: 'https://www.instagram.com/simpo_planet/profilecard/?igsh=MXN1c3N0MnF1NWp1ag==' },
+    { Icon: Youtube, url: 'https://youtube.com/@simpoplanet?si=dQN4tDhWEFssCf0W' },
+    { Icon: Disc, url: 'https://www.tiktok.com/@simpo.planet?_t=ZM-8xcL56gvclp&_r=1' }, // TikTok (using Disc icon as placeholder)
+    { Icon: Music, url: 'https://audiomack.com/simpoplanet/song/umunsi?share-user-id=18684387' } // Audiomack
+  ];
+
   return (
     <footer className="bg-gray-900 text-white py-16">
       <div className="container mx-auto px-4">
@@ -25,13 +34,15 @@ const Footer = () => {
               />
             </div>
             <p className="text-gray-400">
-           Through our state-of-the-art Simpo Studio, we provide a creative space for new singers and music producers to grow and share their voices with the world.
+              Through our state-of-the-art Simpo Studio, we provide a creative space for new singers and music producers to grow and share their voices with the world.
             </p>
             <div className="flex space-x-4">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
+              {socialLinks.map(({ Icon, url }, index) => (
                 <motion.a
                   key={index}
-                  href="#"
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ y: -3, color: "#ef4444" }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
@@ -76,7 +87,7 @@ const Footer = () => {
           >
             <h4 className="text-lg font-semibold mb-4">Programs</h4>
             <ul className="space-y-2">
-              {['Label', 'Freestyle', 'Podcast', 'competition', 'Cypher '].map((program, index) => (
+              {['Label', 'Freestyle', 'Podcast', 'Competition', 'Cypher'].map((program, index) => (
                 <motion.li
                   key={index}
                   whileHover={{ x: 5 }}

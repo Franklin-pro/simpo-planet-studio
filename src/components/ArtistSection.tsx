@@ -1,78 +1,27 @@
-import { Facebook, Twitter, Youtube } from 'lucide-react';
-import { motion } from 'framer-motion';
-import mclay from '../assets/mclay.jpeg';
-import cynthia from '../assets/cynthia.jpeg';
-import skilibombe from '../assets/skilbombe.jpeg';
+import { Instagram, Disc, Youtube, Twitter, Facebook, Eye } from "lucide-react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { artists } from "../data/artists"; // Assuming you have a data file with artist information
 
 const ArtistSection = () => {
-  const artists = [
-    {
-      id: 1,
-      name: "Umurungi Cynthia",
-      age: "22 years old",
-      management: "Simpo Planet Label",
-      description: "A passionate martial artist with over 10 years of experience in various disciplines. Known for her dedication and innovative teaching methods.",
-      image: cynthia,
-      socials: {
-        facebook: "#",
-        twitter: "#",
-        youtube: "#"
-      }
-    },
-    {
-      id: 2,
-      name: "MCLAY",
-      age: "23 years old",
-      management: "Simpo Planet Label",
-      description: "An accomplished martial artist with a focus on self-defense techniques. She brings a wealth of knowledge and experience to her students.",
-      image: mclay,
-      socials: {
-        facebook: "#",
-        twitter: "#",
-        youtube: "#"
-      }
-    },
-    {
-      id: 3,
-      name: "Kristine Cox",
-      age: "24 years old",
-      management: "Simpo Planet Label",
-      description: "An experienced martial artist specializing in Taekwondo and Karate. She has a unique approach to training that emphasizes both physical and mental strength.",
-      image: skilibombe,
-      socials: {
-        facebook: "#",
-        twitter: "#",
-        youtube: "#"
-      }
-    },
-    {
-      id: 5,
-      name: "Alec Whitten",
-      age: "21 years old",
-      management: "Simpo Planet Label",
-      description: "An experienced martial artist with a focus on traditional techniques and a strong commitment to student development.",
-      image: "https://images.unsplash.com/photo-1527576539890-dfa815648363?w=400&h=400&fit=crop&crop=face",
-      socials: {
-        facebook: "#",
-        twitter: "#",
-        youtube: "#"
-      }
-    },
-    {
-      id: 6,
-      name: "Aaron Nunez",
-      age: "20 years old",
-      management: "Simpo Planet Label",
-      description: "A dynamic and energetic instructor who brings a fresh perspective to martial arts training",
-      image: "https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?w=400&h=400&fit=crop&crop=face",
-      socials: {
-        facebook: "#",
-        twitter: "#",
-        youtube: "#"
-      }
-    }
-  ];
-
+  interface Artist {
+    id: number;
+    name: string;
+    image: string;
+    specialty: string;
+    management: string;
+    description: string;
+    education: string;
+    hobbies: string;
+    age: string;
+    socials: {
+      instagram: string;
+      twitter: string;
+      tiktok: string;
+      facebook: string;
+      youtube: string;
+    };
+  }
   return (
     <section id="artists" className="py-20 bg-gray-900 text-white">
       <div className="container mx-auto px-4">
@@ -84,43 +33,110 @@ const ArtistSection = () => {
             viewport={{ once: true }}
             className="text-5xl md:text-6xl font-bold mb-4"
           >
-            Artist <span className='text-red-500'>Label</span>
+            Artist <span className="text-red-500">Label</span>
           </motion.h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 container mx-auto">
-          {artists.map((teacher, index) => (
+          {artists.map((teacher: Artist, index: number) => (
             <motion.div
               key={teacher.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2, duration: 0.6, ease: 'easeOut' }}
+              transition={{
+                delay: index * 0.2,
+                duration: 0.6,
+                ease: "easeOut",
+              }}
               viewport={{ once: true, amount: 0.2 }}
               className="group space-y-1 hover:scale-[1.03] transition-transform duration-300"
             >
-              <div className="relative mb-6 overflow-hidden">
-                <img
-                  src={teacher.image}
-                  alt={teacher.name}
-                  className="w-full h-80 object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-300"
-                />
-              </div>
+              <Link to={`/teacher/${teacher.id}`} className="block">
+                <div className="relative mb-6 overflow-hidden cursor-pointer">
+                  <img
+                    src={teacher.image}
+                    alt={teacher.name}
+                    className="w-full h-80 object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span className="text-white bg-red-500/55 p-3 rounded-full  font-semibold text-lg">
+                      <Eye size={24} className="" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
 
               <h3 className="text-2xl font-bold">{teacher.name}</h3>
               <p className="text-lg">Age: {teacher.age}</p>
-              <span className='font-semibold text-red-500'>Management: {teacher.management}</span>
-              <p className='truncate mb-4'>{teacher.description}</p>
+              <span className="font-semibold text-red-500">
+                Management: {teacher.management}
+              </span>
+              <p className="truncate mb-4">{teacher.description}</p>
+              <div className="flex justify-center md:justify-start space-x-4">
+                {/* Instagram */}
+                {teacher.socials.instagram &&
+                  teacher.socials.instagram !== "#" && (
+                    <a
+                      href={teacher.socials.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
+                      aria-label={`${teacher.name} Instagram`}
+                    >
+                      <Instagram size={20} />
+                    </a>
+                  )}
 
-              <div className="flex justify-center space-x-4">
-                <a href={teacher.socials.facebook} className="social-btn" aria-label={`${teacher.name} Facebook`}>
-                  <Facebook size={20} />
-                </a>
-                <a href={teacher.socials.twitter} className="social-btn" aria-label={`${teacher.name} Twitter`}>
-                  <Twitter size={20} />
-                </a>
-                <a href={teacher.socials.youtube} className="social-btn" aria-label={`${teacher.name} YouTube`}>
-                  <Youtube size={20} />
-                </a>
+                {/* Twitter */}
+                {teacher.socials.twitter && teacher.socials.twitter !== "#" && (
+                  <a
+                    href={teacher.socials.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
+                    aria-label={`${teacher.name} Twitter`}
+                  >
+                    <Twitter size={20} />
+                  </a>
+                )}
+
+                {/* TikTok */}
+                {teacher.socials.tiktok && teacher.socials.tiktok !== "#" && (
+                  <a
+                    href={teacher.socials.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
+                    aria-label={`${teacher.name} TikTok`}
+                  >
+                    <Disc size={20} />
+                  </a>
+                )}
+
+                {/* YouTube */}
+                {teacher.socials.youtube && teacher.socials.youtube !== "#" && (
+                  <a
+                    href={teacher.socials.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
+                    aria-label={`${teacher.name} YouTube`}
+                  >
+                    <Youtube size={20} />
+                  </a>
+                )}
+                {teacher.socials.facebook &&
+                  teacher.socials.facebook !== "#" && (
+                    <a
+                      href={teacher.socials.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 text-white hover:scale-110"
+                      aria-label={`${teacher.name} Facebook`}
+                    >
+                      <Facebook size={20} />
+                    </a>
+                  )}
               </div>
             </motion.div>
           ))}

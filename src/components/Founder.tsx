@@ -31,7 +31,7 @@ const FounderSection = () => {
               <h1 className="text-6xl md:text-8xl font-bold leading-tight">
                 Simpo
                 <br />
-                <span className="text-red-500"> Planet</span>
+                <span className="text-red-500"> Savior</span>
               </h1>
               <div className="w-24 h-1 bg-white"></div>
             </div>
@@ -42,7 +42,7 @@ const FounderSection = () => {
               </p>
 
               <div className="text-right">
-                <div className="text-3xl font-bold italic text-gray-300">Simpo Planet</div>
+                <div className="text-3xl font-bold italic text-gray-300">Simpo Savior</div>
               </div>
             </div>
           </motion.div>
