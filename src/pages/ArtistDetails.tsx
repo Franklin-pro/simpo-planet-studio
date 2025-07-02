@@ -12,28 +12,11 @@ import Footer from "../components/Footer";
 import { artists } from "../data/artists"; // Import centralized data
 
 const ArtistDetails = () => {
-  interface Artist {
-    id: number;
-    name: string;
-    image: string;
-    specialty: string;
-    management: string;
-    about: string;
-    education: string;
-    hobbies: string;
-    age: string;
-    socials: {
-      instagram: string;
-      twitter: string;
-      tiktok: string;
-      facebook: string;
-      youtube: string;
-    };
-  }
+
 
   const { id } = useParams();
   const teacher = artists.find(
-    (artist: Artist) => artist.id === parseInt(id || "0")
+    (artist) => artist.id === parseInt(id || "0")
   );
 
   if (!teacher) {

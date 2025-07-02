@@ -4,24 +4,7 @@ import { Link } from "react-router-dom";
 import { artists } from "../data/artists"; // Assuming you have a data file with artist information
 
 const ArtistSection = () => {
-  interface Artist {
-    id: number;
-    name: string;
-    image: string;
-    specialty: string;
-    management: string;
-    description: string;
-    education: string;
-    hobbies: string;
-    age: string;
-    socials: {
-      instagram: string;
-      twitter: string;
-      tiktok: string;
-      facebook: string;
-      youtube: string;
-    };
-  }
+ 
   return (
     <section id="artists" className="py-20 bg-gray-900 text-white">
       <div className="container mx-auto px-4">
@@ -38,7 +21,7 @@ const ArtistSection = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 container mx-auto">
-          {artists.map((teacher: Artist, index: number) => (
+          {artists.map((teacher, index: number) => (
             <motion.div
               key={teacher.id}
               initial={{ opacity: 0, y: 30 }}
