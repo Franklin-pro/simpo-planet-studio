@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import {
-  ArrowLeft,
   Disc,
   Facebook,
   Instagram,
@@ -42,29 +41,19 @@ const ArtistDetails = () => {
 
       <main className="pt-20 pb-20">
         <div className="container mx-auto px-4">
-          {/* Back Button */}
-          <Link
-            to="/"
-            className="inline-flex items-center text-red-500 hover:text-red-600 mb-8 transition-colors"
-          >
-            <ArrowLeft size={20} className="mr-2" />
-            Back to Artists
-          </Link>
+
 
           {/* Hero Section */}
-          <div className="bg-blue-950 rounded-2xl overflow-hidden mb-8">
+          <div className="bg-blue-950 rounded-2xl mt-8 overflow-hidden mb-8">
             <div className="relative p-8 md:p-12">
               {/* Decorative Elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 opacity-20">
+              <div className="absolute top-[-32px] right-[-75px] h-96 w-96 opacity-20">
                 <div className="w-full h-full bg-white rounded-full transform rotate-12"></div>
               </div>
-              <div className="absolute top-8 right-8 w-16 h-16 opacity-10">
-                <div className="w-full h-full bg-white transform rotate-45"></div>
-              </div>
 
-              <div className="flex flex-col md:flex-row items-center relative z-10">
+              <div className="flex flex-col md:flex-row justify-center items-center relative z-10">
                 <div className="md:w-1/3 mb-6 md:mb-0">
-                  <div className="relative">
+                  <div className="relative ">
                     <img
                       src={teacher.image}
                       alt={teacher.name}
@@ -73,7 +62,7 @@ const ArtistDetails = () => {
                   </div>
                 </div>
 
-                <div className="md:w-2/3 md:pl-12 text-center md:text-left">
+                <div className=" md:w-1/3 md:pl-12 text-center md:text-left">
                   <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
                     {teacher.name}
                   </h1>
@@ -153,6 +142,9 @@ const ArtistDetails = () => {
                       )}
                   </div>
                 </div>
+              </div>
+                   <div className="absolute top-[-32px] left-[-75px]  h-96 w-96 opacity-20">
+                <div className="w-full h-full bg-white rounded-full transform rotate-12"></div>
               </div>
             </div>
           </div>
