@@ -1,5 +1,5 @@
-import founder from '../assets/founder.jpeg';
-import { motion } from 'framer-motion';
+import founder from "../assets/founder.jpeg";
+import { motion } from "framer-motion";
 
 const FounderSection = () => {
   return (
@@ -21,12 +21,14 @@ const FounderSection = () => {
           <motion.div
             initial={{ x: -100, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             viewport={{ once: true, amount: 0.3 }}
             className="space-y-8"
           >
             <div className="space-y-4">
-              <p className="text-gray-200 text-lg tracking-wider uppercase">FOUNDER, HEADMASTER</p>
+              <p className="text-gray-200 text-lg tracking-wider uppercase">
+                FOUNDER, HEADMASTER
+              </p>
               <div className="w-24 h-1 bg-white"></div>
               <h1 className="text-6xl md:text-8xl font-bold leading-tight">
                 Simpo
@@ -38,11 +40,26 @@ const FounderSection = () => {
 
             <div className="space-y-6">
               <p className="text-gray-200 text-lg leading-relaxed italic">
-                "Lacinia nulla porttitor faucibus hendrerit at amet tincidunt id dis sit sed enim sit sed tortor odio mi sapien consequat aliquam volutpat diam elefend risus at tempor volutpat massa dis."
+                "Simpo Savior, born Ndizihiwe Alain Jean Sauveur, is a Rwandan
+                reggae artist and outspoken Pan-Africanist whose music is a
+                powerful blend of rhythm, resistance, and reflection. Known for
+                his deep lyrics and soulful sound, Simpo uses his voice as a
+                weapon against injustice and a bridge for African unity. Rooted
+                in the spirit of reggae legends but uniquely shaped by his East
+                African heritage, Simpo Savior stands as one of the voices of
+                conscious music in Rwanda and beyond." 
               </p>
-
+              <p className="text-gray-200 text-lg leading-relaxed italic">  "Musical Career Simpo
+                Savior debuted on the reggae scene with his groundbreaking first
+                album, "Africa, Why Do Your Profits Go Abroad?", a bold musical
+                critique of economic exploitation, neocolonialism, and the
+                continuous loss of Africa’s wealth to foreign interests. The
+                album struck a chord with many across the continent,
+                establishing him as not only a musician but also a messenger."</p>
               <div className="text-right">
-                <div className="text-3xl font-bold italic text-gray-300">Simpo Savior</div>
+                <div className="text-3xl font-bold italic text-gray-300">
+                  Simpo Savior
+                </div>
               </div>
             </div>
           </motion.div>
@@ -51,7 +68,7 @@ const FounderSection = () => {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             viewport={{ once: true, amount: 0.3 }}
             className="relative"
           >
