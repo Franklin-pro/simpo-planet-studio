@@ -49,9 +49,9 @@ const Header = () => {
             >
               Contact Us
             </a>
-            <button className="bg-red-500 uppercase rounded-lg cursor-pointer text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors">
-              Join Now
-            </button>
+            <a href='/login' className="bg-red-500 uppercase rounded-lg cursor-pointer text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors">
+              Login
+            </a>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -97,9 +97,11 @@ const Header = () => {
             >
               Contact us
             </a>
-              <button className="bg-red-500 uppercase rounded-md text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors w-fit">
-                Join Now
-              </button>
+              <a
+               href="/login"
+               className="bg-red-500 uppercase rounded-md text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors w-fit">
+                Login
+              </a>
             </div>
           </nav>
         )}

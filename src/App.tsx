@@ -15,6 +15,7 @@ import AddGallery from './pages/admin/AddGallery';
 import ManageGallerys from './pages/admin/ManageGallery';
 import UploadMusics from './pages/admin/UploadMusics';
 import ManageMusic from './pages/admin/ManageMusic';
+import LoginAccount from './pages/LoginAccount';
 function App() {
 
   return (
@@ -28,6 +29,7 @@ function App() {
     <Route path="/gallery" element={<Gallery />} />
     <Route path="/abouts" element={<Abouts />} />
     <Route path="/musics" element={<Musics />} />
+    <Route path="/login" element={<LoginAccount />} />
 
     {/* NESTED ADMIN ROUTES */}
     <Route path="/admin" element={<DashboardLayout />}>
