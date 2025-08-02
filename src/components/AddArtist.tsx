@@ -259,7 +259,7 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
                   value={formData.socialLinks.facebook}
                   onChange={handleChange}
                   className="flex-1 min-w-0 block border w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="username"
+                  placeholder="facebook link"
                 />
               </div>
             </div>
@@ -276,7 +276,7 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
                   value={formData.socialLinks.instagram}
                   onChange={handleChange}
                   className="flex-1 min-w-0 block border w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="username"
+                  placeholder="instagram link"
                 />
               </div>
             </div>
@@ -293,7 +293,7 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
                   value={formData.socialLinks.twitter}
                   onChange={handleChange}
                   className="flex-1 min-w-0 block w-full border px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="username"
+                  placeholder="twitter link"
                 />
               </div>
             </div>
@@ -327,7 +327,7 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
                   value={formData.socialLinks.tiktok}
                   onChange={handleChange}
                   className="flex-1 min-w-0 block w-full border px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="@username"
+                  placeholder="titok link"
                 />
               </div>
             </div>

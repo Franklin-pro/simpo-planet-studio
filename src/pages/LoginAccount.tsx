@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/abt.png';
+import { ArrowBigLeft, ArrowLeft } from 'lucide-react';
 
 function LoginAccount() {
   const [email, setEmail] = useState('');
@@ -29,10 +30,24 @@ function LoginAccount() {
     
     // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // Replace with actual authentication logic
-      console.log('Login attempted with:', { email, password, rememberMe });
-      navigate('/admin/artists/create'); // Redirect on success
+      const response = await fetch('http://localhost:3000/api/v1/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, rememberMe }),
+      });
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+      const data = await response.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.data));
+      setEmail('');
+      setPassword('');
+      setRememberMe(false);
+      setIsLoading(false);
+      navigate('/admin/artists/create');
     } catch (err) {
           console.error('Login error:', err); 
       setError('Invalid credentials. Please try again.');
@@ -47,6 +62,7 @@ function LoginAccount() {
         {/* Left Side: Login Form */}
         <div className="p-10 bg-white flex flex-col justify-center">
           <div className="mb-8">
+            <a href="/" className='flex items-center gap-2 mb-2 text-red-500'><ArrowLeft/> <span>back to home</span></a>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Holla, Welcome Back</h2>
             <p className="text-gray-500">Hey, welcome back to your special place only admin can logged in</p>
           </div>

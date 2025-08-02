@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const AboutSection = () => {
   const stats = [
-    { icon: <Users className="w-8 h-8" />, number: "500+", label: "Artist Trained" },
+    { icon: <Users className="w-8 h-8" />, number: "70+", label: "Artist Trained" },
     { icon: <Award className="w-8 h-8" />, number: "15+", label: "Years Experience" },
     { icon: <Clock className="w-8 h-8" />, number: "24/7", label: "Support Available" },
     { icon: <Target className="w-8 h-8" />, number: "95%", label: "Success Rate" },

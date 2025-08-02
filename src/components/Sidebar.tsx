@@ -28,6 +28,12 @@ const menus: MenuItem[] = [
       { name: 'Manage Music', path: '/admin/music/manage' },
     ],
   },
+  {
+    label: 'Contact Messages',
+    items: [
+      { name: 'View Messages', path: '/admin/contact/messages' },
+    ],
+  },
 ];
 
 export default function Sidebar() {
@@ -38,6 +44,7 @@ export default function Sidebar() {
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
   };
+
 
   const handleLogout = () => {
     // Example: remove token from localStorage and redirect

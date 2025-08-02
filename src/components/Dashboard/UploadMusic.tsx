@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
+
 import { Upload, Music, Image, Link, Calendar, Clock, X } from 'lucide-react';
 
 type FormDataState = {
@@ -10,8 +10,7 @@ type FormDataState = {
   genre: string;
   releaseDate: string;
   duration: string;
-  coverImage: File | null;
-  audioFile: File | null;
+  coverImageUrl: File | null;
   youtubeLink: string;
 };
 
@@ -28,8 +27,7 @@ function UploadMusic() {
     genre: '',
     releaseDate: '',
     duration: '',
-    coverImage: null,
-    audioFile: null,
+    coverImageUrl: null,
     youtubeLink: '',
   });
 
@@ -68,36 +66,53 @@ function UploadMusic() {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
+  // Convert file to base64 string
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsUploading(true);
     setMessage({ text: '', type: '' });
 
     try {
-      if (!formData.audioFile) {
-        throw new Error('Audio file is required');
-      }
+      // Convert files to base64 if they exist
+      const coverImageBase64 = formData.coverImageUrl ? await fileToBase64(formData.coverImageUrl) : null;
 
-      const formDataToSend = new FormData();
-      formDataToSend.append('title', formData.title);
-      formDataToSend.append('artist', formData.artist);
-      formDataToSend.append('album', formData.album);
-      formDataToSend.append('genre', formData.genre);
-      formDataToSend.append('releaseDate', formData.releaseDate);
-      formDataToSend.append('duration', formData.duration);
-      formDataToSend.append('youtubeLink', formData.youtubeLink);
-      if (formData.coverImage) {
-        formDataToSend.append('coverImageUrl', formData.coverImage);
-      }
-      formDataToSend.append('audioFileUrl', formData.audioFile);
+      // Create JSON payload
+      const jsonPayload = {
+        title: formData.title,
+        artist: formData.artist,
+        album: formData.album,
+        genre: formData.genre,
+        releaseDate: formData.releaseDate,
+        duration: parseInt(formData.duration),
+        youtubeLink: formData.youtubeLink,
+        coverImageUrl: coverImageBase64,
+        // Include file metadata
+        coverImageName: formData.coverImageUrl?.name || null,
+        coverImageSize: formData.coverImageUrl?.size || null,
+      };
 
-      const response = await axios.post('/api/music', formDataToSend, {
+      const response = await fetch('http://localhost:3000/api/v1/music', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(jsonPayload),
       });
 
-      console.log('Upload successful:', response.data);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+   await response.json();
 
       setMessage({ text: 'Music uploaded successfully!', type: 'success' });
 
@@ -109,26 +124,21 @@ function UploadMusic() {
         genre: '',
         releaseDate: '',
         duration: '',
-        coverImage: null,
-        audioFile: null,
+        coverImageUrl: null,
         youtubeLink: '',
       });
     } catch (error: unknown) {
-  let errorMessage = 'Error uploading music';
+      let errorMessage = 'Error uploading music';
 
-  if (axios.isAxiosError(error)) {
-    errorMessage = error.response?.data?.message || error.message;
-  } else if (error instanceof Error) {
-    errorMessage = error.message;
-  }
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
 
-  setMessage({
-    text: errorMessage,
-    type: 'error',
-  });
-}
-
-   finally {
+      setMessage({
+        text: errorMessage,
+        type: 'error',
+      });
+    } finally {
       setIsUploading(false);
     }
   };
@@ -269,12 +279,11 @@ function UploadMusic() {
           </div>
         </div>
 
-        {/* File Uploads */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Cover Image */}
+        {/* File Upload */}
+        <div className="md:col-span-2">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
-            {!formData.coverImage ? (
+            {!formData.coverImageUrl ? (
               <div className="flex items-center justify-center w-full h-40">
                 <label className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
                   <div className="flex flex-col items-center justify-center p-5">
@@ -286,7 +295,7 @@ function UploadMusic() {
                   </div>
                   <input
                     type="file"
-                    name="coverImage"
+                    name="coverImageUrl"
                     accept="image/*"
                     onChange={handleFileChange}
                     className="hidden"
@@ -296,61 +305,15 @@ function UploadMusic() {
             ) : (
               <div className="relative w-full h-40">
                 <img
-                  src={URL.createObjectURL(formData.coverImage)}
+                  src={URL.createObjectURL(formData.coverImageUrl)}
                   alt="Cover preview"
                   className="w-full h-full object-cover rounded-lg border border-gray-200"
                 />
                 <button
                   type="button"
-                  onClick={() => removeFile('coverImage')}
+                  onClick={() => removeFile('coverImageUrl')}
                   className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-100 transition-colors"
                   aria-label="Remove cover image"
-                >
-                  <X className="w-4 h-4 text-gray-600" />
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Audio File */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Audio File*</label>
-            {!formData.audioFile ? (
-              <div className="flex items-center justify-center w-full h-40">
-                <label className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <div className="flex flex-col items-center justify-center p-5">
-                    <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-500 text-center">
-                      <span className="font-semibold">Click to upload</span><br />
-                      <span className="text-xs">MP3, WAV (Max. 20MB)</span>
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    name="audioFile"
-                    accept="audio/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                    required
-                  />
-                </label>
-              </div>
-            ) : (
-              <div className="relative w-full h-40 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
-                <div className="text-center p-4">
-                  <Music className="w-10 h-10 mx-auto text-gray-400 mb-2" />
-                  <p className="text-sm font-medium text-gray-700 truncate max-w-xs">
-                    {formData.audioFile.name}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {(formData.audioFile.size / (1024 * 1024)).toFixed(2)} MB
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeFile('audioFile')}
-                  className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                  aria-label="Remove audio file"
                 >
                   <X className="w-4 h-4 text-gray-600" />
                 </button>
