@@ -8,6 +8,7 @@ import ArtistSection from '../components/ArtistSection';
 import ArtGallery from '../components/Gallery';
 import ContactSection from '../components/ContactUs';
 import Footer from '../components/Footer';
+import Producers from '../components/Producers';
 
 const Index = () => {
   return (
@@ -17,6 +18,7 @@ const Index = () => {
 <AboutSection/>
 <FounderSection/>
 <MissionVisionSection/>
+<Producers/>
 <ArtistSection/>
 <ArtGallery/>
 <ContactSection/>

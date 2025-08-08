@@ -1,115 +1,520 @@
-import { motion } from 'framer-motion';
-import { Play } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Pause, Youtube, X, ExternalLink} from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useState, useRef, useEffect } from 'react';
 
-const musicData = [
-  {
-    id: 1,
-    title: 'Sick mode',
-    artist: 'Travis Scott',
-    image: 'https://i.scdn.co/image/ab67616d0000b2736cfd9a7353f98f5165ea6160',
-    url: 'https://www.youtube.com/watch?v=6ONzRpd2K0M',
-    isPlaying: false,
-  },
-  {
-    id: 2,
-    title: 'Dior',
-    artist: 'Lil tata',
-    image: 'https://i.scdn.co/image/ab6761610000517437a465ddc4a787a925f81464',
-    url: 'https://www.youtube.com/watch?v=6ONzRpd2K0M',
-    isPlaying: false,
-  },
-  {
-    id: 3,
-    title: 'Richh',
-    artist: 'Kyle richh',
-    image: 'https://resources.tidal.com/images/270ce1b9/5143/4075/a9e1/336cc6f79eb1/750x750.jpg',
-    url: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-    isPlaying: false,
-  },
-  {
-    id: 4,
-    title: 'On my own',
-    artist: 'Jenn Carter',
-    image: 'https://lastfm.freetls.fastly.net/i/u/ar0/41ab88de162945a28108ffedf811741d.jpg',
-    url: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-    isPlaying: false,
-  },
-  {
-    id: 5,
-    title: 'Calling my phone',
-    artist: 'lil Tjay',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/1/14/Lil_Tjay_on_set_%28cropped_2%29.jpg',
-    url: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-    isPlaying: false,
-  },
-  {
-    id: 6,
-    title: 'Mockingbird',
-    artist: 'eminem',
-    image: 'https://i.ytimg.com/vi/D4hAVemuQXY/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDNcFk6W3xZXWcKGHcd37jnqTTabw',
-    url: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-    isPlaying: false,
-  },
-];
+interface MusicItem {
+  _id: string;
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  releaseDate: string;
+  createdAt: string;
+  duration: number;
+  coverImageUrl: string;
+  youtubeLink: string;
+  playCount: number;
+  audioSrc?: string;
+  audioUrl: string;
+}
 
 const Musics = () => {
+  const [musicData, setMusicData] = useState<MusicItem[]>([]);
+  const [currentTrack, setCurrentTrack] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showContinueModal, setShowContinueModal] = useState(false);
+  const [currentPlayingTrack, setCurrentPlayingTrack] = useState<MusicItem | null>(null);
+  const [hasCountedPlay, setHasCountedPlay] = useState<Set<string>>(new Set());
+  
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const playbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const fetchMusicData = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/music');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMusicData(data.data.docs || []);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'An unknown error occurred');
+        console.error("Error fetching music data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMusicData();
+
+    return () => {
+      if (playbackTimerRef.current) {
+        clearTimeout(playbackTimerRef.current);
+      }
+    };
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  const formatPlayCount = (count: number) => {
+    if (count >= 1e6) {
+      return `${(count / 1e6).toFixed(1)}M`;
+    }
+    if (count >= 1e3) {
+      return `${(count / 1e3).toFixed(1)}K`;
+    }
+    return count.toString();
+  }
+
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const diffMs = now.getTime() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSeconds < 60) return "Just now";
+  if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  if (diffDays === 1) return "1 day ago";
+  if (diffDays < 7) return `${diffDays} days ago`;
+
+  const diffWeeks = Math.floor(diffDays / 7);
+  if (diffWeeks === 1) return "1 week ago";
+  if (diffWeeks < 4) return `${diffWeeks} weeks ago`;
+
+  const diffMonths =
+    now.getMonth() -
+    date.getMonth() +
+    12 * (now.getFullYear() - date.getFullYear());
+
+  if (diffMonths === 1) return "1 month ago";
+  if (diffMonths < 12) return `${diffMonths} months ago`;
+
+  const diffYears = now.getFullYear() - date.getFullYear();
+  if (diffYears === 1) return "1 year ago";
+  return `${diffYears} years ago`;
+};
+
+// Test with createdAt
+console.log(formatDate("2025-08-08T15:54:38.229Z"));
+
+
+
+  // Function to increment play count via API
+  const incrementPlayCount = async (musicId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/music/${musicId}/play`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Update the local state with the new play count
+        setMusicData(prevData => 
+          prevData.map(music => 
+            music._id === musicId 
+              ? { ...music, playCount: data.playCount }
+              : music
+          )
+        );
+        
+        // Update current playing track if it matches
+        if (currentPlayingTrack && currentPlayingTrack._id === musicId) {
+          setCurrentPlayingTrack(prev => 
+            prev ? { ...prev, playCount: data.playCount } : null
+          );
+        }
+        
+        console.log('Play count updated:', data.playCount);
+      }
+    } catch (error) {
+      console.error('Error updating play count:', error);
+      // Don't show error to user for play count updates as it's not critical
+    }
+  };
+
+  const startPlaybackTimer = (track: MusicItem) => {
+    if (playbackTimerRef.current) {
+      clearTimeout(playbackTimerRef.current);
+      setCurrentTrack(track._id);
+    }
+    playbackTimerRef.current = setTimeout(() => {
+      setShowContinueModal(true);
+      audioRef.current?.pause();
+    }, 30000); // 30 seconds
+  };
+
+  const handlePlay = (id: string) => {
+    const track = musicData.find(m => m._id === id);
+    if (!track) return;
+
+    if (currentTrack === id) {
+      // Toggle play/pause for current track
+      if (isPlaying) {
+        audioRef.current?.pause();
+        if (playbackTimerRef.current) {
+          clearTimeout(playbackTimerRef.current);
+        }
+      } else {
+        audioRef.current?.play();
+        startPlaybackTimer(track);
+        
+        // Increment play count only if not already counted for this session
+        if (!hasCountedPlay.has(id)) {
+          incrementPlayCount(id);
+          setHasCountedPlay(prev => new Set(prev).add(id));
+        }
+      }
+      setIsPlaying(!isPlaying);
+    } else {
+      // Stop previous track if any
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      if (playbackTimerRef.current) {
+        clearTimeout(playbackTimerRef.current);
+      }
+
+      // Create new audio element
+      const audio = new Audio(track.audioUrl);
+      audioRef.current = audio;
+      
+      audio.onplay = () => {
+        setIsPlaying(true);
+        setCurrentTrack(id);
+        setCurrentPlayingTrack(track);
+        startPlaybackTimer(track);
+        
+        // Increment play count when audio starts playing
+        if (!hasCountedPlay.has(id)) {
+          incrementPlayCount(id);
+          setHasCountedPlay(prev => new Set(prev).add(id));
+        }
+      };
+      
+      audio.onpause = () => {
+        setIsPlaying(false);
+        if (playbackTimerRef.current) {
+          clearTimeout(playbackTimerRef.current);
+        }
+      };
+      
+      audio.onended = () => {
+        setIsPlaying(false);
+        setCurrentTrack(null);
+        setProgress(0);
+        setCurrentPlayingTrack(null);
+        if (playbackTimerRef.current) {
+          clearTimeout(playbackTimerRef.current);
+        }
+      };
+      
+      audio.ontimeupdate = () => {
+        setProgress(audio.currentTime);
+        setDuration(audio.duration || 0);
+      };
+
+      audio.play().catch(error => {
+        console.error("Audio playback failed:", error);
+        setError("Playback failed. Please try again.");
+      });
+    }
+  };
+
+  const closeModal = () => {
+    setShowContinueModal(false);
+  };
+
+  const continueOnPlatform = (platformUrl: string) => {
+    window.open(platformUrl, '_blank');
+    closeModal();
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24 pb-16">
+          <div className="container mx-auto px-4 text-center py-20">
+            <div className="animate-pulse flex flex-col items-center">
+              <div className="h-12 w-64 bg-gray-800 rounded mb-4"></div>
+              <div className="h-6 w-80 bg-gray-800 rounded mb-12"></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-gray-800/50 rounded-xl p-4">
+                    <div className="h-64 w-full bg-gray-700 rounded-xl mb-4"></div>
+                    <div className="h-6 w-3/4 bg-gray-700 rounded mb-2"></div>
+                    <div className="h-4 w-1/2 bg-gray-700 rounded"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24 pb-16">
+          <div className="container mx-auto px-4 text-center py-20">
+            <div className="bg-red-900/20 p-8 rounded-xl max-w-2xl mx-auto">
+              <h2 className="text-2xl font-bold mb-4">Error Loading Music</h2>
+              <p className="text-red-300 mb-6">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (musicData.length === 0) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24 pb-16">
+          <div className="container mx-auto px-4 text-center py-20">
+            <div className="bg-gray-800/20 p-8 rounded-xl max-w-2xl mx-auto">
+              <h2 className="text-2xl font-bold mb-4">No Music Available</h2>
+              <p className="text-gray-300 mb-6">We couldn't find any music tracks in our database.</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors"
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
-      <div className='min-h-screen bg-black text-white pt-24'>
-        <motion.h3
-          className="text-3xl md:text-5xl text-center font-bold my-5 ml-4"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Latest <span className='text-red-500'>Musics</span>
-        </motion.h3>
-        <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-center text-gray-400 mb-8">
-            Discover the latest tracks from our talented artists. Click on any music to listen and enjoy!
-          </motion.p>
-
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24 pb-16'>
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 py-4 sm:grid-cols-2 grid-cols-1 2xl:grid-cols-4 2xl:gap-10 xl:gap-8 gap-6 justify-start">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
+          >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+              Latest <span className='text-red-500'>Releases</span>
+            </h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="text-lg text-gray-400 max-w-2xl mx-auto"
+            >
+              Discover the hottest tracks from your favorite artists
+            </motion.p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {musicData.map((music) => (
-              <motion.a
-              href={music.url}
-                key={music.id}
-                target='_blank'
-                className="bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-md cursor-pointer w-full"
-                whileHover={{ scale: 1.05 }}
-                initial={{ opacity: 0, y: 50 }}
+              <motion.div
+                key={music._id}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.3 }}
+                whileHover={{ y: -5 }}
+                className="bg-gray-800/50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-700/30"
               >
-                <img
-                  src={music.image}
-                  alt={music.title}
-                  className="w-full h-48 object-cover object-top rounded-xl mb-4"
-                />
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg md:text-sm font-semibold dark:text-gray-50 text-black">{music.title}</h3>
-                    <p className="text-gray-500 dark:text-gray-50 md:text-sm max-sm:text-xs text-xl">{music.artist}</p>
+                <div className="relative group">
+                  <img
+                    src={music.coverImageUrl}
+                    alt={music.title}
+                    className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x400?text=Music+Cover';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-gray-300 text-sm line-clamp-2">
+                        {music.artist} • {music.genre}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <button className="bg-black dark:bg-red-500 flex items-center gap-2 cursor-pointer hover:bg-red-400 hover:animate-pulse text-white p-3 rounded-full">
-                      <Play size={16} /> 
-                    </button>
-                  </div>
+                  
+                  <button
+                    onClick={() => handlePlay(music._id)}
+                    className={`absolute top-4 right-4 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all ${
+                      currentTrack === music._id && isPlaying
+                        ? 'bg-red-600 hover:bg-red-700'
+                        : 'bg-gray-900/90 hover:bg-gray-800'
+                    }`}
+                    aria-label={currentTrack === music._id && isPlaying ? 'Pause' : 'Play'}
+                  >
+                    {currentTrack === music._id && isPlaying ? (
+                      <Pause size={20} className="text-white" />
+                    ) : (
+                      <Play size={20} className="text-white pl-1" />
+                    )}
+                  </button>
                 </div>
-              </motion.a>
+
+                <div className="p-5">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-bold truncate">{music.title}</h3>
+                      <p className="text-gray-400 text-sm truncate">{music.artist}</p>
+                      <p className="text-gray-500 text-xs mt-1 truncate">{music.album} • {formatDate(music.createdAt)}</p>
+                    </div>
+                  </div>
+        
+                  <div className='flex items-center gap-1 text-gray-500 my-2'>
+                    <Play size={20}/>
+                        <span className='text-sm text-gray-400 block'>{ formatPlayCount(music.playCount)}</span>
+                      <span className='text-xs text-gray-500'>plays</span>
+                  </div>
+                  
+
+                  {currentTrack === music._id && (
+                    <div className="mt-3">
+                      <div className="w-full bg-gray-700 rounded-full h-1.5">
+                        <div
+                          className="bg-red-500 h-1.5 rounded-full"
+                          style={{ width: duration > 0 ? `${(progress / duration) * 100}%` : '0%' }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>{formatTime(progress)}</span>
+                        <span>{formatTime(duration)}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </div>
 
+        {/* Continue Listening Modal */}
+        <AnimatePresence>
+          {showContinueModal && currentPlayingTrack && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+              onClick={closeModal}
+            >
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-700 max-w-md w-full relative"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={closeModal}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                  aria-label="Close modal"
+                >
+                  <X size={24} />
+                </button>
+
+                <div className="p-6">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <img
+                      src={currentPlayingTrack.coverImageUrl}
+                      alt={currentPlayingTrack.title}
+                      className="w-20 h-20 rounded-lg object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x400?text=Music+Cover';
+                      }}
+                    />
+                    <div>
+                      <h3 className="text-xl font-bold">{currentPlayingTrack.title}</h3>
+                      <p className="text-gray-400">{currentPlayingTrack.artist}</p>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-300 mb-6">
+                    Enjoying this track? Continue listening on your favorite platform:
+                  </p>
+
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => continueOnPlatform(currentPlayingTrack.youtubeLink)}
+                      className="w-full flex items-center justify-between bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <Youtube size={20} />
+                        <span>Continue on YouTube</span>
+                      </div>
+                      <ExternalLink size={16} />
+                    </button>
+
+                    <button
+                      onClick={() => continueOnPlatform(`https://audiomack.com/search?q=${encodeURIComponent(`${currentPlayingTrack.artist} ${currentPlayingTrack.title}`)}`)}
+                      className="w-full flex items-center justify-between bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white px-6 py-3 rounded-lg transition-colors"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <img 
+                          src="https://audiomack.com/favicon.ico"
+                          alt="Audiomack" 
+                          className="w-5 h-5"
+                        />
+                        <span>Continue on Audiomack</span>
+                      </div>
+                      <ExternalLink size={16} />
+                    </button>
+
+                    <button
+                      onClick={closeModal}
+                      className="w-full bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors mt-4"
+                    >
+                      Keep listening here
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       <Footer />
     </>
   );

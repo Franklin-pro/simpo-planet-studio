@@ -11,14 +11,14 @@ const ContactSection = () => {
     message: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
-const handleSubmit = async (e) => {
+const handleSubmit = async (e:any) => {
   e.preventDefault();
   try {
     const res = await axios.post("http://localhost:3000/api/v1/contact", form);

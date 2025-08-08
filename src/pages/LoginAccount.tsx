@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/abt.png';
-import { ArrowBigLeft, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 function LoginAccount() {
   const [email, setEmail] = useState('');

@@ -61,7 +61,7 @@ export default function CreateGallery() {
         throw new Error("Image is required");
       }
 
-      const imageUrl = await convertToBase64(formData.imageFile);
+      const image = await convertToBase64(formData.imageFile);
       let videoUrl = "";
 
       if (formData.videoFile) {
@@ -69,10 +69,10 @@ export default function CreateGallery() {
         videoUrl = typeof videoBase64 === "string" ? videoBase64 : "";
       }
 
-      const response = await axios.post("http://localhost:3000/api/v1/gallery/add", {
+      const response = await axios.post("http://localhost:3000/api/v1/gallery/add-gallery", {
         title: formData.title,
         description: formData.description,
-        imageUrl,
+        image,
         videoUrl,
       });
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 
-import { Upload, Music, Image, Link, Calendar, Clock, X } from 'lucide-react';
+import { Upload, Music, Image, Link, Calendar, Clock, X, Volume2 } from 'lucide-react';
 
 type FormDataState = {
   title: string;
@@ -11,6 +11,7 @@ type FormDataState = {
   releaseDate: string;
   duration: string;
   coverImageUrl: File | null;
+  audioUrl: File | null;
   youtubeLink: string;
 };
 
@@ -28,6 +29,7 @@ function UploadMusic() {
     releaseDate: '',
     duration: '',
     coverImageUrl: null,
+    audioUrl: null,
     youtubeLink: '',
   });
 
@@ -66,6 +68,14 @@ function UploadMusic() {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   // Convert file to base64 string
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -82,8 +92,14 @@ function UploadMusic() {
     setMessage({ text: '', type: '' });
 
     try {
+      // Validate required audio file
+      if (!formData.audioUrl) {
+        throw new Error('Audio file is required');
+      }
+
       // Convert files to base64 if they exist
       const coverImageBase64 = formData.coverImageUrl ? await fileToBase64(formData.coverImageUrl) : null;
+      const audioBase64 = formData.audioUrl ? await fileToBase64(formData.audioUrl) : null;
 
       // Create JSON payload
       const jsonPayload = {
@@ -95,9 +111,12 @@ function UploadMusic() {
         duration: parseInt(formData.duration),
         youtubeLink: formData.youtubeLink,
         coverImageUrl: coverImageBase64,
+        audioUrl: audioBase64,
         // Include file metadata
         coverImageName: formData.coverImageUrl?.name || null,
         coverImageSize: formData.coverImageUrl?.size || null,
+        audioFileName: formData.audioUrl?.name || null,
+        audioFileSize: formData.audioUrl?.size || null,
       };
 
       const response = await fetch('http://localhost:3000/api/v1/music', {
@@ -112,7 +131,7 @@ function UploadMusic() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-   await response.json();
+      await response.json();
 
       setMessage({ text: 'Music uploaded successfully!', type: 'success' });
 
@@ -125,6 +144,7 @@ function UploadMusic() {
         releaseDate: '',
         duration: '',
         coverImageUrl: null,
+        audioUrl: null,
         youtubeLink: '',
       });
     } catch (error: unknown) {
@@ -144,14 +164,13 @@ function UploadMusic() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
       <div className="mb-8 text-center">
         <h2 className="text-3xl font-bold text-gray-800 flex items-center justify-center gap-2">
           <Music className="w-8 h-8" /> Upload Music
         </h2>
         <p className="text-gray-600 mt-2">Share your music with the world</p>
       </div>
-      
       {message.text && (
         <div className={`mb-6 p-4 rounded-lg ${message.type === 'success' ? 
           'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -250,6 +269,7 @@ function UploadMusic() {
                   value={formData.duration}
                   onChange={handleChange}
                   min="1"
+                  required
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Duration in seconds"
                 />
@@ -279,14 +299,74 @@ function UploadMusic() {
           </div>
         </div>
 
-        {/* File Upload */}
-        <div className="md:col-span-2">
+        {/* File Upload Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Audio File Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Audio File*</label>
+            {!formData.audioUrl ? (
+              <div className="flex items-center justify-center w-full h-32">
+                <label className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <div className="flex flex-col items-center justify-center p-4">
+                    <Volume2 className="w-8 h-8 mb-2 text-gray-400" />
+                    <p className="text-sm text-gray-500 text-center">
+                      <span className="font-semibold">Click to upload audio</span><br />
+                      <span className="text-xs">MP3, WAV, FLAC (Max. 50MB)</span>
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    name="audioUrl"
+                    accept="audio/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            ) : (
+              <div className="relative w-full p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Volume2 className="w-8 h-8 text-blue-500" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 truncate max-w-48">
+                        {formData.audioUrl.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatFileSize(formData.audioUrl.size)}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeFile('audioUrl')}
+                    className="bg-white p-1 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                    aria-label="Remove audio file"
+                  >
+                    <X className="w-4 h-4 text-gray-600" />
+                  </button>
+                </div>
+                {/* Audio Preview */}
+                <div className="mt-3">
+                  <audio
+                    controls
+                    className="w-full h-8"
+                    src={URL.createObjectURL(formData.audioUrl)}
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Cover Image Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
             {!formData.coverImageUrl ? (
-              <div className="flex items-center justify-center w-full h-40">
+              <div className="flex items-center justify-center w-full h-32">
                 <label className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <div className="flex flex-col items-center justify-center p-5">
+                  <div className="flex flex-col items-center justify-center p-4">
                     <Image className="w-8 h-8 mb-2 text-gray-400" />
                     <p className="text-sm text-gray-500 text-center">
                       <span className="font-semibold">Click to upload</span><br />
@@ -303,7 +383,7 @@ function UploadMusic() {
                 </label>
               </div>
             ) : (
-              <div className="relative w-full h-40">
+              <div className="relative w-full h-32">
                 <img
                   src={URL.createObjectURL(formData.coverImageUrl)}
                   alt="Cover preview"

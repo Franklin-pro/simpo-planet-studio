@@ -17,7 +17,7 @@ export default function ManageGallery() {
     id: string;
     createdAt: string;
     _id: string;
-    name: string;
+    title: string;
     imageUrl: string;
     age: string;
     bio: string;
@@ -95,9 +95,17 @@ export default function ManageGallery() {
         return true;
     }
   };
+  const formattedDate = (date: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return new Date(date).toLocaleDateString("en-US", options);
+  };
 
   const filteredgallerys = gallerys
-    .filter((a: gallery) => a.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((a: gallery) => a.title.toLowerCase().includes(searchQuery.toLowerCase()))
     .filter(filterByDate);
 
   return (
@@ -112,8 +120,8 @@ export default function ManageGallery() {
               
               <input
                 type="text"
-                value={editinggallery.name}
-                onChange={(e) => setEditinggallery({ ...editinggallery, name: e.target.value })}
+                value={editinggallery.title}
+                onChange={(e) => setEditinggallery({ ...editinggallery, title: e.target.value })}
                 placeholder="Name"
                 className="w-full p-2 border rounded"
               />
@@ -241,8 +249,8 @@ export default function ManageGallery() {
               <tr>
                 <th className="p-4"></th>
                 <th className="px-6 py-3">gallery</th>
-                <th className="px-6 py-3">Age</th>
-                <th className="px-6 py-3">Management</th>
+                <th className="px-6 py-3">Name</th>
+                <th className="px-6 py-3">Created On</th>
                 <th className="px-6 py-3">Actions</th>
               </tr>
             </thead>
@@ -262,14 +270,14 @@ export default function ManageGallery() {
                     <td className="p-4"></td>
                     <td className="px-6 py-4 flex items-center gap-2 font-medium text-gray-900 whitespace-nowrap">
                       <img
-                        src={gallery.imageUrl}
-                        alt={gallery.name}
+                        src={gallery.image}
+                        alt={gallery.title}
                         className="h-10 w-10 object-cover rounded-full"
                       />
-                      {gallery.name}
+                      {gallery.title}
                     </td>
-                    <td className="px-6 py-4">{gallery.age}</td>
-                    <td className="px-6 py-4">{gallery.management}</td>
+                    <td className="px-6 py-4">{gallery.title}</td>
+                    <td className="px-6 py-4 truncate">{formattedDate(gallery.createdAt)}</td>
                     <td className="px-6 py-4 space-x-2">
                       <button
                         onClick={() => handleEdit(gallery)}

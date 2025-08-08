@@ -32,7 +32,7 @@ export default function ManartistMusics() {
   const fetchmusics = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/v1/music");
-      setmusics(response.data || []);
+      setmusics(response.data.data.docs || []);
     } catch (err) {
       setError("Failed to load musics.");
       console.error(err);
