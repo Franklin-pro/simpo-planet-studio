@@ -32,7 +32,7 @@ const ArtistSection = () => {
       try {
         const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/artist');
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error!! status: ${response.status}`);
         }
         const data = await response.json();
         setArtists(data);

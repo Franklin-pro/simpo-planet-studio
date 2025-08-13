@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, Facebook, Instagram, SproutIcon, Twitter } from "lucide-react";
+import { Eye, Facebook, Instagram, Twitter } from "lucide-react";
 import spotifyIcon from "../assets/spotify.png"; 
 import soundCloudIcon from "../assets/soundclouds.png"; // Assuming you have a soundcloud icon
 

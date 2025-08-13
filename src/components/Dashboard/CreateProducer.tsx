@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 
 function CreateProducer() {
@@ -11,7 +11,7 @@ function CreateProducer() {
     soundCloud: ''
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data:any) => {
     const producerData = {
       ...data,
       socialMedia
@@ -20,7 +20,7 @@ function CreateProducer() {
     // Here you would typically send the data to your backend API
   };
 
-  const handleSocialMediaChange = (e) => {
+  const handleSocialMediaChange = (e:ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSocialMedia(prev => ({
       ...prev,
@@ -46,7 +46,7 @@ function CreateProducer() {
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Eve"
             />
-            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
+            {errors.name && <p className="mt-1 text-sm text-red-600">this Field is required</p>}
           </div>
           
           <div>
@@ -62,7 +62,7 @@ function CreateProducer() {
               <option value="Senior">Senior</option>
               <option value="Legendary">Legendary</option>
             </select>
-            {errors.level && <p className="mt-1 text-sm text-red-600">{errors.level.message}</p>}
+            {errors.level && <p className="mt-1 text-sm text-red-600">this Field is required</p>}
           </div>
           
           <div>
@@ -85,7 +85,7 @@ function CreateProducer() {
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Pop music specialist with multiple platinum records..."
             />
-            {errors.bio && <p className="mt-1 text-sm text-red-600">{errors.bio.message}</p>}
+            {errors.bio && <p className="mt-1 text-sm text-red-600">this Field is required</p>}
           </div>
         </div>
         
