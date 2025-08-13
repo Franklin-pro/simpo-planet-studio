@@ -31,7 +31,7 @@ export default function ManartistMusics() {
 
   const fetchmusics = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/v1/music");
+      const response = await axios.get("https://simpo-planet-studio-bn.onrender.com/api/v1/music");
       setmusics(response.data.data.docs || []);
     } catch (err) {
       setError("Failed to load musics.");
@@ -45,7 +45,7 @@ export default function ManartistMusics() {
     if (!confirm("Are you sure you want to delete this music?")) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/v1/music/${id}`);
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/music/${id}`);
       setmusics((prev) => prev.filter((music: music) => music._id !== id));
       alert("music deleted successfully.");
       fetchmusics();
@@ -64,7 +64,7 @@ export default function ManartistMusics() {
     if (!editingmusic) return;
 
     try {
-      await axios.put(`http://localhost:3000/api/v1/music/${editingmusic._id}`, editingmusic);
+      await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/music/${editingmusic._id}`, editingmusic);
       alert("music updated successfully.");
       setIsEditing(false);
       fetchmusics();

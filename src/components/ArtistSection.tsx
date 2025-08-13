@@ -30,7 +30,7 @@ const ArtistSection = () => {
   useEffect(() => {
     const fetchArtists = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/artist');
+        const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/artist');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -173,7 +173,7 @@ const ArtistSection = () => {
                   <img
                     src={artist.imageUrl}
                     alt={artist.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover object-left-top transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x400?text=Artist+Image';
                     }}

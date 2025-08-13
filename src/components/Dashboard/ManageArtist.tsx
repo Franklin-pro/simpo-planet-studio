@@ -31,7 +31,7 @@ export default function ManageArtist() {
 
   const fetchArtists = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/v1/artist");
+      const response = await axios.get("https://simpo-planet-studio-bn.onrender.com/api/v1/artist");
       setArtists(response.data || []);
     } catch (err) {
       setError("Failed to load artists.");
@@ -45,7 +45,7 @@ export default function ManageArtist() {
     if (!confirm("Are you sure you want to delete this artist?")) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/v1/artist/${id}`);
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/artist/${id}`);
       setArtists((prev) => prev.filter((artist: Artist) => artist._id !== id));
       alert("Artist deleted successfully.");
       fetchArtists();
@@ -64,7 +64,7 @@ export default function ManageArtist() {
     if (!editingArtist) return;
 
     try {
-      await axios.put(`http://localhost:3000/api/v1/artist/${editingArtist._id}`, editingArtist);
+      await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/artist/${editingArtist._id}`, editingArtist);
       alert("Artist updated successfully.");
       setIsEditing(false);
       fetchArtists();

@@ -69,7 +69,7 @@ export default function CreateGallery() {
         videoUrl = typeof videoBase64 === "string" ? videoBase64 : "";
       }
 
-      const response = await axios.post("http://localhost:3000/api/v1/gallery/add-gallery", {
+      const response = await axios.post("https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/add-gallery", {
         title: formData.title,
         description: formData.description,
         image,

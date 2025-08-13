@@ -21,7 +21,7 @@ const ContactSection = () => {
 const handleSubmit = async (e:any) => {
   e.preventDefault();
   try {
-    const res = await axios.post("http://localhost:3000/api/v1/contact", form);
+    const res = await axios.post("https://simpo-planet-studio-bn.onrender.com/api/v1/contact", form);
     
     if (res.status < 200 || res.status >= 300) {
       throw new Error("Failed to send message");

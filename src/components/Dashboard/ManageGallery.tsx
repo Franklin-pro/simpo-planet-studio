@@ -31,7 +31,7 @@ export default function ManageGallery() {
 
   const fetchgallerys = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/v1/gallery");
+      const response = await axios.get("https://simpo-planet-studio-bn.onrender.com/api/v1/gallery");
       setgallerys(response.data || []);
     } catch (err) {
       setError("Failed to load gallerys.");
@@ -45,7 +45,7 @@ export default function ManageGallery() {
     if (!confirm("Are you sure you want to delete this gallery?")) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/v1/gallery/${id}`);
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${id}`);
       setgallerys((prev) => prev.filter((gallery: gallery) => gallery._id !== id));
       alert("gallery deleted successfully.");
       fetchgallerys();
@@ -64,7 +64,7 @@ export default function ManageGallery() {
     if (!editinggallery) return;
 
     try {
-      await axios.put(`http://localhost:3000/api/v1/gallery/${editinggallery._id}`, editinggallery);
+      await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${editinggallery._id}`, editinggallery);
       alert("gallery updated successfully.");
       setIsEditing(false);
       fetchgallerys();

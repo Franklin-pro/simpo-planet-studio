@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Eye, Facebook, Instagram, SproutIcon, Twitter } from "lucide-react";
+import spotifyIcon from "../assets/spotify.png"; 
+import soundCloudIcon from "../assets/soundclouds.png"; // Assuming you have a soundcloud icon
 
 const mockProducers = [
   { 
@@ -35,7 +38,14 @@ const mockProducers = [
     name: "Eve", 
     level: "Senior", 
     image: "https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=686&q=80",
-    bio: "Pop music specialist with multiple platinum records to her name."
+    bio: "Pop music specialist with multiple platinum records to her name.",
+    socialMedia: {
+      instagram: "https://instagram.com/eveproducer",
+      twitter: "https://twitter.com/eveproducer",
+      facebook: "https://facebook.com/eveproducer",
+      spotifiy: "https://open.spotify.com/artist/1234567890",
+      soundCloud: "https://soundcloud.com/eveproducer"
+    }
   },
 ];
 
@@ -122,23 +132,49 @@ function Producers() {
               </div>
             </div>
             <div className="p-5 space-y-3">
-              <h3 className="text-xl font-bold text-white">{producer.name}</h3>
-              <p className="text-gray-300 text-sm">{producer.bio}</p>
+              <div className="flex items-center justify-between">
+           <div>
+                 <h3 className="text-xl font-bold text-white">{producer.name}</h3>
+              <p className="text-gray-300 truncate w-50 text-sm">{producer.bio}</p>
+           </div>
+           <div>
+              <Eye size={20} className="text-green-500 cursor-pointer" />
+           </div>
+              </div>
+                  
               <div className="pt-2 flex justify-between items-center">
-                <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
-                  View Profile
-                </button>
+           
                 <div className="flex space-x-2">
-                  <button className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  </button>
-                  <button className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </button>
+                {producer.socialMedia && (
+                  <>
+                    {producer.socialMedia.instagram && (
+                      <a href={producer.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
+                        <Instagram size={24} className="text-pink-400" />    
+                      </a>
+                    )}
+                    {producer.socialMedia.twitter && (
+                      <a href={producer.socialMedia.twitter} target="_blank" rel="noopener noreferrer">
+                        <Twitter size={24} className="text-blue-400" />
+                      </a>
+                    )}
+                    {producer.socialMedia.facebook && (
+                      <a href={producer.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
+                        <Facebook size={24} className="text-blue-600" />
+                      </a>
+                    )}
+                    {producer.socialMedia.spotifiy && (
+                      <a href={producer.socialMedia.spotifiy} target="_blank" rel="noopener noreferrer">
+                        <img src={spotifyIcon} alt="Spotify" className="w-6 h-6" />
+
+                      </a>
+                    )}
+                    {producer.socialMedia.soundCloud && (
+                      <a href={producer.socialMedia.soundCloud} target="_blank" rel="noopener noreferrer">
+                        <img src={soundCloudIcon} alt="SoundCloud" className="w-6 h-6" />
+                      </a>
+                    )}
+                  </>
+                )}
                 </div>
               </div>
             </div>

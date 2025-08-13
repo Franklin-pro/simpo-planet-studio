@@ -28,6 +28,13 @@ const menus: MenuItem[] = [
       { name: 'Manage Music', path: '/admin/music/manage' },
     ],
   },
+     {
+    label: 'Producers',
+    items: [
+      { name: 'Add New Producer', path: '/admin/producer/create' },
+      { name: 'Manage Producers', path: '/admin/producer/manage' },
+    ],
+  },
   {
     label: 'Contact Messages',
     items: [

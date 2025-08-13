@@ -87,7 +87,7 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
       const imageUrl = await convertToBase64(formData.imageFile);
 
       const response = await axios.post(
-        "http://localhost:3000/api/v1/artist/add",
+        "https://simpo-planet-studio-bn.onrender.com/api/v1/artist/add",
         {
           name: formData.name,
           bio: formData.bio,

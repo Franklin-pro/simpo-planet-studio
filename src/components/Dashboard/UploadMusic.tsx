@@ -119,7 +119,7 @@ function UploadMusic() {
         audioFileSize: formData.audioUrl?.size || null,
       };
 
-      const response = await fetch('http://localhost:3000/api/v1/music', {
+      const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/music', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

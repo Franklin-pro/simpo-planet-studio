@@ -38,7 +38,7 @@ const Musics = () => {
   useEffect(() => {
     const fetchMusicData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/music');
+        const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/music');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -118,7 +118,7 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
   // Function to increment play count via API
   const incrementPlayCount = async (musicId: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/music/${musicId}/play`, {
+      const response = await fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/music/${musicId}/play`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
