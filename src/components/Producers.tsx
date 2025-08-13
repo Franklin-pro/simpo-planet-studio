@@ -1,65 +1,96 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, Facebook, Instagram, Twitter } from "lucide-react";
-import spotifyIcon from "../assets/spotify.png"; 
-import soundCloudIcon from "../assets/soundclouds.png"; // Assuming you have a soundcloud icon
+import { useNavigate } from "react-router-dom";
 
-const mockProducers = [
-  { 
-    id: 1, 
-    name: "Alice", 
-    level: "Beginner", 
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80",
-    bio: "Specializes in electronic music with a focus on atmospheric soundscapes."
-  },
-  { 
-    id: 2, 
-    name: "Bob", 
-    level: "Senior", 
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
-    bio: "Award-winning producer with 10+ years experience in hip-hop and R&B."
-  },
-  { 
-    id: 3, 
-    name: "Charlie", 
-    level: "Beginner", 
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
-    bio: "Upcoming talent specializing in lo-fi beats and chillwave."
-  },
-  { 
-    id: 4, 
-    name: "Diane", 
-    level: "Senior", 
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80",
-    bio: "Film score composer and electronic music producer with orchestral influences."
-  },
-  { 
-    id: 5, 
-    name: "Eve", 
-    level: "Senior", 
-    image: "https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=686&q=80",
-    bio: "Pop music specialist with multiple platinum records to her name.",
-    socialMedia: {
-      instagram: "https://instagram.com/eveproducer",
-      twitter: "https://twitter.com/eveproducer",
-      facebook: "https://facebook.com/eveproducer",
-      spotifiy: "https://open.spotify.com/artist/1234567890",
-      soundCloud: "https://soundcloud.com/eveproducer"
-    }
-  },
-];
+// Placeholder icons (replace with actual asset paths if available)
+const spotifyIcon = "https://via.placeholder.com/24?text=Spotify";
+const soundCloudIcon = "https://via.placeholder.com/24?text=SoundCloud";
 
-const categories = ["All", "Beginner", "Senior"];
-
-
-
+interface Producer {
+  _id: string;
+  name: string;
+  level: string;
+  image?: string;
+  bio: string;
+  genres: string[];
+  skills: string[];
+  contactEmail: string;
+  yearsExperience: number;
+  credits: Array<{
+    project: string;
+    role: string;
+    year: number;
+  }>;
+  socialMedia: {
+    instagram: string;
+    twitter: string;
+    facebook: string;
+    spotify: string;
+    soundCloud: string;
+    youtube: string;
+    appleMusic: string;
+  };
+}
 
 function Producers() {
+  const [producers, setProducers] = useState<Producer[]>([]);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
+  // Fetch producers from API
+  useEffect(() => {
+    const fetchProducers = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/producer');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        setProducers(result.data || []);
+        setIsLoading(false);
+      } catch (err) {
+        setError('Failed to load producers. Please try again.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducers();
+  }, []);
+
+  // Dynamically generate categories from producer levels
+  const categories = ["All", ...new Set(producers.map(p => p.level))];
+
+  // Filter producers based on active category
   const filteredProducers = activeCategory === "All"
-    ? mockProducers
-    : mockProducers.filter(p => p.level === activeCategory);
+    ? producers
+    : producers.filter(p => p.level === activeCategory);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
+        <div className="flex items-center space-x-2">
+          <svg className="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span className="text-gray-300 text-lg">Loading producers...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
+        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-8 min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
@@ -87,9 +118,9 @@ function Producers() {
         {categories.map((cat) => (
           <motion.button
             key={cat}
-                    initial={{ y: 20, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 0.5, ease: "easeInOut" }}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
             onClick={() => setActiveCategory(cat)}
             className={`px-6 py-2 rounded-full font-medium transition-all ${
               activeCategory === cat
@@ -106,18 +137,17 @@ function Producers() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
         {filteredProducers.map((producer) => (
           <motion.div
-            key={producer.id}
-               custom={0}
-         initial={{ y: 20, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 0.5, ease: "easeInOut" }}
+            key={producer._id}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             className="bg-gray-800 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 border border-gray-700"
           >
             <div className="relative h-48 overflow-hidden">
               <img
-                src={producer.image}
+                src={producer.image || "https://via.placeholder.com/300x200?text=No+Image"}
                 alt={producer.name}
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
               />
@@ -125,7 +155,11 @@ function Producers() {
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                   producer.level === "Senior" 
                     ? "bg-purple-600 text-white" 
-                    : "bg-blue-600 text-white"
+                    : producer.level === "Mid-level"
+                    ? "bg-blue-600 text-white"
+                    : producer.level === "Legendary"
+                    ? "bg-yellow-600 text-white"
+                    : "bg-green-600 text-white"
                 }`}>
                   {producer.level}
                 </span>
@@ -133,48 +167,49 @@ function Producers() {
             </div>
             <div className="p-5 space-y-3">
               <div className="flex items-center justify-between">
-           <div>
-                 <h3 className="text-xl font-bold text-white">{producer.name}</h3>
-              <p className="text-gray-300 truncate w-50 text-sm">{producer.bio}</p>
-           </div>
-           <div>
-              <Eye size={20} className="text-green-500 cursor-pointer" />
-           </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">{producer.name}</h3>
+                  <p className="text-gray-300 truncate w-50 text-sm">{producer.bio}</p>
+                </div>
+                <div>
+                  <Eye 
+                    size={20} 
+                    className="text-green-500 cursor-pointer hover:text-green-400 transition-colors" 
+                    onClick={() => navigate(`/producer/${producer._id}`)}
+                  />
+                </div>
               </div>
-                  
               <div className="pt-2 flex justify-between items-center">
-           
                 <div className="flex space-x-2">
-                {producer.socialMedia && (
-                  <>
-                    {producer.socialMedia.instagram && (
-                      <a href={producer.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
-                        <Instagram size={24} className="text-pink-400" />    
-                      </a>
-                    )}
-                    {producer.socialMedia.twitter && (
-                      <a href={producer.socialMedia.twitter} target="_blank" rel="noopener noreferrer">
-                        <Twitter size={24} className="text-blue-400" />
-                      </a>
-                    )}
-                    {producer.socialMedia.facebook && (
-                      <a href={producer.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
-                        <Facebook size={24} className="text-blue-600" />
-                      </a>
-                    )}
-                    {producer.socialMedia.spotifiy && (
-                      <a href={producer.socialMedia.spotifiy} target="_blank" rel="noopener noreferrer">
-                        <img src={spotifyIcon} alt="Spotify" className="w-6 h-6" />
-
-                      </a>
-                    )}
-                    {producer.socialMedia.soundCloud && (
-                      <a href={producer.socialMedia.soundCloud} target="_blank" rel="noopener noreferrer">
-                        <img src={soundCloudIcon} alt="SoundCloud" className="w-6 h-6" />
-                      </a>
-                    )}
-                  </>
-                )}
+                  {producer.socialMedia && (
+                    <>
+                      {producer.socialMedia.instagram && (
+                        <a href={producer.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
+                          <Instagram size={24} className="text-pink-400 hover:text-pink-300 transition-colors" />    
+                        </a>
+                      )}
+                      {producer.socialMedia.twitter && (
+                        <a href={producer.socialMedia.twitter} target="_blank" rel="noopener noreferrer">
+                          <Twitter size={24} className="text-blue-400 hover:text-blue-300 transition-colors" />
+                        </a>
+                      )}
+                      {producer.socialMedia.facebook && (
+                        <a href={producer.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
+                          <Facebook size={24} className="text-blue-600 hover:text-blue-500 transition-colors" />
+                        </a>
+                      )}
+                      {producer.socialMedia.spotify && (
+                        <a href={producer.socialMedia.spotify} target="_blank" rel="noopener noreferrer">
+                          <img src={spotifyIcon} alt="Spotify" className="w-6 h-6" />
+                        </a>
+                      )}
+                      {producer.socialMedia.soundCloud && (
+                        <a href={producer.socialMedia.soundCloud} target="_blank" rel="noopener noreferrer">
+                          <img src={soundCloudIcon} alt="SoundCloud" className="w-6 h-6" />
+                        </a>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             </div>

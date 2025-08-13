@@ -16,6 +16,9 @@ import ManageGallerys from './pages/admin/ManageGallery';
 import UploadMusics from './pages/admin/UploadMusics';
 import ManageMusic from './pages/admin/ManageMusic';
 import LoginAccount from './pages/LoginAccount';
+import ManageProducers from './components/Dashboard/ManageProducers';
+import CreateProducer from './components/Dashboard/CreateProducer';
+import ProducerDetails from './components/ProducerDetails';
 function App() {
 
   return (
@@ -25,6 +28,7 @@ function App() {
     <Route path="/" element={<Index />} />
     <Route path="/founder" element={<FounderSection />} />
     <Route path="/artist/:id" element={<ArtistDetails />} />
+     <Route path="/producer/:id" element={<ProducerDetails />} />
     <Route path="/contacts" element={<Contacts />} />
     <Route path="/gallery" element={<Gallery />} />
     <Route path="/abouts" element={<Abouts />} />
@@ -36,7 +40,8 @@ function App() {
       <Route path="artists/create" element={<AddArtists />} />
       <Route path="gallery/create" element={<AddGallery />} />
       <Route path="gallery/manage" element={<ManageGallerys />} />
-      <Route path="producer/manage" element={<ManagingArtist />} />
+      <Route path="producer/manage" element={<ManageProducers />} />
+      <Route path="producer/create" element={<CreateProducer />} />
       <Route path="music/upload" element={<UploadMusics />} />
       <Route path="music/manage" element={<ManageMusic />} />
       <Route path="artists/manage" element={<ManagingArtist />} />
