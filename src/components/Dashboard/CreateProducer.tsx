@@ -58,6 +58,7 @@ function CreateProducer() {
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
+        // Optionally set the form value for validation, but we won't rely on it for submission
         setValue('image', e.target?.result as string);
       };
       reader.readAsDataURL(file);
@@ -75,53 +76,68 @@ function CreateProducer() {
     setValue(name as keyof ProducerFormData, value);
   };
 
-  const onSubmit = async (data: ProducerFormData) => {
-  setIsSubmitting(true);
-  setSubmitStatus('idle');
-  
-  try {
-    // Stringify all array/object fields
-    const payload = {
-      ...data,
-      image: imageFile ? data.image : '',
-      genres: JSON.stringify(data.genres),
-      skills: JSON.stringify(data.skills),
-      credits: JSON.stringify(data.credits),
-      socialMedia: JSON.stringify(data.socialMedia)
-    };
-
-    const response = await fetch('http://localhost:3000/api/v1/producer/add-producer', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
+  const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
     });
+  };
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  const onSubmit = async (data: ProducerFormData) => {
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      // Convert imageFile to Base64 if it exists
+      let imageBase64 = '';
+      if (imageFile) {
+        imageBase64 = (await convertToBase64(imageFile)) as string;
+      }
+
+      const payload = {
+        ...data,
+        image: imageBase64, // Use the freshly converted Base64 string
+        genres: JSON.stringify(data.genres),
+        skills: JSON.stringify(data.skills),
+        credits: JSON.stringify(data.credits),
+        socialMedia: JSON.stringify(data.socialMedia)
+      };
+
+      const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/producer/add-producer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Producer created successfully:', result);
+      
+      setSubmitStatus('success');
+      
+      setTimeout(() => {
+        reset();
+        setImageFile(null);
+        setImagePreview(null);
+        setActiveTab('basic');
+        setSubmitStatus('idle');
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error creating producer:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
-    const result = await response.json();
-    console.log('Producer created successfully:', result);
-    
-    setSubmitStatus('success');
-    
-    setTimeout(() => {
-      reset();
-      setImageFile(null);
-      setImagePreview(null);
-      setActiveTab('basic');
-      setSubmitStatus('idle');
-    }, 2000);
-    
-  } catch (error) {
-    console.error('Error creating producer:', error);
-    setSubmitStatus('error');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
   const handleSocialMediaChange = (field: keyof ProducerFormData['socialMedia'], value: string) => {
     const currentSocialMedia = watch('socialMedia') ?? {};
     setValue('socialMedia', {

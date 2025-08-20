@@ -38,7 +38,7 @@ function ProducerDetails() {
   useEffect(() => {
     const fetchProducer = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/producer/${id}`);
+        const response = await fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/producer/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -46,6 +46,7 @@ function ProducerDetails() {
         setProducer(result.data);
         setIsLoading(false);
       } catch (err) {
+        console.error("Failed to fetch producer details:", err);
         setError('Failed to load producer details. Please try again.');
         setIsLoading(false);
       }
@@ -81,7 +82,7 @@ function ProducerDetails() {
   return (
     <>
      <Header/>
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg my-8">
+    <div className="container mx-auto p-6 mt-28 bg-white rounded-xl shadow-lg my-8">
       <div className="flex items-center mb-8">
         <Music className="text-indigo-600 text-3xl mr-3" />
         <h1 className="text-3xl font-bold text-gray-800">{producer.name}'s Profile</h1>
@@ -95,7 +96,7 @@ function ProducerDetails() {
               <img
                 src={producer.image}
                 alt={producer.name}
-                className="w-full h-full object-cover rounded-lg border border-gray-200"
+                className="w-full h-full object-cover object-top rounded-lg border border-gray-200"
               />
             ) : (
               <div className="w-full h-full bg-gray-100 flex items-center justify-center rounded-lg border border-gray-200">

@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, Facebook, Instagram, Twitter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-// Placeholder icons (replace with actual asset paths if available)
-const spotifyIcon = "https://via.placeholder.com/24?text=Spotify";
-const soundCloudIcon = "https://via.placeholder.com/24?text=SoundCloud";
+import soundcloud from '../assets/soundclouds.png'
 
 interface Producer {
   _id: string;
@@ -44,7 +41,7 @@ function Producers() {
   useEffect(() => {
     const fetchProducers = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/producer');
+        const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/producer');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -52,6 +49,7 @@ function Producers() {
         setProducers(result.data || []);
         setIsLoading(false);
       } catch (err) {
+        console.error("Failed to fetch producers:", err);
         setError('Failed to load producers. Please try again.');
         setIsLoading(false);
       }
@@ -149,7 +147,7 @@ function Producers() {
               <img
                 src={producer.image || "https://via.placeholder.com/300x200?text=No+Image"}
                 alt={producer.name}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                className="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-110"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -200,12 +198,12 @@ function Producers() {
                       )}
                       {producer.socialMedia.spotify && (
                         <a href={producer.socialMedia.spotify} target="_blank" rel="noopener noreferrer">
-                          <img src={spotifyIcon} alt="Spotify" className="w-6 h-6" />
+                          <img src='https://www.logo.wine/a/logo/Spotify/Spotify-Icon-Logo.wine.svg' alt="Spotify" className="w-6 h-6" />
                         </a>
                       )}
                       {producer.socialMedia.soundCloud && (
                         <a href={producer.socialMedia.soundCloud} target="_blank" rel="noopener noreferrer">
-                          <img src={soundCloudIcon} alt="SoundCloud" className="w-6 h-6" />
+                          <img src={soundcloud} alt="SoundCloud" className="w-6 h-6" />
                         </a>
                       )}
                     </>
