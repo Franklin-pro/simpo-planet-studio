@@ -32,7 +32,7 @@ const ArtistDetails = () => {
     const fetchArtist = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/api/v1/artists/${id}`);
+        const response = await fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/artists/${id}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch artist: ${response.status}`);

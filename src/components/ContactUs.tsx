@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { motion } from "framer-motion";
+import type { ChangeEvent, FormEvent } from 'react';
 
 const ContactSection = () => {
   const [form, setForm] = useState({
@@ -11,14 +12,14 @@ const ContactSection = () => {
     message: "",
   });
 
-  const handleChange = (e:any) => {
+  const handleChange = (e:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
-const handleSubmit = async (e:any) => {
+const handleSubmit = async (e:FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   try {
     const res = await axios.post("https://simpo-planet-studio-bn.onrender.com/api/v1/contact", form);

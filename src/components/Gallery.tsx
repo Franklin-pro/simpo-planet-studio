@@ -40,7 +40,7 @@ const images = [
 ];
 
 export default function ArtGallery() {
-  const [selectedImage, setSelectedImage] = useState(null as any);
+   const [selectedImage, setSelectedImage] = useState<any | null>(null);
   const [filter, setFilter] = useState("All");
   const [likedImages, setLikedImages] = useState(new Set());
 
