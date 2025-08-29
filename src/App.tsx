@@ -19,6 +19,8 @@ import LoginAccount from './pages/LoginAccount';
 import ManageProducers from './components/Dashboard/ManageProducers';
 import CreateProducer from './components/Dashboard/CreateProducer';
 import ProducerDetails from './components/ProducerDetails';
+import FilmMakerPage from './pages/FilmMakerPage';
+import FilmMakerDetailsPage from './pages/FilmMakerDetailsPage';
 function App() {
 
   return (
@@ -33,6 +35,8 @@ function App() {
     <Route path="/gallery" element={<Gallery />} />
     <Route path="/abouts" element={<Abouts />} />
     <Route path="/musics" element={<Musics />} />
+    <Route path="/filmmakers" element={<FilmMakerPage />}/>
+    <Route path="/filmmakers/:id" element={<FilmMakerDetailsPage />}/>
     <Route path="/login" element={<LoginAccount />} />
 
     {/* NESTED ADMIN ROUTES */}
