@@ -37,6 +37,12 @@ const Header = () => {
             >
               Gallery
             </a>
+             <a
+             href='/filmmakers'
+              className="text-white hover:text-red-500 transition-colors"
+            >
+              Film Makers
+            </a>
             <a
             href='/musics'
               className="text-white hover:text-red-500 transition-colors"
@@ -90,6 +96,12 @@ const Header = () => {
                 className="text-white hover:text-red-500 transition-colors text-left"
               >
                 Gallery
+              </a>
+                  <a
+               href='/filmmakers'
+                className="text-white hover:text-red-500 transition-colors text-left"
+              >
+                Film Makers
               </a>
               <a
               href="/contacts"
