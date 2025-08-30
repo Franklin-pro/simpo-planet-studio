@@ -102,11 +102,11 @@ export default function ManageArtist() {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-6">🎨 Manage Artists</h2>
+      <h2 className="text-2xl text-gray-700 dark:text-gray-100 font-bold mb-6">🎨 Manage Artists</h2>
 
       {isEditing && editingArtist && (
         <div className="fixed inset-0 bg-black/15 bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+          <div className="bg-white  p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold mb-4">Edit Artist</h2>
             <div className="space-y-4">
               
@@ -161,7 +161,7 @@ export default function ManageArtist() {
         </div>
       )}
 
-      <div className="relative overflow-x-auto bg-gray-200 p-2 shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto bg-gray-200 dark:bg-gray-600  p-2 shadow-md sm:rounded-lg">
         {/* FILTER & SEARCH BAR */}
         <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between pb-4 space-y-4 sm:space-y-0">
           {/* Filter dropdown */}
@@ -236,8 +236,8 @@ export default function ManageArtist() {
         ) : error ? (
           <p className="text-red-600 text-center py-4">{error}</p>
         ) : (
-          <table className="w-full text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+          <table className="w-full text-sm text-left bg-red text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-500 dark:text-gray-100">
               <tr>
                 <th className="p-4"></th>
                 <th className="px-6 py-3">Artist</th>
@@ -257,7 +257,7 @@ export default function ManageArtist() {
                 filteredArtists.map((artist: Artist) => (
                   <tr
                     key={artist._id}
-                    className="bg-white border-b-2 border-gray-200 hover:bg-gray-50"
+                    className="bg-white dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 border-b-2 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="p-4"></td>
                     <td className="px-6 py-4 flex items-center gap-2 font-medium text-gray-900 whitespace-nowrap">

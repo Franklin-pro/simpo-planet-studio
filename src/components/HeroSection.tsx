@@ -31,7 +31,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section id="home" className="min-h-screen bg-black text-white relative overflow-hidden">
+    <section id="home" className="min-h-screen bg-gray-50 dark:bg-black text-gray-500 dark:text-white relative overflow-hidden">
       {/* Animated Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 to-transparent"></div>
@@ -40,7 +40,7 @@ const HeroSection = () => {
             {Array.from({ length: 144 }).map((_, i) => (
               <motion.div
                 key={i}
-                className="w-2 h-2 bg-white rounded-full"
+                className="w-2 h-2 bg-white dark:bg-gray-600 rounded-full"
                 custom={i}
                 initial="hidden"
                 animate="visible"
@@ -63,10 +63,10 @@ const HeroSection = () => {
             <motion.div className="space-y-4"  initial={{ y: 20, opacity: 0 }}
   animate={{ y: 0, opacity: 1 }}
   transition={{ duration: 0.5, ease: "easeInOut" }}>
-              <p className="text-gray-300 text-lg tracking-wider uppercase">
+              <p className="text-gray-600 dark:text-gray-300 text-lg tracking-wider uppercase">
                 Welcome to our Simpo Planet Studio Label
               </p>
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold leading-tight text-gray-900 dark:text-white">
                 Simpo Planet 
                 <br />
                 <span className="text-red-500">Label.</span>
@@ -74,7 +74,7 @@ const HeroSection = () => {
             </motion.div>
             
             <motion.p 
-              className="text-gray-300 text-lg max-w-md leading-relaxed"
+              className="text-gray-600 dark:text-gray-300 text-lg max-w-md leading-relaxed"
                initial={{ y: 20, opacity: 0 }}
   animate={{ y: 0, opacity: 1 }}
   transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -97,8 +97,8 @@ const HeroSection = () => {
               </motion.button>
               
               <div className="space-y-2">
-                <p className="text-gray-400">Register now:</p>
-                <div className="flex items-center gap-2 text-white text-xl font-semibold">
+                <p className="text-gray-500 dark:text-gray-400">Register now:</p>
+                <div className="flex items-center gap-2 text-gray-900 dark:text-white text-xl font-semibold">
                   <Phone size={20} className="text-red-500" />
                   (+250)783054403
                 </div>

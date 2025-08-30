@@ -1,5 +1,6 @@
 import { UserCircleIcon } from "lucide-react";
 import { useState, useEffect } from "react";
+import ThemeToggle from './ThemeToggle';
 
 export function Topbar() {
   const [message, setMessage] = useState('');
@@ -22,9 +23,9 @@ export function Topbar() {
   }
 
   return (
-    <header className="bg-white shadow px-4 py-3 flex justify-between items-center">
-      <div className="text-lg font-semibold text-gray-800">{message} 👋</div>
-      <div className="text-sm flex items-center text-gray-600">
+    <header className="bg-white dark:bg-gray-800 shadow px-4 py-3 flex justify-between items-center">
+      <div className="text-lg font-semibold text-gray-800 dark:text-white">{message} 👋</div>
+      <div className="text-sm flex items-center text-gray-600 dark:text-gray-300">
         <UserCircleIcon className="inline-block mr-2 w-8 h-8" />
         <div className="flex flex-col">
           <span className="font-bold">{user.username || 'Admin'}</span>

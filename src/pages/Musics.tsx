@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, Youtube, X, ExternalLink} from 'lucide-react';
+import { Play, Pause, Youtube, X, ExternalLink, User } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useState, useRef, useEffect } from 'react';
@@ -18,6 +18,14 @@ interface MusicItem {
   playCount: number;
   audioSrc?: string;
   audioUrl: string;
+  userPlays?: number; // User-specific play count
+}
+
+interface UserData {
+  _id: string;
+  email: string;
+  name: string;
+  // Add other user properties as needed
 }
 
 const Musics = () => {
@@ -30,15 +38,58 @@ const Musics = () => {
   const [error, setError] = useState<string | null>(null);
   const [showContinueModal, setShowContinueModal] = useState(false);
   const [currentPlayingTrack, setCurrentPlayingTrack] = useState<MusicItem | null>(null);
-  const [hasCountedPlay, setHasCountedPlay] = useState<Set<string>>(new Set());
+  const [user, setUser] = useState<UserData | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Enhanced authentication check function
+  const checkAndValidateAuth = () => {
+    try {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      
+      if (!token || !userData) {
+        return { isAuthenticated: false, userId: null, user: null };
+      }
+
+      const user = JSON.parse(userData);
+      
+      if (!user._id) {
+        // Clear invalid data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        return { isAuthenticated: false, userId: null, user: null };
+      }
+
+      return { isAuthenticated: true, userId: user._id, user };
+    } catch (error) {
+      console.error('Error validating auth:', error);
+      // Clear corrupted data
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      return { isAuthenticated: false, userId: null, user: null };
+    }
+  };
+
   useEffect(() => {
     const fetchMusicData = async () => {
       try {
-        const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/music');
+        // Validate authentication
+        const { isAuthenticated, userId, user } = checkAndValidateAuth();
+        
+        setIsLoggedIn(isAuthenticated);
+        setUser(user);
+        
+        let url = 'https://simpo-planet-studio-bn.onrender.com/api/v1/music';
+        
+        // Only include userId if user is properly authenticated
+        if (isAuthenticated && userId) {
+          url += `?userId=${userId}`;
+        }
+
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -75,57 +126,103 @@ const Musics = () => {
       return `${(count / 1e3).toFixed(1)}K`;
     }
     return count.toString();
-  }
+  };
 
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
 
-  const diffMs = now.getTime() - date.getTime();
-  const diffSeconds = Math.floor(diffMs / 1000);
-  const diffMinutes = Math.floor(diffSeconds / 60);
-  const diffHours = Math.floor(diffMinutes / 60);
-  const diffDays = Math.floor(diffHours / 24);
+    const diffMs = now.getTime() - date.getTime();
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
 
-  if (diffSeconds < 60) return "Just now";
-  if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
-  if (diffDays === 1) return "1 day ago";
-  if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffSeconds < 60) return "Just now";
+    if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+    if (diffDays === 1) return "1 day ago";
+    if (diffDays < 7) return `${diffDays} days ago`;
 
-  const diffWeeks = Math.floor(diffDays / 7);
-  if (diffWeeks === 1) return "1 week ago";
-  if (diffWeeks < 4) return `${diffWeeks} weeks ago`;
+    const diffWeeks = Math.floor(diffDays / 7);
+    if (diffWeeks === 1) return "1 week ago";
+    if (diffWeeks < 4) return `${diffWeeks} weeks ago`;
 
-  const diffMonths =
-    now.getMonth() -
-    date.getMonth() +
-    12 * (now.getFullYear() - date.getFullYear());
+    const diffMonths =
+      now.getMonth() -
+      date.getMonth() +
+      12 * (now.getFullYear() - date.getFullYear());
 
-  if (diffMonths === 1) return "1 month ago";
-  if (diffMonths < 12) return `${diffMonths} months ago`;
+    if (diffMonths === 1) return "1 month ago";
+    if (diffMonths < 12) return `${diffMonths} months ago`;
 
-  const diffYears = now.getFullYear() - date.getFullYear();
-  if (diffYears === 1) return "1 year ago";
-  return `${diffYears} years ago`;
-};
+    const diffYears = now.getFullYear() - date.getFullYear();
+    if (diffYears === 1) return "1 year ago";
+    return `${diffYears} years ago`;
+  };
 
-// Test with createdAt
-console.log(formatDate("2025-08-08T15:54:38.229Z"));
-
-
-
-  // Function to increment play count via API
+  // Enhanced function to increment play count with strict user authentication
   const incrementPlayCount = async (musicId: string) => {
     try {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      
+      // Strict authentication check - return early if not authenticated
+      if (!token || !userData) {
+        console.log('User not authenticated, skipping play count update');
+        return;
+      }
+
+      // Parse and validate user data
+      let userId;
+      try {
+        const user = JSON.parse(userData);
+        userId = user._id;
+        
+        if (!userId) {
+          console.log('Invalid user data, skipping play count update');
+          return;
+        }
+      } catch (parseError) {
+        console.error('Error parsing user data:', parseError);
+        // Clear invalid data
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+        setUser(null);
+        return;
+      }
+
+      // Additional check against current state
+      if (!isLoggedIn || !user?._id) {
+        console.log('User state indicates not logged in, skipping play count update');
+        return;
+      }
+
       const response = await fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/music/${musicId}/play`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
+        // Include userId in request body for backend validation
+        body: JSON.stringify({ userId })
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          // Token expired or invalid - clear auth data and update state
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setIsLoggedIn(false);
+          setUser(null);
+          console.log('Authentication expired, user logged out');
+          return;
+        }
+        if (response.status === 403) {
+          console.log('User not authorized to update play count');
+          return;
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -136,7 +233,11 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
         setMusicData(prevData => 
           prevData.map(music => 
             music._id === musicId 
-              ? { ...music, playCount: data.playCount }
+              ? { 
+                  ...music, 
+                  playCount: data.playCount || music.playCount,
+                  userPlays: data.userPlays || (music.userPlays || 0) + 1
+                }
               : music
           )
         );
@@ -144,22 +245,31 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
         // Update current playing track if it matches
         if (currentPlayingTrack && currentPlayingTrack._id === musicId) {
           setCurrentPlayingTrack(prev => 
-            prev ? { ...prev, playCount: data.playCount } : null
+            prev ? { 
+              ...prev, 
+              playCount: data.playCount || prev.playCount,
+              userPlays: data.userPlays || (prev.userPlays || 0) + 1
+            } : null
           );
         }
         
-        console.log('Play count updated:', data.playCount);
+        console.log('Play count updated successfully:', {
+          trackId: musicId,
+          totalPlays: data.playCount,
+          userPlays: data.userPlays,
+          userId: userId
+        });
       }
     } catch (error) {
       console.error('Error updating play count:', error);
-      // Don't show error to user for play count updates as it's not critical
+      // Don't throw error to avoid breaking playback experience
+      // But you might want to show a non-intrusive notification to user
     }
   };
 
   const startPlaybackTimer = (track: MusicItem) => {
     if (playbackTimerRef.current) {
       clearTimeout(playbackTimerRef.current);
-      setCurrentTrack(track._id);
     }
     playbackTimerRef.current = setTimeout(() => {
       setShowContinueModal(true);
@@ -181,12 +291,7 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
       } else {
         audioRef.current?.play();
         startPlaybackTimer(track);
-        
-        // Increment play count only if not already counted for this session
-        if (!hasCountedPlay.has(id)) {
-          incrementPlayCount(id);
-          setHasCountedPlay(prev => new Set(prev).add(id));
-        }
+        // DON'T increment play count on resume - only on initial play
       }
       setIsPlaying(!isPlaying);
     } else {
@@ -203,16 +308,47 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
       const audio = new Audio(track.audioUrl);
       audioRef.current = audio;
       
+      // Track if play count has been incremented for this session
+      let playCountIncremented = false;
+      
       audio.onplay = () => {
         setIsPlaying(true);
         setCurrentTrack(id);
         setCurrentPlayingTrack(track);
         startPlaybackTimer(track);
         
-        // Increment play count when audio starts playing
-        if (!hasCountedPlay.has(id)) {
-          incrementPlayCount(id);
-          setHasCountedPlay(prev => new Set(prev).add(id));
+        // Only increment play count ONCE per new track session
+        if (!playCountIncremented) {
+          const token = localStorage.getItem('token');
+          const userData = localStorage.getItem('user');
+          
+          let isAuthenticated = false;
+          let parsedUser = null;
+          
+          if (token && userData) {
+            try {
+              parsedUser = JSON.parse(userData);
+              isAuthenticated = Boolean(parsedUser?._id);
+            } catch (error) {
+              console.error('Error parsing user data:', error);
+            }
+          }
+          
+          console.log('Auth check for NEW track play:', { 
+            hasToken: !!token, 
+            hasUserData: !!userData, 
+            parsedUser, 
+            isAuthenticated,
+            trackId: id
+          });
+          
+          // Only increment play count if user is properly authenticated
+          if (isAuthenticated && parsedUser?._id) {
+            incrementPlayCount(id);
+            playCountIncremented = true; // Mark as incremented
+          } else {
+            console.log('Play count not tracked - user not authenticated');
+          }
         }
       };
       
@@ -231,6 +367,7 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
         if (playbackTimerRef.current) {
           clearTimeout(playbackTimerRef.current);
         }
+        // DON'T increment play count on end - already counted on initial play
       };
       
       audio.ontimeupdate = () => {
@@ -252,6 +389,11 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
   const continueOnPlatform = (platformUrl: string) => {
     window.open(platformUrl, '_blank');
     closeModal();
+  };
+
+  const handleLogin = () => {
+    // Redirect to login page
+    window.location.href = '/login';
   };
 
   if (loading) {
@@ -348,6 +490,40 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
             >
               Discover the hottest tracks from your favorite artists
             </motion.p>
+            
+            {!isLoggedIn && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                className="mt-6 bg-gray-800/50 p-4 rounded-lg max-w-md mx-auto"
+              >
+                <p className="text-gray-300 mb-2 flex items-center justify-center">
+                  <User size={16} className="mr-2" />
+                  Sign in to track your listening history
+                </p>
+                <button
+                  onClick={handleLogin}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Sign In
+                </button>
+              </motion.div>
+            )}
+
+            {isLoggedIn && user && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                className="mt-6 bg-green-800/20 p-4 rounded-lg max-w-md mx-auto border border-green-600/30"
+              >
+                <p className="text-green-300 flex items-center justify-center">
+                  <User size={16} className="mr-2" />
+                  Welcome back, {user.name}! Your plays are being tracked.
+                </p>
+              </motion.div>
+            )}
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -392,6 +568,13 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
                       <Play size={20} className="text-white pl-1" />
                     )}
                   </button>
+
+                  {/* Authentication status indicator */}
+                  {!isLoggedIn && (
+                    <div className="absolute top-4 left-4 bg-gray-900/90 text-gray-300 px-2 py-1 rounded-full text-xs">
+                      Guest Mode
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-5">
@@ -403,12 +586,27 @@ console.log(formatDate("2025-08-08T15:54:38.229Z"));
                     </div>
                   </div>
         
-                  <div className='flex items-center gap-1 text-gray-500 my-2'>
-                    <Play size={20}/>
-                        <span className='text-sm text-gray-400 block'>{ formatPlayCount(music.playCount)}</span>
-                      <span className='text-xs text-gray-500'>plays</span>
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center gap-1 text-gray-500">
+                      <Play size={16}/>
+                      <span className="text-sm text-gray-400">{formatPlayCount(music.playCount)}</span>
+                      <span className="text-xs text-gray-500">plays</span>
+                    </div>
+                    
+                    {isLoggedIn && music.userPlays !== undefined && music.userPlays > 0 && (
+                      <div className="flex items-center gap-1 text-gray-400">
+                        <User size={14} />
+                        <span className="text-xs">You played {music.userPlays} time{music.userPlays !== 1 ? 's' : ''}</span>
+                      </div>
+                    )}
+
+                    {!isLoggedIn && (
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <User size={14} />
+                        <span className="text-xs">Sign in to track</span>
+                      </div>
+                    )}
                   </div>
-                  
 
                   {currentTrack === music._id && (
                     <div className="mt-3">

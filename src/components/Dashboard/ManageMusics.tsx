@@ -102,12 +102,12 @@ export default function ManartistMusics() {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-6">🎨 Manartist Musics</h2>
+      <h2 className="text-2xl dark:text-gray-100 text-gray-900 font-bold mb-6">🎨 Manartist Musics</h2>
 
       {isEditing && editingmusic && (
         <div className="fixed inset-0 bg-black/15 bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">Edit music</h2>
+          <div className="bg-white dark:bg-gray-700 p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-2xl dark:text-gray-100 text-gray-900 font-bold mb-4">Edit music</h2>
             <div className="space-y-4">
               
               <input
@@ -115,21 +115,21 @@ export default function ManartistMusics() {
                 value={editingmusic.title}
                 onChange={(e) => setEditingmusic({ ...editingmusic, title: e.target.value })}
                 placeholder="Name"
-                className="w-full p-2 border rounded"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <input
                 type="text"
                 value={editingmusic.artist}
                 onChange={(e) => setEditingmusic({ ...editingmusic, artist: e.target.value })}
                 placeholder="artist"
-                className="w-full p-2 border rounded"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <input
                 type="text"
                 value={editingmusic.genre}
                 onChange={(e) => setEditingmusic({ ...editingmusic, genre: e.target.value })}
                 placeholder="genre"
-                className="w-full p-2 border rounded"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
                   <div className="flex flex-col col-span-1 md:col-span-2">
           <label className="mb-1 text-sm text-gray-600">albumgraphy</label>
@@ -138,7 +138,7 @@ export default function ManartistMusics() {
           value={editingmusic.album}
                 onChange={(e) => setEditingmusic({ ...editingmusic, album: e.target.value })}
             rows={4}
-            className=" border-gray-400 border-2 rounded-lg px-3 py-2 focus:outline-none"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           ></textarea>
         </div>
@@ -161,7 +161,7 @@ export default function ManartistMusics() {
         </div>
       )}
 
-      <div className="relative overflow-x-auto bg-gray-200 p-2 shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto bg-gray-200 dark:bg-gray-500 dark:border-gray-500 dark:text-gray-100 p-2 shadow-md sm:rounded-lg">
         {/* FILTER & SEARCH BAR */}
         <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between pb-4 space-y-4 sm:space-y-0">
           {/* Filter dropdown */}
@@ -237,7 +237,7 @@ export default function ManartistMusics() {
           <p className="text-red-600 text-center py-4">{error}</p>
         ) : (
           <table className="w-full text-sm text-left text-gray-500">
-      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+      <thead className="text-xs uppercase text-gray-700 dark:bg-gray-500 dark:border-gray-500 dark:text-gray-100 bg-gray-50">
   <tr>
     <th className="px-6 py-3">Cover</th>
     <th className="px-6 py-3">Title</th>
@@ -258,7 +258,7 @@ export default function ManartistMusics() {
     filteredmusics.map((music: music) => (
       <tr
         key={music._id}
-        className="bg-white border-b-2 border-gray-200 hover:bg-gray-50"
+        className="bg-white dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 border-b-2 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
       >
         <td className="px-6 py-4">
           <img
@@ -267,8 +267,8 @@ export default function ManartistMusics() {
             className="h-12 w-12 object-cover rounded"
           />
         </td>
-        <td className="px-6 py-4 font-medium text-gray-900">{music.title}</td>
-        <td className="px-6 py-4">{music.artist}</td>
+        <td className="px-6 py-4 font-bold">{music.title}</td>
+        <td className="px-6 py-4 font-semibold">{music.artist}</td>
         <td className="px-6 py-4">{music.genre}</td>
         <td className="px-6 py-4">{music.album}</td>
         <td className="px-6 py-4 space-x-2">
