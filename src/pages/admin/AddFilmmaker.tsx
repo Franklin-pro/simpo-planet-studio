@@ -1,7 +1,25 @@
 import { useState, useRef } from 'react';
+import type { FormEvent, ChangeEvent } from 'react';
+
+interface PortfolioItem {
+  title: string;
+  year: number;
+  role: string;
+}
+
+interface FormData {
+  name: string;
+  bio: string;
+  image: string | null;
+  specialization: string;
+  experience: number;
+  email: string;
+  phone: string;
+  portfolio: PortfolioItem[];
+}
 
 const AddFilmmaker = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     bio: '',
     image: null,
@@ -12,16 +30,17 @@ const AddFilmmaker = () => {
     portfolio: [{ title: '', year: new Date().getFullYear(), role: '' }]
   });
 
-    const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
+  const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
+      reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
   };
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
+  
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const base64 = await convertToBase64(file);
       setFormData({ ...formData, image: base64 });
@@ -29,10 +48,10 @@ const AddFilmmaker = () => {
     }
   };
 
-  const [imagePreview, setImagePreview] = useState(null);
-  const fileInputRef = useRef(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     const submitData = {
@@ -77,7 +96,7 @@ const AddFilmmaker = () => {
         alert('Error: ' + result.message);
       }
     } catch (error) {
-      alert('Error creating filmmaker: ' + error.message);
+      alert('Error creating filmmaker: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   };
 
@@ -88,13 +107,13 @@ const AddFilmmaker = () => {
     });
   };
 
-  const removePortfolioItem = (index) => {
+  const removePortfolioItem = (index: number) => {
     if (formData.portfolio.length <= 1) return;
     const updated = formData.portfolio.filter((_, i) => i !== index);
     setFormData({ ...formData, portfolio: updated });
   };
 
-  const updatePortfolio = (index, field, value) => {
+  const updatePortfolio = (index: number, field: keyof PortfolioItem, value: string | number) => {
     const updated = formData.portfolio.map((item, i) => 
       i === index ? { ...item, [field]: value } : item
     );
@@ -115,13 +134,15 @@ const AddFilmmaker = () => {
   // };
 
   const triggerFileInput = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
   const removeImage = () => {
     setFormData({ ...formData, image: null });
     setImagePreview(null);
-    fileInputRef.current.value = '';
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (

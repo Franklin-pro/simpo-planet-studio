@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { PenBoxIcon, Trash } from "lucide-react";
-
+import DeleteModal from "../../components/DeleteModal";
 
 export default function ManageGallery() {
   const [gallerys, setgallerys] = useState([]);
@@ -12,6 +12,8 @@ export default function ManageGallery() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("last30");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   interface gallery {
     id: string;
@@ -41,17 +43,20 @@ export default function ManageGallery() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this gallery?")) return;
-
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    setIsDeleting(true);
     try {
-      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${id}`);
-      setgallerys((prev) => prev.filter((gallery: gallery) => gallery._id !== id));
-      alert("gallery deleted successfully.");
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${deleteId}`);
+      setgallerys((prev) => prev.filter((gallery: gallery) => gallery._id !== deleteId));
+      setDeleteId(null);
       fetchgallerys();
     } catch (err) {
       alert("Delete failed.");
       console.error(err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -285,7 +290,7 @@ export default function ManageGallery() {
                         <PenBoxIcon />
                       </button>
                       <button
-                        onClick={() => handleDelete(gallery._id)}
+                        onClick={() => setDeleteId(gallery._id)}
                         className="text-red-600 cursor-pointer"
                       >
                         <Trash />
@@ -298,6 +303,15 @@ export default function ManageGallery() {
           </table>
         )}
       </div>
+      
+      <DeleteModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Gallery Item"
+        message="Are you sure you want to delete this gallery item? This action cannot be undone."
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

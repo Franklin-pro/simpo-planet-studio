@@ -1,5 +1,6 @@
-import { Users, Music, Image, Film, TrendingUp, Eye, Headphones } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { Users, Music, Image, Film, TrendingUp, Eye } from 'lucide-react';
+import { useState, useRef } from 'react';
+import type { MouseEvent } from 'react';
 
 const Dashboard = () => {
   const stats = [
@@ -11,10 +12,15 @@ const Dashboard = () => {
     { title: 'Growth Rate', value: '18%', icon: TrendingUp, color: 'bg-indigo-500', change: '+3%' }
   ];
 
-  const [hoveredBar, setHoveredBar] = useState(null);
-  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const [hoveredBar, setHoveredBar] = useState<number | null>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<{
+    type: string;
+    index: number;
+    value: number;
+    month: string;
+  } | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const chartContainerRef = useRef(null);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   const chartData = [
     { month: 'Jan', artists: 20, music: 45, listens: 850, views: 1200 },
@@ -32,7 +38,7 @@ const Dashboard = () => {
   const maxViews = Math.max(...chartData.map(d => d.views));
 
   // Handle tooltip positioning
-  const handleBarHover = (index, e) => {
+  const handleBarHover = (index: number, e: MouseEvent) => {
     setHoveredBar(index);
     if (chartContainerRef.current) {
       const rect = chartContainerRef.current.getBoundingClientRect();
@@ -43,7 +49,7 @@ const Dashboard = () => {
     }
   };
 
-  const handlePointHover = (type, index, value, month, e) => {
+  const handlePointHover = (type: string, index: number, value: number, month: string, e: MouseEvent) => {
     setHoveredPoint({ type, index, value, month });
     if (chartContainerRef.current) {
       const rect = chartContainerRef.current.getBoundingClientRect();

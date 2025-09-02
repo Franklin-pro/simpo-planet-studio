@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { PenBoxIcon, Trash } from "lucide-react";
+import DeleteModal from "../../components/DeleteModal";
 
 
 export default function ManageArtist() {
@@ -12,6 +13,8 @@ export default function ManageArtist() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("last30");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   interface Artist {
     id: string;
@@ -41,17 +44,20 @@ export default function ManageArtist() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this artist?")) return;
-
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    setIsDeleting(true);
     try {
-      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/artist/${id}`);
-      setArtists((prev) => prev.filter((artist: Artist) => artist._id !== id));
-      alert("Artist deleted successfully.");
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/artist/${deleteId}`);
+      setArtists((prev) => prev.filter((artist: Artist) => artist._id !== deleteId));
+      setDeleteId(null);
       fetchArtists();
     } catch (err) {
       alert("Delete failed.");
       console.error(err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -278,7 +284,7 @@ export default function ManageArtist() {
                         <PenBoxIcon />
                       </button>
                       <button
-                        onClick={() => handleDelete(artist._id)}
+                        onClick={() => setDeleteId(artist._id)}
                         className="text-red-600 cursor-pointer"
                       >
                         <Trash />
@@ -291,6 +297,15 @@ export default function ManageArtist() {
           </table>
         )}
       </div>
+      
+      <DeleteModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Artist"
+        message="Are you sure you want to delete this artist? This action cannot be undone."
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

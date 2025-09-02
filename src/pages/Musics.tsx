@@ -267,7 +267,7 @@ const Musics = () => {
     }
   };
 
-  const startPlaybackTimer = (track: MusicItem) => {
+  const startPlaybackTimer = () => {
     if (playbackTimerRef.current) {
       clearTimeout(playbackTimerRef.current);
     }
@@ -290,7 +290,7 @@ const Musics = () => {
         }
       } else {
         audioRef.current?.play();
-        startPlaybackTimer(track);
+        startPlaybackTimer();
         // DON'T increment play count on resume - only on initial play
       }
       setIsPlaying(!isPlaying);
@@ -315,7 +315,7 @@ const Musics = () => {
         setIsPlaying(true);
         setCurrentTrack(id);
         setCurrentPlayingTrack(track);
-        startPlaybackTimer(track);
+        startPlaybackTimer();
         
         // Only increment play count ONCE per new track session
         if (!playCountIncremented) {

@@ -1,62 +1,162 @@
-import { useState } from "react";
-import { X, ZoomIn, Heart, Share2, Play, PlayCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { X, ZoomIn, Heart, Share2, Play, PlayCircle, Eye } from "lucide-react";
 import { motion } from "framer-motion";
-import mclay from '../assets/mclay.jpeg';
-import cynthia from '../assets/cynthia.jpeg';
-import skilibombe from '../assets/skilbombe.jpeg';
-import founder from '../assets/founder.jpeg';
 
-const images = [
-  {
-    src: founder,
-    title: "Simpo Planet",
-    category: "founder",
-    type: "image",
-  },
-  {
-    src: cynthia,
-    title: "Umurungi Cynthia",
-    category: "artist",
-    type: "image",
-  },
-  {
-    src: skilibombe,
-    title: "Skilibombe",
-    category: "Studio-session",
-    type: "image",
-  },
-  {
-    src: "https://www.youtube.com/watch?v=ZVqHQfavP-4&list=RDZVqHQfavP-4&index=1",
-    title: "skilbombe new Video",
-    category: "Videos",
-    type: "video",
-  },
-  {
-    src: mclay,
-    title: "MCLAY",
-    category: "artist",
-    type: "image",
-  },
-];
+interface GalleryItem {
+  _id: string;
+  title: string;
+  description?: string;
+  imageUrl: string;
+  image?: string;
+  category: string;
+  type: 'image' | 'video';
+  createdAt: string;
+  likes?: number;
+  likeCount?: number;
+  videoUrl?: string;
+}
+
+// interface ApiResponse {
+//   success: boolean;
+//   data: {
+//     docs: GalleryItem[];
+//     totalDocs: number;
+//     limit: number;
+//     page: number;
+//     totalPages: number;
+//   };
+//   message?: string;
+// }
 
 export default function ArtGallery() {
-   const [selectedImage, setSelectedImage] = useState<any | null>(null);
+  const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);
   const [filter, setFilter] = useState("All");
   const [likedImages, setLikedImages] = useState(new Set());
+  const [images, setImages] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGalleryData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/gallery', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Gallery API response:', data);
+        
+        // Handle direct array response or nested object response
+        let galleryItems = [];
+        if (Array.isArray(data)) {
+          galleryItems = data;
+        } else if (data.success && data.data?.docs) {
+          galleryItems = data.data.docs;
+        } else if (data.data && Array.isArray(data.data)) {
+          galleryItems = data.data;
+        } else {
+          throw new Error('Invalid gallery data format');
+        }
+        
+        // Map API data to component format
+        const mappedImages = galleryItems.map((item:any) => ({
+          ...item,
+          imageUrl: item.image,
+          likes: item.likeCount || 0,
+          category: item.category || 'General',
+          type: 'image' as const
+        }));
+        
+        setImages(mappedImages);
+      } catch (error) {
+        console.error('Error fetching gallery data:', error);
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          setError('Network error: Unable to connect to the server. Please check your internet connection.');
+        } else {
+          setError(error instanceof Error ? error.message : 'An unknown error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryData();
+  }, []);
 
   const categories = ["All", ...new Set(images.map((img) => img.category))];
 
   const filteredImages =
     filter === "All" ? images : images.filter((img) => img.category === filter);
 
-  const toggleLike = (index: number) => {
+  const toggleLike = async (index: number) => {
+    const image = images[index];
+    if (!image) return;
+    
     const newLiked = new Set(likedImages);
-    if (newLiked.has(index)) {
+    const isLiked = newLiked.has(index);
+    
+    if (isLiked) {
       newLiked.delete(index);
     } else {
       newLiked.add(index);
     }
     setLikedImages(newLiked);
+    
+    // Update like count locally first
+    const newLikeCount = (image.likes || 0) + (isLiked ? -1 : 1);
+    setImages(prevImages => 
+      prevImages.map((img, i) => 
+        i === index 
+          ? { ...img, likes: newLikeCount }
+          : img
+      )
+    );
+    
+    // Update selected image if it's the same one
+    if (selectedImage && image._id === selectedImage._id) {
+      setSelectedImage(prev => 
+        prev ? { ...prev, likes: newLikeCount } : null
+      );
+    }
+    
+    // Send API request to update like count
+    try {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      let userId = null;
+      
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          userId = user._id;
+        } catch (e) {
+          console.error('Error parsing user data:', e);
+        }
+      }
+      
+      await fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${image._id}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify({ userId })
+      });
+    } catch (error) {
+      console.error('Error updating like count:', error);
+    }
   };
 
   const getGridClass = (index: number) => {
@@ -116,95 +216,184 @@ export default function ArtGallery() {
         </div>
       </div>
 
-      {/* Gallery Grid */}
-      <div className="px-6 pb-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 auto-rows-[200px]">
-            {filteredImages.map((image, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-                viewport={{ once: true, amount: 0.2 }}
-                className={`group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-sm transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 cursor-pointer ${getGridClass(
-                  index
-                )}`}
-                onClick={() => setSelectedImage({ ...image, index })}
+      {/* Loading State */}
+      {loading && (
+        <div className="px-6 pb-20">
+          <div className="max-w-7xl mx-auto text-center">
+            <div className="animate-pulse">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 auto-rows-[200px]">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-gray-800/50 rounded-2xl h-48"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="px-6 pb-20">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="bg-red-900/20 p-8 rounded-xl border border-red-500/30">
+              <h2 className="text-2xl font-bold text-red-400 mb-4">Error Loading Gallery</h2>
+              <p className="text-red-300 mb-6">{error}</p>
+              <button
+                onClick={() => {
+                  setError(null);
+                  setLoading(true);
+                  window.location.reload();
+                }}
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors"
               >
-                <div className="relative overflow-hidden rounded-2xl h-full">
-                  {image.type === "image" ? (
-                    <img
-                      src={image.src}
-                      alt={image.title}
-                      className="w-full h-full object-cover object-left-top transition-all duration-700 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-black flex items-center justify-center text-white text-sm">
-                      <PlayCircle size={48} />
-                    </div>
-                  )}
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      {/* Empty State */}
+      {!loading && !error && images.length === 0 && (
+        <div className="px-6 pb-20">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="bg-gray-800/20 p-8 rounded-xl">
+              <h2 className="text-2xl font-bold text-gray-400 mb-4">No Gallery Items</h2>
+              <p className="text-gray-300 mb-6">We couldn't find any gallery items to display.</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors"
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-                  {/* Action Buttons */}
-                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleLike(index);
-                      }}
-                      className={`p-2 rounded-full backdrop-blur-md transition-all duration-300 ${
-                        likedImages.has(index)
-                          ? "bg-red-500/80 text-white"
-                          : "bg-white/20 text-white hover:bg-white/30"
-                      }`}
-                    >
-                      <Heart
-                        size={16}
-                        fill={likedImages.has(index) ? "currentColor" : "none"}
+      {/* Gallery Grid */}
+      {!loading && !error && images.length > 0 && (
+        <div className="px-6 pb-20">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 auto-rows-[200px]">
+              {filteredImages.map((image, index) => (
+                <motion.div
+                  key={image._id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  className={`group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-sm transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 cursor-pointer ${getGridClass(
+                    index
+                  )}`}
+                  onClick={() => setSelectedImage(image)}
+                >
+                  <div className="relative overflow-hidden rounded-2xl h-full">
+                    {image.type === "image" ? (
+                      <img
+                        src={image.imageUrl}
+                        alt={image.title}
+                        className="w-full h-full object-cover object-left-top transition-all duration-700 group-hover:scale-110"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+                        }}
                       />
-                    </button>
-                  </div>
+                    ) : (
+                      <div className="w-full h-full bg-black flex items-center justify-center text-white text-sm relative">
+                        {image.imageUrl && (
+                          <img
+                            src={image.imageUrl}
+                            alt={image.title}
+                            className="w-full h-full object-cover object-left-top transition-all duration-700 group-hover:scale-110"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Video+Thumbnail';
+                            }}
+                          />
+                        )}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <PlayCircle size={48} className="text-white/80" />
+                        </div>
+                      </div>
+                    )}
 
-                  {/* Image Info */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <div className="text-white">
-                      <h3 className="font-bold text-lg mb-1 truncate">
-                        {image.title}
-                      </h3>
-                      <span className="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                        {image.category}
-                      </span>
-                      <div className="flex p-2 items-center justify-between mt-2">
-                        <button className="text-lg hover:text-white transition-colors">
-                          <Share2 size={16} />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    {/* Action Buttons */}
+                    <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await toggleLike(index);
+                        }}
+                        className={`p-2 rounded-full backdrop-blur-md transition-all duration-300 ${
+                          likedImages.has(index)
+                            ? "bg-red-500/80 text-white"
+                            : "bg-white/20 text-white hover:bg-white/30"
+                        }`}
+                      >
+                        <Heart
+                          size={16}
+                          fill={likedImages.has(index) ? "currentColor" : "none"}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Image Info */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <div className="text-white">
+                        <h3 className="font-bold text-lg mb-1 truncate">
+                          {image.title}
+                        </h3>
+                        <span className="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                          {image.category}
+                        </span>
+                        <div className="flex p-2 items-center justify-between mt-2">
+                          <button className="text-lg hover:text-white transition-colors">
+                            <Share2 size={16} />
+                          </button>
+                          <button 
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              await toggleLike(index);
+                            }}
+                            className="text-lg flex items-center gap-2 hover:text-white transition-colors"
+                          >
+                            <Heart size={16} />
+                            <span>{image.likes || 0}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Icons */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <div className="flex gap-3">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/gallery/${image._id}`);
+                          }}
+                          className="bg-white/20 backdrop-blur-md rounded-full p-3 transform scale-75 group-hover:scale-100 transition-transform duration-300 hover:bg-white/30"
+                        >
+                          <Eye size={20} className="text-white" />
                         </button>
-                        <button className="text-lg flex items-center gap-2 hover:text-white transition-colors">
-                          <Heart size={16} />
-                          <span>100</span>
-                        </button>
+                        <div className="bg-white/20 backdrop-blur-md rounded-full p-3 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                          {image.type === "image" ? (
+                            <ZoomIn size={20} className="text-white" />
+                          ) : (
+                            <Play size={20} className="text-white" />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Zoom Icon */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="bg-white/20 backdrop-blur-md rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                      {image.type === "image" ? (
-                        <ZoomIn size={24} className="text-white" />
-                      ) : (
-                        <Play size={24} className="text-white" />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Lightbox Modal */}
       {selectedImage && (
@@ -220,25 +409,32 @@ export default function ArtGallery() {
             <div className="relative">
               {selectedImage.type === "image" ? (
                 <img
-                  src={selectedImage.src}
+                  src={selectedImage.imageUrl}
                   alt={selectedImage.title}
                   className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/800x600?text=Image+Not+Found';
+                  }}
                 />
-              ) : selectedImage.src.includes("youtube.com") ? (
+              ) : selectedImage.videoUrl?.includes("youtube.com") ? (
                 <iframe
-                  src={getYouTubeEmbedUrl(selectedImage.src)}
+                  src={getYouTubeEmbedUrl(selectedImage.videoUrl)}
                   title={selectedImage.title}
                   className="w-[80vw] h-[45vw] max-w-full max-h-[80vh] rounded-lg shadow-2xl"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
-              ) : (
+              ) : selectedImage.videoUrl ? (
                 <video
-                  src={selectedImage.src}
+                  src={selectedImage.videoUrl}
                   className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
                   controls
                   autoPlay
                 />
+              ) : (
+                <div className="w-[80vw] h-[45vw] max-w-full max-h-[80vh] bg-gray-800 rounded-lg shadow-2xl flex items-center justify-center">
+                  <p className="text-white">Video not available</p>
+                </div>
               )}
 
               {/* Image Details */}
@@ -253,9 +449,12 @@ export default function ArtGallery() {
                     </span>
                     <div className="flex gap-3">
                       <button
-                        onClick={() => toggleLike(selectedImage.index)}
+                        onClick={async () => {
+                          const imageIndex = images.findIndex(img => img._id === selectedImage._id);
+                          await toggleLike(imageIndex);
+                        }}
                         className={`p-2 rounded-full flex items-center gap-1 backdrop-blur-md transition-all duration-300 ${
-                          likedImages.has(selectedImage.index)
+                          likedImages.has(images.findIndex(img => img._id === selectedImage._id))
                             ? "bg-red-500/80 text-white"
                             : "bg-white/20 text-white hover:bg-white/30"
                         }`}
@@ -263,12 +462,12 @@ export default function ArtGallery() {
                         <Heart
                           size={20}
                           fill={
-                            likedImages.has(selectedImage.index)
+                            likedImages.has(images.findIndex(img => img._id === selectedImage._id))
                               ? "currentColor"
                               : "none"
                           }
                         />
-                        <span>100</span>
+                        <span>{selectedImage.likes || 0}</span>
                       </button>
                       <button className="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all duration-300">
                         <Share2 size={20} />

@@ -1,6 +1,5 @@
 import { UserCircleIcon } from "lucide-react";
 import { useState, useEffect } from "react";
-import ThemeToggle from './ThemeToggle';
 
 export function Topbar() {
   const [message, setMessage] = useState('');

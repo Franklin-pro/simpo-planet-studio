@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { PenBoxIcon, Trash } from "lucide-react";
+import DeleteModal from "../../components/DeleteModal";
 
 
 export default function ManartistMusics() {
@@ -12,6 +13,8 @@ export default function ManartistMusics() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("last30");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   interface music {
     id: string;
@@ -41,17 +44,20 @@ export default function ManartistMusics() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this music?")) return;
-
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    setIsDeleting(true);
     try {
-      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/music/${id}`);
-      setmusics((prev) => prev.filter((music: music) => music._id !== id));
-      alert("music deleted successfully.");
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/music/${deleteId}`);
+      setmusics((prev) => prev.filter((music: music) => music._id !== deleteId));
+      setDeleteId(null);
       fetchmusics();
     } catch (err) {
       alert("Delete failed.");
       console.error(err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -279,7 +285,7 @@ export default function ManartistMusics() {
             <PenBoxIcon />
           </button>
           <button
-            onClick={() => handleDelete(music._id)}
+            onClick={() => setDeleteId(music._id)}
             className="text-red-600 cursor-pointer"
           >
             <Trash />
@@ -293,6 +299,15 @@ export default function ManartistMusics() {
           </table>
         )}
       </div>
+      
+      <DeleteModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Music"
+        message="Are you sure you want to delete this music? This action cannot be undone."
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

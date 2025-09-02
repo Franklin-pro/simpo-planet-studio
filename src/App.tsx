@@ -24,6 +24,7 @@ import FilmMakerDetailsPage from './pages/FilmMakerDetailsPage';
 import AddFilmmaker from './pages/admin/AddFilmmaker';
 import { ThemeProvider } from './contexts/ThemeProvider';
 import Dashboard from './pages/admin/Dashboard';
+import GalleryDetails from './pages/GalleryDetails';
 function App() {
 
   return (
@@ -36,6 +37,7 @@ function App() {
      <Route path="/producer/:id" element={<ProducerDetails />} />
     <Route path="/contacts" element={<Contacts />} />
     <Route path="/gallery" element={<Gallery />} />
+    <Route path="/gallery/:id" element={<GalleryDetails />} />
     <Route path="/abouts" element={<Abouts />} />
     <Route path="/musics" element={<Musics />} />
     <Route path="/filmmakers" element={<FilmMakerPage />}/>
