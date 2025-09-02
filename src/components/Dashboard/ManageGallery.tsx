@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { PenBoxIcon, Trash } from "lucide-react";
-
+import DeleteModal from "../../components/DeleteModal";
 
 export default function ManageGallery() {
   const [gallerys, setgallerys] = useState([]);
@@ -12,6 +12,8 @@ export default function ManageGallery() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("last30");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   interface gallery {
     id: string;
@@ -41,17 +43,20 @@ export default function ManageGallery() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this gallery?")) return;
-
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    setIsDeleting(true);
     try {
-      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${id}`);
-      setgallerys((prev) => prev.filter((gallery: gallery) => gallery._id !== id));
-      alert("gallery deleted successfully.");
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${deleteId}`);
+      setgallerys((prev) => prev.filter((gallery: gallery) => gallery._id !== deleteId));
+      setDeleteId(null);
       fetchgallerys();
     } catch (err) {
       alert("Delete failed.");
       console.error(err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -110,12 +115,12 @@ export default function ManageGallery() {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-6">🎨 Manage gallerys</h2>
+      <h2 className="text-2xl dark:text-gray-100 font-bold mb-6">🎨 Manage gallerys</h2>
 
       {isEditing && editinggallery && (
         <div className="fixed inset-0 bg-black/15 bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">Edit gallery</h2>
+          <div className="bg-white dark:bg-gray-700 p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-2xl dark:text-gray-100 font-bold mb-4">Edit gallery</h2>
             <div className="space-y-4">
               
               <input
@@ -123,21 +128,21 @@ export default function ManageGallery() {
                 value={editinggallery.title}
                 onChange={(e) => setEditinggallery({ ...editinggallery, title: e.target.value })}
                 placeholder="Name"
-                className="w-full p-2 border rounded"
+               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <input
                 type="text"
                 value={editinggallery.age}
                 onChange={(e) => setEditinggallery({ ...editinggallery, age: e.target.value })}
                 placeholder="Age"
-                className="w-full p-2 border rounded"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <input
                 type="text"
                 value={editinggallery.management}
                 onChange={(e) => setEditinggallery({ ...editinggallery, management: e.target.value })}
                 placeholder="Management"
-                className="w-full p-2 border rounded"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
                   <div className="flex flex-col col-span-1 md:col-span-2">
           <label className="mb-1 text-sm text-gray-600">Biography</label>
@@ -169,7 +174,7 @@ export default function ManageGallery() {
         </div>
       )}
 
-      <div className="relative overflow-x-auto bg-gray-200 p-2 shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto bg-gray-200 dark:bg-gray-500 dark:border-gray-500 dark:text-gray-100 p-2 shadow-md sm:rounded-lg">
         {/* FILTER & SEARCH BAR */}
         <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between pb-4 space-y-4 sm:space-y-0">
           {/* Filter dropdown */}
@@ -245,7 +250,7 @@ export default function ManageGallery() {
           <p className="text-red-600 text-center py-4">{error}</p>
         ) : (
           <table className="w-full text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <thead className="text-xs text-gray-700 dark:bg-gray-500 dark:border-gray-500 dark:text-gray-100 uppercase bg-gray-50">
               <tr>
                 <th className="p-4"></th>
                 <th className="px-6 py-3">gallery</th>
@@ -265,7 +270,7 @@ export default function ManageGallery() {
                 filteredgallerys.map((gallery: gallery) => (
                   <tr
                     key={gallery._id}
-                    className="bg-white border-b-2 border-gray-200 hover:bg-gray-50"
+                    className="bg-white dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 border-b-2 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="p-4"></td>
                     <td className="px-6 py-4 flex items-center gap-2 font-medium text-gray-900 whitespace-nowrap">
@@ -274,9 +279,8 @@ export default function ManageGallery() {
                         alt={gallery.title}
                         className="h-10 w-10 object-cover rounded-full"
                       />
-                      {gallery.title}
                     </td>
-                    <td className="px-6 py-4">{gallery.title}</td>
+                    <td className="px-6 py-4 font-bold">{gallery.title}</td>
                     <td className="px-6 py-4 truncate">{formattedDate(gallery.createdAt)}</td>
                     <td className="px-6 py-4 space-x-2">
                       <button
@@ -286,7 +290,7 @@ export default function ManageGallery() {
                         <PenBoxIcon />
                       </button>
                       <button
-                        onClick={() => handleDelete(gallery._id)}
+                        onClick={() => setDeleteId(gallery._id)}
                         className="text-red-600 cursor-pointer"
                       >
                         <Trash />
@@ -299,6 +303,15 @@ export default function ManageGallery() {
           </table>
         )}
       </div>
+      
+      <DeleteModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Gallery Item"
+        message="Are you sure you want to delete this gallery item? This action cannot be undone."
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

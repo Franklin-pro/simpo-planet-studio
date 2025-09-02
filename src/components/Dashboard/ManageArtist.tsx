@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { PenBoxIcon, Trash } from "lucide-react";
+import DeleteModal from "../../components/DeleteModal";
 
 
 export default function ManageArtist() {
@@ -12,6 +13,8 @@ export default function ManageArtist() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("last30");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   interface Artist {
     id: string;
@@ -41,17 +44,20 @@ export default function ManageArtist() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this artist?")) return;
-
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    setIsDeleting(true);
     try {
-      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/artist/${id}`);
-      setArtists((prev) => prev.filter((artist: Artist) => artist._id !== id));
-      alert("Artist deleted successfully.");
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/artist/${deleteId}`);
+      setArtists((prev) => prev.filter((artist: Artist) => artist._id !== deleteId));
+      setDeleteId(null);
       fetchArtists();
     } catch (err) {
       alert("Delete failed.");
       console.error(err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -102,11 +108,11 @@ export default function ManageArtist() {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-6">🎨 Manage Artists</h2>
+      <h2 className="text-2xl text-gray-700 dark:text-gray-100 font-bold mb-6">🎨 Manage Artists</h2>
 
       {isEditing && editingArtist && (
         <div className="fixed inset-0 bg-black/15 bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+          <div className="bg-white  p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold mb-4">Edit Artist</h2>
             <div className="space-y-4">
               
@@ -161,7 +167,7 @@ export default function ManageArtist() {
         </div>
       )}
 
-      <div className="relative overflow-x-auto bg-gray-200 p-2 shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto bg-gray-200 dark:bg-gray-600  p-2 shadow-md sm:rounded-lg">
         {/* FILTER & SEARCH BAR */}
         <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between pb-4 space-y-4 sm:space-y-0">
           {/* Filter dropdown */}
@@ -236,8 +242,8 @@ export default function ManageArtist() {
         ) : error ? (
           <p className="text-red-600 text-center py-4">{error}</p>
         ) : (
-          <table className="w-full text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+          <table className="w-full text-sm text-left bg-red text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-500 dark:text-gray-100">
               <tr>
                 <th className="p-4"></th>
                 <th className="px-6 py-3">Artist</th>
@@ -257,7 +263,7 @@ export default function ManageArtist() {
                 filteredArtists.map((artist: Artist) => (
                   <tr
                     key={artist._id}
-                    className="bg-white border-b-2 border-gray-200 hover:bg-gray-50"
+                    className="bg-white dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 border-b-2 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <td className="p-4"></td>
                     <td className="px-6 py-4 flex items-center gap-2 font-medium text-gray-900 whitespace-nowrap">
@@ -278,7 +284,7 @@ export default function ManageArtist() {
                         <PenBoxIcon />
                       </button>
                       <button
-                        onClick={() => handleDelete(artist._id)}
+                        onClick={() => setDeleteId(artist._id)}
                         className="text-red-600 cursor-pointer"
                       >
                         <Trash />
@@ -291,6 +297,15 @@ export default function ManageArtist() {
           </table>
         )}
       </div>
+      
+      <DeleteModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Artist"
+        message="Are you sure you want to delete this artist? This action cannot be undone."
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

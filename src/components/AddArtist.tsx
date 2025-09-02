@@ -132,14 +132,14 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-8">
+    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl my-8">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-800">Add New Artist</h2>
-        <p className="text-gray-600 mt-2">Fill in the details below to add a new artist to your platform</p>
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Add New Artist</h2>
+        <p className="text-gray-600 dark:text-gray-300 mt-2">Fill in the details below to add a new artist to your platform</p>
       </div>
 
       {message.text && (
-        <div className={`mb-6 p-4 rounded-lg ${message.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+        <div className={`mb-6 p-4 rounded-lg ${message.type === "success" ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200" : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200"}`}>
           {message.text}
         </div>
       )}
@@ -149,39 +149,39 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
           {/* Basic Info */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Artist Name*</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Artist Name*</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
                 placeholder="Enter artist name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Age</label>
               <input
                 type="number"
                 name="age"
                 value={formData.age}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter age"
                 min="1"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Management</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Management</label>
               <input
                 type="text"
                 name="management"
                 value={formData.management}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter management company"
               />
             </div>
@@ -189,10 +189,10 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Artist Image*</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Artist Image*</label>
             {!formData.imageFile ? (
               <div className="flex items-center justify-center w-full">
-                <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <Upload className="w-10 h-10 mb-3 text-gray-400" />
                     <p className="mb-2 text-sm text-gray-500">
@@ -231,26 +231,26 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
 
         {/* Biography */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Biography*</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Biography*</label>
           <textarea
             name="bio"
             value={formData.bio}
             onChange={handleChange}
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
             placeholder="Tell us about the artist..."
           />
         </div>
 
         {/* Social Links */}
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h3 className="text-lg font-medium text-gray-800 mb-4">Social Media Links</h3>
+        <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+          <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">Social Media Links</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Facebook</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Facebook</label>
               <div className="flex">
-                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-600 text-gray-500 dark:text-gray-300 text-sm">
                   fb.com/
                 </span>
                 <input
@@ -258,14 +258,14 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
                   name="facebook"
                   value={formData.socialLinks.facebook}
                   onChange={handleChange}
-                  className="flex-1 min-w-0 block border w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  className="flex-1 min-w-0 block border w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500"
                   placeholder="facebook link"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instagram</label>
               <div className="flex">
                 <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                   instagram.com/
@@ -282,7 +282,7 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Twitter/X</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Twitter/X</label>
               <div className="flex">
                 <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                   twitter.com/
@@ -299,7 +299,7 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">YouTube</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">YouTube</label>
               <div className="flex">
                 <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                   youtube.com/
@@ -316,7 +316,7 @@ const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">TikTok</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">TikTok</label>
               <div className="flex">
                 <span className="inline-flex items-center px-3 border rounded-l-md border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                   tiktok.com/

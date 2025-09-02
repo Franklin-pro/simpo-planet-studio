@@ -164,9 +164,9 @@ function UploadMusic() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-gray-800 flex items-center justify-center gap-2">
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center justify-center gap-2">
           <Music className="w-8 h-8" /> Upload Music
         </h2>
         <p className="text-gray-600 mt-2">Share your music with the world</p>
@@ -183,7 +183,7 @@ function UploadMusic() {
           {/* Basic Info */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title*</label>
+              <label className="block text-sm font-medium dark:text-white text-gray-700 mb-1">Title*</label>
               <div className="relative">
                 <input
                   type="text"
@@ -191,7 +191,7 @@ function UploadMusic() {
                   value={formData.title}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-700 text-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Song title"
                 />
                 <Music className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -199,37 +199,37 @@ function UploadMusic() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Artist*</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Artist*</label>
               <input
                 type="text"
                 name="artist"
                 value={formData.artist}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Artist name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Album</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Album</label>
               <input
                 type="text"
                 name="album"
                 value={formData.album}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Album name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Genre</label>
               <select
                 name="genre"
                 value={formData.genre}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select genre</option>
                 <option value="Pop">Pop</option>
@@ -247,21 +247,21 @@ function UploadMusic() {
           {/* Date and Duration */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Release Date</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Release Date</label>
               <div className="relative">
                 <input
                   type="date"
                   name="releaseDate"
                   value={formData.releaseDate}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <Calendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Duration (seconds)*</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Duration (seconds)*</label>
               <div className="relative">
                 <input
                   type="number"
@@ -270,7 +270,7 @@ function UploadMusic() {
                   onChange={handleChange}
                   min="1"
                   required
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Duration in seconds"
                 />
                 <Clock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -283,14 +283,14 @@ function UploadMusic() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">YouTube Link</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">YouTube Link</label>
               <div className="relative">
                 <input
                   type="url"
                   name="youtubeLink"
                   value={formData.youtubeLink}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="https://youtube.com/..."
                 />
                 <Link className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -303,10 +303,10 @@ function UploadMusic() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Audio File Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Audio File*</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Audio File*</label>
             {!formData.audioUrl ? (
               <div className="flex items-center justify-center w-full h-32">
-                <label className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                <label className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                   <div className="flex flex-col items-center justify-center p-4">
                     <Volume2 className="w-8 h-8 mb-2 text-gray-400" />
                     <p className="text-sm text-gray-500 text-center">
@@ -324,12 +324,12 @@ function UploadMusic() {
                 </label>
               </div>
             ) : (
-              <div className="relative w-full p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="relative w-full p-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Volume2 className="w-8 h-8 text-blue-500" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900 truncate max-w-48">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-48">
                         {formData.audioUrl.name}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -362,10 +362,10 @@ function UploadMusic() {
 
           {/* Cover Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
+            <label className="block text-sm font-medium text-gray-700  dark:text-white mb-1">Cover Image</label>
             {!formData.coverImageUrl ? (
               <div className="flex items-center justify-center w-full h-32">
-                <label className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                <label className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                   <div className="flex flex-col items-center justify-center p-4">
                     <Image className="w-8 h-8 mb-2 text-gray-400" />
                     <p className="text-sm text-gray-500 text-center">

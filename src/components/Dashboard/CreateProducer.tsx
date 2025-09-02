@@ -188,10 +188,10 @@ function CreateProducer() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <div className="flex items-center mb-8">
-        <Music className="text-indigo-600 text-3xl mr-3" />
-        <h1 className="text-3xl font-bold text-gray-800">Producer Profile Creation</h1>
+        <Music className="text-blue-600 text-3xl mr-3" />
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Producer Profile Creation</h1>
       </div>
       
       {submitStatus === 'success' && (
@@ -206,24 +206,24 @@ function CreateProducer() {
         </div>
       )}
       
-      <div className="flex mb-8 border-b border-gray-200">
+      <div className="flex mb-8 border-b border-gray-200 dark:border-gray-600">
         <button
           onClick={() => setActiveTab('basic')}
-          className={`px-4 py-2 font-medium ${activeTab === 'basic' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500'}`}
+          className={`px-4 py-2 font-medium ${activeTab === 'basic' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 dark:text-gray-400'}`}
         >
           <User className="inline mr-2" size={16} />
           Basic Info
         </button>
         <button
           onClick={() => setActiveTab('details')}
-          className={`px-4 py-2 font-medium ${activeTab === 'details' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500'}`}
+          className={`px-4 py-2 font-medium ${activeTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 dark:text-gray-400'}`}
         >
           <Award className="inline mr-2" size={16} />
           Details
         </button>
         <button
           onClick={() => setActiveTab('social')}
-          className={`px-4 py-2 font-medium ${activeTab === 'social' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500'}`}
+          className={`px-4 py-2 font-medium ${activeTab === 'social' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 dark:text-gray-400'}`}
         >
           <Link className="inline mr-2" size={16} />
           Social & Links
@@ -235,7 +235,7 @@ function CreateProducer() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -243,21 +243,21 @@ function CreateProducer() {
                   type="text"
                   {...register("name", { required: "Name is required", minLength: { value: 2, message: "Name must be at least 2 characters" } })}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${errors.name ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${errors.name ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-200'}`}
                   placeholder="e.g. Max Martin"
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
               </div>
               
               <div>
-                <label htmlFor="level" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="level" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Experience Level <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="level"
                   {...register("level", { required: "Level is required" })}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${errors.level ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${errors.level ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-200'}`}
                 >
                   <option value="">Select your level</option>
                   <option value="Junior">Junior (0-3 years)</option>
@@ -270,10 +270,10 @@ function CreateProducer() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Profile Image (Optional)</label>
               {!imageFile ? (
                 <div className="flex items-center justify-center w-full">
-                  <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <ImageIcon className="w-10 h-10 mb-3 text-gray-400" />
                       <p className="mb-2 text-sm text-gray-500">
@@ -309,7 +309,7 @@ function CreateProducer() {
             </div>
             
             <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="bio" className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-1">
                 Professional Bio <span className="text-red-500">*</span>
               </label>
               <textarea
@@ -321,7 +321,7 @@ function CreateProducer() {
                 })}
                 onChange={handleChange}
                 rows={5}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${errors.bio ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'}`}
+                className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 ${errors.bio ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'}`}
                 placeholder="Describe your musical background, specialties, and approach to production..."
               />
               {errors.bio && <p className="mt-1 text-sm text-red-600">{errors.bio.message}</p>}
@@ -334,7 +334,7 @@ function CreateProducer() {
               <button
                 type="button"
                 onClick={() => setActiveTab('details')}
-                className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+                className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
                 Next: Professional Details
               </button>
@@ -346,7 +346,7 @@ function CreateProducer() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-2">
                   Primary Genres <span className="text-red-500">*</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -355,7 +355,7 @@ function CreateProducer() {
                       key={genre}
                       type="button"
                       onClick={() => toggleGenre(genre)}
-                      className={`px-3 py-1 rounded-full text-sm transition-colors ${watch('genres')?.includes(genre) ? 'bg-indigo-100 text-indigo-800 border border-indigo-300' : 'bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200'}`}
+                      className={`px-3 py-1 rounded-full text-sm transition-colors ${watch('genres')?.includes(genre) ? 'bg-blue-200 text-blue-800 border border-blue-300' : 'bg-gray-100 dark:bg-gray-500 dark:text-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-500'}`}
                     >
                       {genre}
                     </button>
@@ -369,7 +369,7 @@ function CreateProducer() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-2">
                   Core Skills <span className="text-red-500">*</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -378,7 +378,7 @@ function CreateProducer() {
                       key={skill}
                       type="button"
                       onClick={() => toggleSkill(skill)}
-                      className={`px-3 py-1 rounded-full text-sm transition-colors ${watch('skills')?.includes(skill) ? 'bg-indigo-100 text-indigo-800 border border-indigo-300' : 'bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200'}`}
+                      className={`px-3 py-1 rounded-full text-sm transition-colors ${watch('skills')?.includes(skill) ? 'bg-blue-200 text-blue-800 border border-blue-300' : 'bg-gray-100 dark:bg-gray-500 dark:text-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-500'}`}
                     >
                       {skill}
                     </button>
@@ -394,7 +394,7 @@ function CreateProducer() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="yearsExperience" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="yearsExperience" className="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
                   Years of Experience <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -407,7 +407,7 @@ function CreateProducer() {
                     max: { value: 50, message: "Must be at most 50" } 
                   })}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${errors.yearsExperience ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'}`}
+                  className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 ${errors.yearsExperience ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'}`}
                   min="0"
                   max="50"
                 />
@@ -415,7 +415,7 @@ function CreateProducer() {
               </div>
               
               <div>
-                <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
                   Professional Email <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -429,7 +429,7 @@ function CreateProducer() {
                     }
                   })}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${errors.contactEmail ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'}`}
+                  className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300  rounded-lg focus:outline-none focus:ring-2 ${errors.contactEmail ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'}`}
                   placeholder="your.email@studio.com"
                 />
                 {errors.contactEmail && <p className="mt-1 text-sm text-red-600">{errors.contactEmail.message}</p>}
@@ -438,13 +438,13 @@ function CreateProducer() {
             
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
                   Notable Credits
                 </label>
                 <button
                   type="button"
                   onClick={addCredit}
-                  className="flex items-center text-sm text-indigo-600 hover:text-indigo-800"
+                  className="flex items-center text-sm text-blue-500 hover:text-blue-800"
                 >
                   <Plus className="mr-1" size={16} /> Add Credit
                 </button>
@@ -454,31 +454,31 @@ function CreateProducer() {
                 {(watch('credits') ?? []).map((_, index) => (
                   <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Project</label>
+                      <label className="block text-xs font-medium dark:text-gray-100 text-gray-500 mb-1">Project</label>
                       <input
                         {...register(`credits.${index}.project`)}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200"
                         placeholder="Album/Single Name"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Role</label>
+                      <label className="block text-xs font-medium dark:text-gray-100 text-gray-500 mb-1">Role</label>
                       <input
                         {...register(`credits.${index}.role`)}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200"
                         placeholder="Producer/Mixer/etc"
                       />
                     </div>
                     <div className="flex items-end gap-2">
                       <div className="flex-1">
-                        <label className="block text-xs font-medium text-gray-500 mb-1">Year</label>
+                        <label className="block text-xs font-medium dark:text-gray-100 text-gray-500 mb-1">Year</label>
                         <input
                           type="number"
                           {...register(`credits.${index}.year`, { valueAsNumber: true })}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200"
                           min="1900"
                           max={new Date().getFullYear()}
                         />
@@ -507,7 +507,7 @@ function CreateProducer() {
               <button
                 type="button"
                 onClick={() => setActiveTab('social')}
-                className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+                className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
                 Next: Social & Links
               </button>
@@ -531,7 +531,7 @@ function CreateProducer() {
                     type="text"
                     value={watch('socialMedia.instagram') ?? ''}
                     onChange={(e) => handleSocialMediaChange('instagram', e.target.value)}
-                    className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+                    className="flex-1 min-w-0 block w-full px-3 py-2 dark:bg-gray-700 dark:text-gray-300  rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="yourusername"
                   />
                 </div>
@@ -550,7 +550,7 @@ function CreateProducer() {
                     type="text"
                     value={watch('socialMedia.twitter') ?? ''}
                     onChange={(e) => handleSocialMediaChange('twitter', e.target.value)}
-                    className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+                    className="flex-1 min-w-0 block w-full dark:bg-gray-700 dark:text-gray-300 px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="yourusername"
                   />
                 </div>
@@ -571,7 +571,7 @@ function CreateProducer() {
                     type="text"
                     value={watch('socialMedia.facebook') ?? ''}
                     onChange={(e) => handleSocialMediaChange('facebook', e.target.value)}
-                    className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+                    className="flex-1 min-w-0 block w-full px-3 dark:bg-gray-700 dark:text-gray-300 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="yourusername"
                   />
                 </div>
@@ -586,7 +586,7 @@ function CreateProducer() {
                   type="url"
                   value={watch('socialMedia.spotify') ?? ''}
                   onChange={(e) => handleSocialMediaChange('spotify', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                   placeholder="https://open.spotify.com/artist/..."
                 />
               </div>
@@ -602,7 +602,7 @@ function CreateProducer() {
                   type="url"
                   value={watch('socialMedia.soundCloud') ?? ''}
                   onChange={(e) => handleSocialMediaChange('soundCloud', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                   placeholder="https://soundcloud.com/yourusername"
                 />
               </div>
@@ -616,7 +616,7 @@ function CreateProducer() {
                   type="url"
                   value={watch('socialMedia.youtube') ?? ''}
                   onChange={(e) => handleSocialMediaChange('youtube', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                   placeholder="https://youtube.com/yourchannel"
                 />
               </div>
@@ -632,7 +632,7 @@ function CreateProducer() {
                   type="url"
                   value={watch('socialMedia.appleMusic') ?? ''}
                   onChange={(e) => handleSocialMediaChange('appleMusic', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                   placeholder="https://music.apple.com/artist/..."
                 />
               </div>
@@ -649,10 +649,10 @@ function CreateProducer() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-8 py-3 font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-md transition-all hover:shadow-lg flex items-center justify-center ${
+                className={`px-8 py-3 font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md transition-all hover:shadow-lg flex items-center justify-center ${
                   isSubmitting 
                     ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700'
+                    : 'bg-gradient-to-r from-blue-600 to-blue-600 text-white hover:from-blue-700 hover:to-blue-700'
                 }`}
               >
                 {isSubmitting ? (

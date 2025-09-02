@@ -21,11 +21,15 @@ import CreateProducer from './components/Dashboard/CreateProducer';
 import ProducerDetails from './components/ProducerDetails';
 import FilmMakerPage from './pages/FilmMakerPage';
 import FilmMakerDetailsPage from './pages/FilmMakerDetailsPage';
+import AddFilmmaker from './pages/admin/AddFilmmaker';
+import { ThemeProvider } from './contexts/ThemeProvider';
+import Dashboard from './pages/admin/Dashboard';
+import GalleryDetails from './pages/GalleryDetails';
 function App() {
 
   return (
-    <>
-    <BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
   <Routes>
     <Route path="/" element={<Index />} />
     <Route path="/founder" element={<FounderSection />} />
@@ -33,6 +37,7 @@ function App() {
      <Route path="/producer/:id" element={<ProducerDetails />} />
     <Route path="/contacts" element={<Contacts />} />
     <Route path="/gallery" element={<Gallery />} />
+    <Route path="/gallery/:id" element={<GalleryDetails />} />
     <Route path="/abouts" element={<Abouts />} />
     <Route path="/musics" element={<Musics />} />
     <Route path="/filmmakers" element={<FilmMakerPage />}/>
@@ -41,11 +46,13 @@ function App() {
 
     {/* NESTED ADMIN ROUTES */}
     <Route path="/admin" element={<DashboardLayout />}>
+      <Route index element={<Dashboard />} />
       <Route path="artists/create" element={<AddArtists />} />
       <Route path="gallery/create" element={<AddGallery />} />
       <Route path="gallery/manage" element={<ManageGallerys />} />
       <Route path="producer/manage" element={<ManageProducers />} />
       <Route path="producer/create" element={<CreateProducer />} />
+      <Route path="filmmaker/create" element={<AddFilmmaker />} />
       <Route path="music/upload" element={<UploadMusics />} />
       <Route path="music/manage" element={<ManageMusic />} />
       <Route path="artists/manage" element={<ManagingArtist />} />
@@ -54,8 +61,7 @@ function App() {
     <Route path="*" element={<NotFound />} />
   </Routes>
 </BrowserRouter>
-
-    </>
+    </ThemeProvider>
   )
 }
 
