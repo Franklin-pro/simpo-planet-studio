@@ -1,27 +1,31 @@
-import { useState, useEffect } from 'react';
-import { Edit, Trash2, Eye, Search, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import DeleteModal from '../../components/DeleteModal';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Edit3, Trash2, Search, Filter, User, Calendar, Briefcase } from "lucide-react";
+import DeleteModal from "../../components/DeleteModal";
 
-interface Producer {
-  _id: string;
-  name: string;
-  email: string;
-  bio: string;
-  profileImage: string;
-  specialization: string;
-  experience: number;
-  createdAt: string;
-}
-
-function ManageProducers() {
-  const navigate = useNavigate();
-  const [producers, setProducers] = useState<Producer[]>([]);
+export default function ManageProducers() {
+  const [producers, setProducers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingProducer, setEditingProducer] = useState<Producer>();
+  const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("last30");
+  const [showDropdown, setShowDropdown] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  interface Producer {
+    id: string;
+    createdAt: string;
+    _id: string;
+    name: string;
+    email: string;
+    bio: string;
+    level: string;
+    yearsExperience: number;
+    profileImage: string;
+  }
 
   useEffect(() => {
     fetchProducers();
@@ -29,18 +33,11 @@ function ManageProducers() {
 
   const fetchProducers = async () => {
     try {
-      setLoading(true);
-      const response = await fetch('https://simpo-planet-studio-bn.onrender.com/api/v1/producer');
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      setProducers(Array.isArray(data) ? data : data.data || []);
-    } catch (error) {
-      console.error('Error fetching producers:', error);
-      setError(error instanceof Error ? error.message : 'Failed to fetch producers');
+      const response = await axios.get("https://simpo-planet-studio-bn.onrender.com/api/v1/producer");
+      setProducers(response.data.data || []);
+    } catch (err) {
+      setError("Failed to load producers.");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -51,191 +48,334 @@ function ManageProducers() {
     
     setIsDeleting(true);
     try {
-      const response = await fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/producer/${deleteId}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        setProducers(producers.filter(producer => producer._id !== deleteId));
-        setDeleteId(null);
-      } else {
-        throw new Error('Failed to delete producer');
-      }
-    } catch (error) {
-      console.error('Error deleting producer:', error);
-      alert('Failed to delete producer');
+      await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/producer/${deleteId}`);
+      setProducers((prev) => prev.filter((producer: Producer) => producer._id !== deleteId));
+      setDeleteId(null);
+      fetchProducers();
+    } catch (err) {
+      alert("Delete failed.");
+      console.error(err);
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const filteredProducers = producers.filter(producer =>
-    producer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    producer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    producer.specialization.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  const handleEdit = (producer: Producer) => {
+    setEditingProducer(producer);
+    setIsEditing(true);
   };
 
-  if (loading) {
-    return (
-      <div className="p-6">
-        <div className="animate-pulse">
-          <div className="h-8 w-64 bg-gray-300 rounded mb-6"></div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-300 rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleUpdate = async () => {
+    if (!editingProducer) return;
+
+    try {
+      await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/producer/${editingProducer._id}`, editingProducer);
+      alert("Producer updated successfully.");
+      setIsEditing(false);
+      fetchProducers();
+    } catch (err) {
+      alert("Update failed.");
+      console.error(err);
+    }
+  };
+
+  const filterByDate = (producer: Producer) => {
+    const now = new Date();
+    const createdAt = new Date(producer.createdAt);
+
+    const daysDiff = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+
+    switch (selectedFilter) {
+      case "last1":
+        return daysDiff <= 1;
+      case "last7":
+        return daysDiff <= 7;
+      case "last30":
+        return daysDiff <= 30;
+      case "lastMonth":
+        return createdAt.getMonth() === now.getMonth() - 1;
+      case "lastYear":
+        return createdAt.getFullYear() === now.getFullYear() - 1;
+      default:
+        return true;
+    }
+  };
+
+  const filteredProducers = Array.isArray(producers) 
+    ? producers
+        .filter((p: Producer) => p.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+        .filter(filterByDate)
+    : [];
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Producers</h1>
-        <button
-          onClick={() => navigate('/admin/producer/create')}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus size={20} />
-          Add Producer
-        </button>
-      </div>
-
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-          {error}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Producer Management</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage and organize your producers</p>
         </div>
-      )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search producers..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-            />
+        {/* Edit Modal */}
+        {isEditing && editingProducer && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Producer</h2>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                  <input
+                    type="text"
+                    value={editingProducer.name}
+                    onChange={(e) => setEditingProducer({ ...editingProducer, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={editingProducer.email}
+                    onChange={(e) => setEditingProducer({ ...editingProducer, email: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">level</label>
+                  <input
+                    type="text"
+                    value={editingProducer.level}
+                    onChange={(e) => setEditingProducer({ ...editingProducer, level: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">yearsExperience (years)</label>
+                  <input
+                    type="number"
+                    value={editingProducer.yearsExperience}
+                    onChange={(e) => setEditingProducer({ ...editingProducer, yearsExperience: parseInt(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
+                  <textarea
+                    value={editingProducer.bio}
+                    onChange={(e) => setEditingProducer({ ...editingProducer, bio: e.target.value })}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdate}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  Update Producer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Modal */}
+        {deleteId && (
+          <DeleteModal
+            isOpen={!!deleteId}
+            onClose={() => setDeleteId(null)}
+            onConfirm={handleDelete}
+            isDeleting={isDeleting}
+            title="Delete Producer"
+            message="Are you sure you want to delete this producer? This action cannot be undone."
+          />
+        )}
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                <Briefcase className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Producers</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{Array.isArray(producers) ? producers.length : 0}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Calendar className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">This Month</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{filteredProducers.length}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <User className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{Array.isArray(producers) ? producers.length : 0}</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Producer
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Specialization
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Experience
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Created
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {filteredProducers.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                    {searchTerm ? 'No producers found matching your search.' : 'No producers found.'}
-                  </td>
-                </tr>
-              ) : (
-                filteredProducers.map((producer) => (
-                  <tr key={producer._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <img
-                          src={producer.profileImage || 'https://via.placeholder.com/40x40?text=P'}
-                          alt={producer.name}
-                          className="h-10 w-10 rounded-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40x40?text=P';
-                          }}
-                        />
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {producer.name}
+        {/* Table Container */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          {/* Table Header with Search and Filter */}
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Search producers..."
+                  />
+                </div>
+                <div className="relative">
+                  <button
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-blue-500"
+                  >
+                    <Filter className="h-4 w-4" />
+                    Filter
+                  </button>
+                  {showDropdown && (
+                    <div className="absolute z-10 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+                      <div className="p-2">
+                        {[
+                          { label: "Last day", value: "last1" },
+                          { label: "Last 7 days", value: "last7" },
+                          { label: "Last 30 days", value: "last30" },
+                          { label: "Last month", value: "lastMonth" },
+                          { label: "Last year", value: "lastYear" },
+                        ].map((option) => (
+                          <label key={option.value} className="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-600 rounded cursor-pointer">
+                            <input
+                              type="radio"
+                              name="filter-radio"
+                              value={option.value}
+                              checked={selectedFilter === option.value}
+                              onChange={() => {
+                                setSelectedFilter(option.value);
+                                setShowDropdown(false);
+                              }}
+                              className="w-4 h-4 text-blue-600"
+                            />
+                            <span className="text-sm text-gray-700 dark:text-gray-300">{option.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Table Content */}
+          <div className="overflow-x-auto">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Loading producers...</span>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <p className="text-red-600 dark:text-red-400">{error}</p>
+              </div>
+            ) : filteredProducers.length === 0 ? (
+              <div className="text-center py-12">
+                <Briefcase className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <p className="text-gray-600 dark:text-gray-400">No producers found</p>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="text-left py-4 px-6 font-semibold text-gray-900 dark:text-white">Producer</th>
+                    <th className="text-left py-4 px-6 font-semibold text-gray-900 dark:text-white">level</th>
+                    <th className="text-left py-4 px-6 font-semibold text-gray-900 dark:text-white">yearsExperience</th>
+                    <th className="text-left py-4 px-6 font-semibold text-gray-900 dark:text-white">Created</th>
+                    <th className="text-right py-4 px-6 font-semibold text-gray-900 dark:text-white">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {filteredProducers.map((producer: Producer) => (
+                    <tr key={producer._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <td className="py-4 px-6">
+                        <div className="flex items-center">
+                          <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-600 overflow-hidden">
+                            {producer.profileImage ? (
+                              <img src={producer.profileImage} alt={producer.name} className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center">
+                                <User className="h-6 w-6 text-gray-400" />
+                              </div>
+                            )}
                           </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {producer.email}
+                          <div className="ml-4">
+                            <p className="font-medium text-gray-900 dark:text-white">{producer.name}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{producer.email}</p>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                        {producer.specialization}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      {producer.experience} years
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {formatDate(producer.createdAt)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => navigate(`/producer/${producer._id}`)}
-                          className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                          title="View Details"
-                        >
-                          <Eye size={16} />
-                        </button>
-                        <button
-                          onClick={() => navigate(`/admin/producer/edit/${producer._id}`)}
-                          className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
-                          title="Edit"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => setDeleteId(producer._id)}
-                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 rounded-full">
+                          {producer.level}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-gray-900 dark:text-white">{producer.yearsExperience} years</td>
+                      <td className="py-4 px-6 text-gray-500 dark:text-gray-400">
+                        {new Date(producer.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleEdit(producer)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                            title="Edit producer"
+                          >
+                            <Edit3 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteId(producer._id)}
+                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                            title="Delete producer"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </div>
-
-      <DeleteModal
-        isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
-        onConfirm={handleDelete}
-        title="Delete Producer"
-        message="Are you sure you want to delete this producer? This action cannot be undone."
-        isDeleting={isDeleting}
-      />
     </div>
   );
 }
-
-export default ManageProducers;
