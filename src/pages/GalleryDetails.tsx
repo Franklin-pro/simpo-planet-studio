@@ -26,6 +26,7 @@ const GalleryDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGalleryItem = async () => {
@@ -77,6 +78,34 @@ const GalleryDetails = () => {
       fetchGalleryItem();
     }
   }, [id]);
+
+  const handleShare = async () => {
+    if (!item) return;
+    
+    try {
+      const response = await fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${item._id}/share`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        // Copy gallery URL to clipboard
+        const galleryUrl = `${window.location.origin}/gallery/${item._id}`;
+        await navigator.clipboard.writeText(galleryUrl);
+        setMessage('Gallery link copied to clipboard!');
+        setTimeout(() => setMessage(null), 3000);
+      }
+    } catch (error) {
+      console.error('Error sharing gallery:', error);
+      // Fallback: just copy URL to clipboard
+      const galleryUrl = `${window.location.origin}/gallery/${item._id}`;
+      await navigator.clipboard.writeText(galleryUrl);
+      setMessage('Gallery link copied to clipboard!');
+      setTimeout(() => setMessage(null), 3000);
+    }
+  };
 
   const handleLike = async () => {
     if (!item || isLiking) return;
@@ -293,7 +322,10 @@ const GalleryDetails = () => {
                   <span>{item.likeCount} Likes</span>
                 </button>
 
-                <button className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                <button 
+                  onClick={handleShare}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors"
+                >
                   <Share2 size={20} />
                   Share
                 </button>
@@ -320,6 +352,13 @@ const GalleryDetails = () => {
           </div>
         </div>
       </div>
+      {/* Toast Message */}
+      {message && (
+        <div className="fixed top-24 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+          {message}
+        </div>
+      )}
+      
       <Footer />
     </>
   );
