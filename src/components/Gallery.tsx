@@ -37,6 +37,7 @@ export default function ArtGallery() {
   const [images, setImages] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGalleryData = async () => {
@@ -56,7 +57,6 @@ export default function ArtGallery() {
         }
         
         const data = await response.json();
-        console.log('Gallery API response:', data);
         
         // Handle direct array response or nested object response
         let galleryItems = [];
@@ -349,7 +349,16 @@ export default function ArtGallery() {
                           {image.category}
                         </span>
                         <div className="flex p-2 items-center justify-between mt-2">
-                          <button className="text-lg hover:text-white transition-colors">
+                          <button 
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              const galleryUrl = `${window.location.origin}/gallery/${image._id}`;
+                              await navigator.clipboard.writeText(galleryUrl);
+                              setMessage('Gallery link copied!');
+                              setTimeout(() => setMessage(null), 3000);
+                            }}
+                            className="text-lg hover:text-white transition-colors"
+                          >
                             <Share2 size={16} />
                           </button>
                           <button 
@@ -469,7 +478,15 @@ export default function ArtGallery() {
                         />
                         <span>{selectedImage.likes || 0}</span>
                       </button>
-                      <button className="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all duration-300">
+                      <button 
+                        onClick={async () => {
+                          const galleryUrl = `${window.location.origin}/gallery/${selectedImage._id}`;
+                          await navigator.clipboard.writeText(galleryUrl);
+                          setMessage('Gallery link copied!');
+                          setTimeout(() => setMessage(null), 3000);
+                        }}
+                        className="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all duration-300"
+                      >
                         <Share2 size={20} />
                       </button>
                     </div>
@@ -478,6 +495,13 @@ export default function ArtGallery() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+      
+      {/* Toast Message */}
+      {message && (
+        <div className="fixed top-24 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+          {message}
         </div>
       )}
     </div>
