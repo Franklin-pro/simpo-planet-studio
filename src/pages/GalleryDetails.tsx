@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Share2, Calendar } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, Heart, Share2, Calendar, Image as ImageIcon } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -20,7 +19,6 @@ interface GalleryItem {
 
 const GalleryDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [item, setItem] = useState<GalleryItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +57,6 @@ const GalleryDetails = () => {
         
         setItem(galleryItem);
         
-        // Check if user has liked this gallery item
         let userHasLiked = galleryItem.isLikedByUser || false;
         if (!userHasLiked && galleryItem.likedBy && userId) {
           userHasLiked = galleryItem.likedBy.includes(userId);
@@ -83,26 +80,13 @@ const GalleryDetails = () => {
     if (!item) return;
     
     try {
-      const response = await fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${item._id}/share`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (response.ok) {
-        // Copy gallery URL to clipboard
-        const galleryUrl = `${window.location.origin}/gallery/${item._id}`;
-        await navigator.clipboard.writeText(galleryUrl);
-        setMessage('Gallery link copied to clipboard!');
-        setTimeout(() => setMessage(null), 3000);
-      }
-    } catch (error) {
-      console.error('Error sharing gallery:', error);
-      // Fallback: just copy URL to clipboard
       const galleryUrl = `${window.location.origin}/gallery/${item._id}`;
       await navigator.clipboard.writeText(galleryUrl);
       setMessage('Gallery link copied to clipboard!');
+      setTimeout(() => setMessage(null), 3000);
+    } catch (error) {
+      console.error('Error sharing gallery:', error);
+      setMessage('Failed to copy link');
       setTimeout(() => setMessage(null), 3000);
     }
   };
@@ -110,13 +94,9 @@ const GalleryDetails = () => {
   const handleLike = async () => {
     if (!item || isLiking) return;
     
-    // Prevent unliking when count is 0 and user hasn't liked
-    if (!isLiked && item.likeCount === 0) return;
-    
     setIsLiking(true);
     const newLikedState = !isLiked;
     
-    // Optimistic update
     setIsLiked(newLikedState);
     setItem(prev => prev ? { 
       ...prev, 
@@ -149,33 +129,13 @@ const GalleryDetails = () => {
       
       if (response.ok) {
         const result = await response.json();
-        // Update with server response
         setItem(prev => prev ? { 
           ...prev, 
           likeCount: result.likeCount,
           isLikedByUser: result.isLiked
         } : null);
         setIsLiked(result.isLiked);
-      } else if (response.status === 400) {
-        // User already liked - keep liked state
-        const errorData = await response.json();
-        if (errorData.message?.includes('already liked')) {
-          setIsLiked(true);
-          setItem(prev => prev ? { 
-            ...prev, 
-            isLikedByUser: true
-          } : null);
-        } else {
-          // Other 400 errors - revert
-          setIsLiked(!newLikedState);
-          setItem(prev => prev ? { 
-            ...prev, 
-            likeCount: Math.max(0, prev.likeCount + (newLikedState ? -1 : 1)),
-            isLikedByUser: !newLikedState
-          } : null);
-        }
       } else {
-        // Other errors - revert
         setIsLiked(!newLikedState);
         setItem(prev => prev ? { 
           ...prev, 
@@ -185,7 +145,6 @@ const GalleryDetails = () => {
       }
     } catch (error) {
       console.error('Error updating like:', error);
-      // Revert on error
       setIsLiked(!newLikedState);
       setItem(prev => prev ? { 
         ...prev, 
@@ -197,31 +156,14 @@ const GalleryDetails = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
   if (loading) {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24">
-          <div className="container mx-auto px-4 py-8">
-            <div className="animate-pulse">
-              <div className="h-8 w-32 bg-gray-800 rounded mb-8"></div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="h-96 bg-gray-800 rounded-xl"></div>
-                <div className="space-y-4">
-                  <div className="h-8 w-3/4 bg-gray-800 rounded"></div>
-                  <div className="h-4 w-1/2 bg-gray-800 rounded"></div>
-                  <div className="h-20 w-full bg-gray-800 rounded"></div>
-                </div>
-              </div>
-            </div>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading gallery item...</p>
           </div>
         </div>
         <Footer />
@@ -233,16 +175,14 @@ const GalleryDetails = () => {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24">
-          <div className="container mx-auto px-4 py-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Gallery Item Not Found</h2>
-            <p className="text-gray-400 mb-6">{error || 'The requested gallery item could not be found.'}</p>
-            <button
-              onClick={() => navigate('/gallery')}
-              className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-            >
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              {error || 'Gallery Item Not Found'}
+            </h1>
+            <Link to="/gallery" className="text-blue-600 dark:text-blue-400 hover:underline">
               Back to Gallery
-            </button>
+            </Link>
           </div>
         </div>
         <Footer />
@@ -253,112 +193,115 @@ const GalleryDetails = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24">
-        <div className="container mx-auto px-4 py-8">
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={() => navigate('/gallery')}
-            className="flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
-          >
-            <ArrowLeft size={20} />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+        <div className="max-w-6xl mt-20 mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Link */}
+          <Link to="/gallery" className="text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
             Back to Gallery
-          </motion.button>
+          </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="relative"
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-auto max-h-[600px] object-cover rounded-xl shadow-2xl"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/800x600?text=Image+Not+Found';
-                }}
-              />
-            </motion.div>
+          {/* Message */}
+          {message && (
+            <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-400 rounded-lg">
+              {message}
+            </div>
+          )}
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="space-y-6"
-            >
-              <div>
-                <h1 className="text-4xl font-bold mb-4">{item.title}</h1>
-                <div className="flex items-center gap-4 text-gray-400 mb-6">
-                  <span className="bg-red-600/20 text-red-400 px-3 py-1 rounded-full text-sm">
-                    {item.category}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Calendar size={16} />
-                    <span className="text-sm">{formatDate(item.createdAt)}</span>
+          {/* Main Content */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="md:flex">
+              {/* Left Column - Image */}
+              <div className="md:w-2/3">
+                <div className="relative">
+                  <img 
+                    src={item.image} 
+                    alt={item.title}
+                    className="w-full h-96 md:h-[600px] object-cover"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="px-3 py-1 bg-black/50 text-white rounded-full text-sm">
+                      {item.category}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {item.description && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Description</h3>
-                  <p className="text-gray-300 leading-relaxed">{item.description}</p>
+              {/* Right Column - Details */}
+              <div className="md:w-1/3 p-8">
+                {/* Header */}
+                <div className="mb-6">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{item.title}</h1>
+                  {item.description && (
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{item.description}</p>
+                  )}
                 </div>
-              )}
 
-              <div className="flex items-center gap-4 pt-6 border-t border-gray-800">
-                <button
-                  onClick={handleLike}
-                  disabled={isLiking}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                    isLiked
-                      ? 'bg-red-600 text-white'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                  } ${isLiking ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <Heart size={20} fill={isLiked ? 'currentColor' : 'none'} />
-                  <span>{item.likeCount} Likes</span>
-                </button>
-
-                <button 
-                  onClick={handleShare}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors"
-                >
-                  <Share2 size={20} />
-                  Share
-                </button>
-              </div>
-
-              <div className="bg-gray-800/50 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Details</h4>
-                <div className="space-y-2 text-sm text-gray-400">
-                  <div className="flex justify-between">
-                    <span>Created:</span>
-                    <span>{formatDate(item.createdAt)}</span>
+                {/* Stats */}
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                      <Heart className={`h-5 w-5 ${isLiked ? 'text-red-600 fill-current' : 'text-red-600 dark:text-red-400'}`} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Likes</h3>
+                      <p className="text-gray-600 dark:text-gray-300">{item.likeCount}</p>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Updated:</span>
-                    <span>{formatDate(item.updatedAt)}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                      <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Created</h3>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        {new Date(item.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Category:</span>
-                    <span>{item.category}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                      <ImageIcon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Category</h3>
+                      <p className="text-gray-600 dark:text-gray-300">{item.category}</p>
+                    </div>
                   </div>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="space-y-3">
+                  <button
+                    onClick={handleLike}
+                    disabled={isLiking}
+                    className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
+                      isLiked
+                        ? 'bg-red-600 text-white hover:bg-red-700'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    } ${isLiking ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
+                    {isLiked ? 'Liked' : 'Like'}
+                  </button>
+                  
+                  <button
+                    onClick={handleShare}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  >
+                    <Share2 className="h-5 w-5" />
+                    Share
+                  </button>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
-      {/* Toast Message */}
-      {message && (
-        <div className="fixed top-24 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50">
-          {message}
-        </div>
-      )}
-      
       <Footer />
     </>
   );

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 interface Filmmaker {
   _id: string;
@@ -109,6 +110,7 @@ const FilmMakerPage = () => {
           )}
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

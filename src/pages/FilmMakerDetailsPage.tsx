@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Mail, Phone, Calendar, Award, Film, User } from 'lucide-react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 interface PortfolioItem {
   title: string;
@@ -179,6 +180,7 @@ const FilmMakerDetailsPage = () => {
         </div>
       </div>
     </div>
+    <Footer/>
  </>
   );
 };

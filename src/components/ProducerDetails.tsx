@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Award, Link, Music, User, Mail, Calendar, Instagram, Twitter, Facebook, Youtube,} from 'lucide-react';
+import { useParams, Link } from 'react-router-dom';
+import { Award, Music, User, Mail, Calendar, Instagram, Twitter, Facebook, Youtube, ArrowLeft, ExternalLink } from 'lucide-react';
 import Header from './Header';
 import Footer from './Footer';
 
 interface Producer {
+  _id: string;
   name: string;
   level: string;
   image?: string;
@@ -44,10 +45,10 @@ function ProducerDetails() {
         }
         const result = await response.json();
         setProducer(result.data);
-        setIsLoading(false);
       } catch (err) {
         console.error("Failed to fetch producer details:", err);
         setError('Failed to load producer details. Please try again.');
+      } finally {
         setIsLoading(false);
       }
     };
@@ -57,79 +58,101 @@ function ProducerDetails() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-        <div className="flex items-center space-x-3">
-          <svg className="animate-spin h-8 w-8 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <span className="text-gray-700 text-base sm:text-lg">Loading...</span>
+      <>
+        <Header/>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading producer details...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (error || !producer) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-        <div className="p-4 sm:p-6 bg-white border border-gray-300 text-gray-700 rounded-lg max-w-md w-full text-center shadow-sm">
-          {error || 'Producer not found.'}
+      <>
+        <Header/>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              {error || 'Producer Not Found'}
+            </h1>
+            <Link to="/producers" className="text-blue-600 dark:text-blue-400 hover:underline">
+              Back to Producers
+            </Link>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
     <>
       <Header/>
-      <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          {/* Header Section - Responsive */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6 sm:mb-8">
-            <div className="p-4 sm:p-6 lg:p-8">
-              {/* Title with Icon - Responsive text sizes */}
-              <div className="flex items-center mb-6 sm:mb-8">
-                <Music className="text-gray-600 w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 flex-shrink-0" />
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 break-words">
-                  {producer.name}'s Profile
-                </h1>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+
+          {/* Main Content */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl mt-20 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  {/* Back Link */}
+          <Link to="/producers" className="text-blue-600 mb-4 p-2 dark:text-blue-400 hover:underline inline-flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Producers
+          </Link>
+            <div className="md:flex">
+              {/* Left Column - Image */}
+              <div className="md:w-1/3">
+                <div className="h-96 md:h-full">
+                  {producer.image ? (
+                    <img 
+                      src={producer.image} 
+                      alt={producer.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                      <User className="h-16 w-16 text-gray-400" />
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Main Content Grid - Responsive layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                
-                {/* Left Column - Profile Image and Basic Info */}
-                <div className="lg:col-span-1 order-1 lg:order-1">
-                  {/* Profile Image - Responsive sizing */}
-                  <div className="relative w-full aspect-square sm:aspect-[4/5] lg:aspect-square mb-4 sm:mb-6">
-                    {producer.image ? (
-                      <img
-                        src={producer.image}
-                        alt={producer.name}
-                        className="w-full h-full object-cover rounded-lg border border-gray-200 shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-100 flex items-center justify-center rounded-lg border border-gray-200">
-                        <User className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400" />
-                      </div>
-                    )}
+              {/* Right Column - Details */}
+              <div className="md:w-2/3 p-8">
+                {/* Header */}
+                <div className="mb-6">
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{producer.name}</h1>
+                  <p className="text-xl text-blue-600 dark:text-blue-400 font-medium">{producer.level}</p>
+                </div>
+
+                {/* Bio */}
+                <div className="mb-6">
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{producer.bio}</p>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                      <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Experience</h3>
+                      <p className="text-gray-600 dark:text-gray-300">{producer.yearsExperience} years</p>
+                    </div>
                   </div>
-                  
-                  {/* Basic Info - Responsive spacing and text */}
-                  <div className="space-y-3 sm:space-y-4">
-                    <div className="flex items-center">
-                      <Award className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base text-gray-700 font-medium break-words">{producer.level}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                      <Mail className="h-5 w-5 text-green-600 dark:text-green-400" />
                     </div>
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base text-gray-700">{producer.yearsExperience} years of experience</span>
-                    </div>
-                    <div className="flex items-start">
-                      <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 mr-2 sm:mr-3 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Contact</h3>
                       <a 
-                        href={`mailto:${producer.contactEmail}`} 
-                        className="text-sm sm:text-base text-gray-600 hover:text-gray-800 hover:underline transition-colors break-all"
+                        href={`mailto:${producer.contactEmail}`}
+                        className="text-blue-600 dark:text-blue-400 hover:underline"
                       >
                         {producer.contactEmail}
                       </a>
@@ -137,149 +160,121 @@ function ProducerDetails() {
                   </div>
                 </div>
 
-                {/* Right Column - Bio and Details */}
-                <div className="lg:col-span-2 order-2 lg:order-2 space-y-6 sm:space-y-8">
-                  
-                  {/* Bio Section - Responsive text */}
-                  <div>
-                    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">About</h2>
-                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{producer.bio}</p>
-                  </div>
-
-                  {/* Genres Section - Responsive tags */}
-                  <div>
-                    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">Genres</h2>
+                {/* Genres */}
+                {producer.genres && producer.genres.length > 0 && (
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                        <Music className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Genres</h3>
+                    </div>
                     <div className="flex flex-wrap gap-2">
-                      {producer.genres.map((genre) => (
+                      {producer.genres.map((genre, index) => (
                         <span
-                          key={genre}
-                          className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gray-100 text-gray-800 rounded-full text-xs sm:text-sm hover:bg-gray-200 transition-colors cursor-default"
+                          key={index}
+                          className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400 rounded-full text-sm"
                         >
                           {genre}
                         </span>
                       ))}
                     </div>
                   </div>
+                )}
 
-                  {/* Skills Section - Responsive tags */}
-                  <div>
-                    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">Skills</h2>
+                {/* Skills */}
+                {producer.skills && producer.skills.length > 0 && (
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                        <Award className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                      </div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Skills</h3>
+                    </div>
                     <div className="flex flex-wrap gap-2">
-                      {producer.skills.map((skill) => (
+                      {producer.skills.map((skill, index) => (
                         <span
-                          key={skill}
-                          className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gray-100 text-gray-800 rounded-full text-xs sm:text-sm hover:bg-gray-200 transition-colors cursor-default"
+                          key={index}
+                          className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 rounded-full text-sm"
                         >
                           {skill}
                         </span>
                       ))}
                     </div>
                   </div>
+                )}
 
-                  {/* Notable Credits Section - Responsive layout */}
-                  <div>
-                    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">Notable Credits</h2>
-                    {producer.credits.length > 0 ? (
-                      <div className="space-y-3 sm:space-y-4">
-                        {producer.credits.map((credit, index) => (
-                          <div key={index} className="border-b border-gray-200 pb-3 sm:pb-4 last:border-b-0 last:pb-0">
-                            <p className="text-sm sm:text-base text-gray-800 font-medium mb-1">{credit.project}</p>
-                            <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-1 sm:space-y-0">
-                              <p className="text-xs sm:text-sm text-gray-600">Role: {credit.role}</p>
-                              <p className="text-xs sm:text-sm text-gray-600">Year: {credit.year}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm sm:text-base text-gray-600">No notable credits listed.</p>
-                    )}
+                {/* Credits */}
+                {producer.credits && producer.credits.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Notable Credits</h3>
+                    <div className="space-y-3">
+                      {producer.credits.map((credit, index) => (
+                        <div key={index} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                          <h4 className="font-medium text-gray-900 dark:text-white">{credit.project}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">{credit.role} • {credit.year}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </div>
+                )}
 
-              {/* Social Media Links Section - Full width, responsive */}
-              <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">Connect</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
-                  {producer.socialMedia.instagram && (
-                    <a
-                      href={`https://instagram.com/${producer.socialMedia.instagram}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center sm:justify-start p-3 sm:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300"
-                    >
-                      <Instagram className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2 flex-shrink-0" />
-                      <span className="hidden sm:inline text-xs sm:text-sm font-medium">Instagram</span>
-                    </a>
-                  )}
-                  {producer.socialMedia.twitter && (
-                    <a
-                      href={`https://twitter.com/${producer.socialMedia.twitter}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center sm:justify-start p-3 sm:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300"
-                    >
-                      <Twitter className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2 flex-shrink-0" />
-                      <span className="hidden sm:inline text-xs sm:text-sm font-medium">Twitter</span>
-                    </a>
-                  )}
-                  {producer.socialMedia.facebook && (
-                    <a
-                      href={`https://facebook.com/${producer.socialMedia.facebook}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center sm:justify-start p-3 sm:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300"
-                    >
-                      <Facebook className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2 flex-shrink-0" />
-                      <span className="hidden sm:inline text-xs sm:text-sm font-medium">Facebook</span>
-                    </a>
-                  )}
-                  {producer.socialMedia.spotify && (
-                    <a
-                      href={producer.socialMedia.spotify}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center sm:justify-start p-3 sm:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300"
-                    >
-                      <Music className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2 flex-shrink-0" />
-                      <span className="hidden sm:inline text-xs sm:text-sm font-medium">Spotify</span>
-                    </a>
-                  )}
-                  {producer.socialMedia.soundCloud && (
-                    <a
-                      href={producer.socialMedia.soundCloud}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center sm:justify-start p-3 sm:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300"
-                    >
-                      <Link className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2 flex-shrink-0" />
-                      <span className="hidden sm:inline text-xs sm:text-sm font-medium">SoundCloud</span>
-                    </a>
-                  )}
-                  {producer.socialMedia.youtube && (
-                    <a
-                      href={producer.socialMedia.youtube}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center sm:justify-start p-3 sm:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300"
-                    >
-                      <Youtube className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2 flex-shrink-0" />
-                      <span className="hidden sm:inline text-xs sm:text-sm font-medium">YouTube</span>
-                    </a>
-                  )}
-                  {producer.socialMedia.appleMusic && (
-                    <a
-                      href={producer.socialMedia.appleMusic}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center sm:justify-start p-3 sm:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300"
-                    >
-                      <Link className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2 flex-shrink-0" />
-                      <span className="hidden sm:inline text-xs sm:text-sm font-medium">Apple Music</span>
-                    </a>
-                  )}
-                </div>
+                {/* Social Media */}
+                {producer.socialMedia && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Connect</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {producer.socialMedia.instagram && (
+                        <a
+                          href={producer.socialMedia.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-400 rounded-lg hover:bg-pink-200 dark:hover:bg-pink-900/50 transition-colors"
+                        >
+                          <Instagram className="h-4 w-4" />
+                          Instagram
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                      {producer.socialMedia.twitter && (
+                        <a
+                          href={producer.socialMedia.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                        >
+                          <Twitter className="h-4 w-4" />
+                          Twitter
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                      {producer.socialMedia.youtube && (
+                        <a
+                          href={producer.socialMedia.youtube}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                        >
+                          <Youtube className="h-4 w-4" />
+                          YouTube
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                      {producer.socialMedia.facebook && (
+                        <a
+                          href={producer.socialMedia.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                        >
+                          <Facebook className="h-4 w-4" />
+                          Facebook
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
