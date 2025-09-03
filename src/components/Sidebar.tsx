@@ -62,10 +62,18 @@ export default function Sidebar() {
   };
 
 
-  const handleLogout = () => {
-    // Example: remove token from localStorage and redirect
-    localStorage.removeItem('token');
-    navigate('/login');
+  const handleLogout = async() => {
+try {
+  await fetch("https://simpo-planet-studio-bn.onrender.com/api/v1/auth/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+  navigate("/login");
+  
+} catch (error) {
+  console.error("Logout failed:", error);
+  
+}
   };
 
   return (

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { PenBoxIcon, Trash } from "lucide-react";
+import { Edit3, Trash2, Search, Filter, Image, Calendar, Eye } from "lucide-react";
 import DeleteModal from "../../components/DeleteModal";
 
 export default function ManageGallery() {
-  const [gallerys, setgallerys] = useState([]);
+  const [galleries, setGalleries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [editinggallery, setEditinggallery] = useState<gallery>();
+  const [editingGallery, setEditingGallery] = useState<Gallery>();
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("last30");
@@ -15,28 +15,26 @@ export default function ManageGallery() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  interface gallery {
+  interface Gallery {
     id: string;
     createdAt: string;
     _id: string;
     title: string;
     imageUrl: string;
-    age: string;
-    bio: string;
-    management: string;
+    description: string;
     image: string;
   }
 
   useEffect(() => {
-    fetchgallerys();
+    fetchGalleries();
   }, []);
 
-  const fetchgallerys = async () => {
+  const fetchGalleries = async () => {
     try {
       const response = await axios.get("https://simpo-planet-studio-bn.onrender.com/api/v1/gallery");
-      setgallerys(response.data || []);
+      setGalleries(response.data || []);
     } catch (err) {
-      setError("Failed to load gallerys.");
+      setError("Failed to load galleries.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -49,9 +47,9 @@ export default function ManageGallery() {
     setIsDeleting(true);
     try {
       await axios.delete(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${deleteId}`);
-      setgallerys((prev) => prev.filter((gallery: gallery) => gallery._id !== deleteId));
+      setGalleries((prev) => prev.filter((gallery: Gallery) => gallery._id !== deleteId));
       setDeleteId(null);
-      fetchgallerys();
+      fetchGalleries();
     } catch (err) {
       alert("Delete failed.");
       console.error(err);
@@ -60,26 +58,26 @@ export default function ManageGallery() {
     }
   };
 
-  const handleEdit = (gallery: gallery) => {
-    setEditinggallery(gallery);
+  const handleEdit = (gallery: Gallery) => {
+    setEditingGallery(gallery);
     setIsEditing(true);
   };
 
   const handleUpdate = async () => {
-    if (!editinggallery) return;
+    if (!editingGallery) return;
 
     try {
-      await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${editinggallery._id}`, editinggallery);
-      alert("gallery updated successfully.");
+      await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${editingGallery._id}`, editingGallery);
+      alert("Gallery updated successfully.");
       setIsEditing(false);
-      fetchgallerys();
+      fetchGalleries();
     } catch (err) {
       alert("Update failed.");
       console.error(err);
     }
   };
 
-  const filterByDate = (gallery: gallery) => {
+  const filterByDate = (gallery: Gallery) => {
     const now = new Date();
     const createdAt = new Date(gallery.createdAt);
 
@@ -100,218 +98,248 @@ export default function ManageGallery() {
         return true;
     }
   };
-  const formattedDate = (date: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return new Date(date).toLocaleDateString("en-US", options);
-  };
 
-  const filteredgallerys = gallerys
-    .filter((a: gallery) => a.title.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredGalleries = galleries
+    .filter((g: Gallery) => g.title.toLowerCase().includes(searchQuery.toLowerCase()))
     .filter(filterByDate);
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <h2 className="text-2xl dark:text-gray-100 font-bold mb-6">🎨 Manage gallerys</h2>
-
-      {isEditing && editinggallery && (
-        <div className="fixed inset-0 bg-black/15 bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="bg-white dark:bg-gray-700 p-8 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-2xl dark:text-gray-100 font-bold mb-4">Edit gallery</h2>
-            <div className="space-y-4">
-              
-              <input
-                type="text"
-                value={editinggallery.title}
-                onChange={(e) => setEditinggallery({ ...editinggallery, title: e.target.value })}
-                placeholder="Name"
-               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <input
-                type="text"
-                value={editinggallery.age}
-                onChange={(e) => setEditinggallery({ ...editinggallery, age: e.target.value })}
-                placeholder="Age"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <input
-                type="text"
-                value={editinggallery.management}
-                onChange={(e) => setEditinggallery({ ...editinggallery, management: e.target.value })}
-                placeholder="Management"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-                  <div className="flex flex-col col-span-1 md:col-span-2">
-          <label className="mb-1 text-sm text-gray-600">Biography</label>
-          <textarea
-            name="bio"
-          value={editinggallery.bio}
-                onChange={(e) => setEditinggallery({ ...editinggallery, bio: e.target.value })}
-            rows={4}
-            className=" border-gray-400 border-2 rounded-lg px-3 py-2 focus:outline-none"
-            required
-          ></textarea>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Gallery Management</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage and organize your gallery items</p>
         </div>
+
+        {/* Edit Modal */}
+        {isEditing && editingGallery && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Gallery Item</h2>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
+                  <input
+                    type="text"
+                    value={editingGallery.title}
+                    onChange={(e) => setEditingGallery({ ...editingGallery, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                  <textarea
+                    value={editingGallery.description}
+                    onChange={(e) => setEditingGallery({ ...editingGallery, description: e.target.value })}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdate}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  Update Gallery
+                </button>
+              </div>
             </div>
-            <div className="mt-4 flex justify-end space-x-2">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdate}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
-              >
-                Update
-              </button>
+          </div>
+        )}
+
+        {/* Delete Modal */}
+        {deleteId && (
+          <DeleteModal
+            isOpen={!!deleteId}
+            onClose={() => setDeleteId(null)}
+            onConfirm={handleDelete}
+            isDeleting={isDeleting}
+            title="Delete Gallery Item"
+            message="Are you sure you want to delete this gallery item? This action cannot be undone."
+          />
+        )}
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                <Image className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Items</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{galleries.length}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Calendar className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">This Month</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{filteredGalleries.length}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <Eye className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{galleries.length}</p>
+              </div>
             </div>
           </div>
         </div>
-      )}
 
-      <div className="relative overflow-x-auto bg-gray-200 dark:bg-gray-500 dark:border-gray-500 dark:text-gray-100 p-2 shadow-md sm:rounded-lg">
-        {/* FILTER & SEARCH BAR */}
-        <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between pb-4 space-y-4 sm:space-y-0">
-          {/* Filter dropdown */}
-          <div className="relative inline-block">
-            <button
-              onClick={() => setShowDropdown(!showDropdown)}
-              className="inline-flex items-center text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-            >
-              Filter: {selectedFilter}
-              <svg className="w-2.5 h-2.5 ml-2" fill="none" viewBox="0 0 10 6">
-                <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" />
-              </svg>
-            </button>
-            {showDropdown && (
-              <div className="absolute z-10 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
-                <ul className="p-2 space-y-1 text-sm text-gray-700">
-                  {[
-                    { label: "Last day", value: "last1" },
-                    { label: "Last 7 days", value: "last7" },
-                    { label: "Last 30 days", value: "last30" },
-                    { label: "Last month", value: "lastMonth" },
-                    { label: "Last year", value: "lastYear" },
-                  ].map((option) => (
-                    <li key={option.value}>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="filter-radio"
-                          value={option.value}
-                          checked={selectedFilter === option.value}
-                          onChange={() => {
-                            setSelectedFilter(option.value);
-                            setShowDropdown(false);
-                          }}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        {option.label}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
+        {/* Table Container */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          {/* Table Header with Search and Filter */}
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Search gallery items..."
+                  />
+                </div>
+                <div className="relative">
+                  <button
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-blue-500"
+                  >
+                    <Filter className="h-4 w-4" />
+                    Filter
+                  </button>
+                  {showDropdown && (
+                    <div className="absolute z-10 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+                      <div className="p-2">
+                        {[
+                          { label: "Last day", value: "last1" },
+                          { label: "Last 7 days", value: "last7" },
+                          { label: "Last 30 days", value: "last30" },
+                          { label: "Last month", value: "lastMonth" },
+                          { label: "Last year", value: "lastYear" },
+                        ].map((option) => (
+                          <label key={option.value} className="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-600 rounded cursor-pointer">
+                            <input
+                              type="radio"
+                              name="filter-radio"
+                              value={option.value}
+                              checked={selectedFilter === option.value}
+                              onChange={() => {
+                                setSelectedFilter(option.value);
+                                setShowDropdown(false);
+                              }}
+                              className="w-4 h-4 text-blue-600"
+                            />
+                            <span className="text-sm text-gray-700 dark:text-gray-300">{option.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
+            </div>
+          </div>
+
+          {/* Table Content */}
+          <div className="overflow-x-auto">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Loading gallery items...</span>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <p className="text-red-600 dark:text-red-400">{error}</p>
+              </div>
+            ) : filteredGalleries.length === 0 ? (
+              <div className="text-center py-12">
+                <Image className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <p className="text-gray-600 dark:text-gray-400">No gallery items found</p>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="text-left py-4 px-6 font-semibold text-gray-900 dark:text-white">Gallery Item</th>
+                    <th className="text-left py-4 px-6 font-semibold text-gray-900 dark:text-white">Description</th>
+                    <th className="text-left py-4 px-6 font-semibold text-gray-900 dark:text-white">Created</th>
+                    <th className="text-right py-4 px-6 font-semibold text-gray-900 dark:text-white">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {filteredGalleries.map((gallery: Gallery) => (
+                    <tr key={gallery._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <td className="py-4 px-6">
+                        <div className="flex items-center">
+                          <div className="h-16 w-16 rounded-lg bg-gray-200 dark:bg-gray-600 overflow-hidden">
+                            {gallery.image ? (
+                              <img src={gallery.image} alt={gallery.title} className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center">
+                                <Image className="h-8 w-8 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="ml-4">
+                            <p className="font-medium text-gray-900 dark:text-white">{gallery.title}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <p className="text-gray-900 dark:text-white truncate max-w-xs">{gallery.description}</p>
+                      </td>
+                      <td className="py-4 px-6 text-gray-500 dark:text-gray-400">
+                        {new Date(gallery.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleEdit(gallery)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                            title="Edit gallery item"
+                          >
+                            <Edit3 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteId(gallery._id)}
+                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                            title="Delete gallery item"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
-
-          {/* Search input */}
-          <div className="relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50"
-              placeholder="Search for gallerys"
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center ps-3 pointer-events-none">
-              <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89
-                  3.476l4.817 4.817a1 1 0 01-1.414
-                  1.414l-4.816-4.816A6 6 0 012 8z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
         </div>
-
-        {/* TABLE */}
-        {loading ? (
-          <p className="text-center text-gray-500 py-4">Loading gallerys...</p>
-        ) : error ? (
-          <p className="text-red-600 text-center py-4">{error}</p>
-        ) : (
-          <table className="w-full text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 dark:bg-gray-500 dark:border-gray-500 dark:text-gray-100 uppercase bg-gray-50">
-              <tr>
-                <th className="p-4"></th>
-                <th className="px-6 py-3">gallery</th>
-                <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">Created On</th>
-                <th className="px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredgallerys.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="text-center py-4">
-                    No gallerys found.
-                  </td>
-                </tr>
-              ) : (
-                filteredgallerys.map((gallery: gallery) => (
-                  <tr
-                    key={gallery._id}
-                    className="bg-white dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 border-b-2 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
-                    <td className="p-4"></td>
-                    <td className="px-6 py-4 flex items-center gap-2 font-medium text-gray-900 whitespace-nowrap">
-                      <img
-                        src={gallery.image}
-                        alt={gallery.title}
-                        className="h-10 w-10 object-cover rounded-full"
-                      />
-                    </td>
-                    <td className="px-6 py-4 font-bold">{gallery.title}</td>
-                    <td className="px-6 py-4 truncate">{formattedDate(gallery.createdAt)}</td>
-                    <td className="px-6 py-4 space-x-2">
-                      <button
-                        onClick={() => handleEdit(gallery)}
-                        className="text-yellow-600 cursor-pointer"
-                      >
-                        <PenBoxIcon />
-                      </button>
-                      <button
-                        onClick={() => setDeleteId(gallery._id)}
-                        className="text-red-600 cursor-pointer"
-                      >
-                        <Trash />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        )}
       </div>
-      
-      <DeleteModal
-        isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
-        onConfirm={handleDelete}
-        title="Delete Gallery Item"
-        message="Are you sure you want to delete this gallery item? This action cannot be undone."
-        isDeleting={isDeleting}
-      />
     </div>
   );
 }
