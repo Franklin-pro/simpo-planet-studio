@@ -26,6 +26,7 @@ import { ThemeProvider } from './contexts/ThemeProvider';
 import Dashboard from './pages/admin/Dashboard';
 import GalleryDetails from './pages/GalleryDetails';
 import ManageUsers from './components/Dashboard/ManageUsers';
+import Messages from './pages/admin/Messages';
 function App() {
 
   return (
@@ -51,6 +52,7 @@ function App() {
       <Route path="artists/create" element={<AddArtists />} />
       <Route path="gallery/create" element={<AddGallery />} />
       <Route path="gallery/manage" element={<ManageGallerys />} />
+      <Route path="contact/messages" element={<Messages />} />
       <Route path="producer/manage" element={<ManageProducers />} />
       <Route path="producer/create" element={<CreateProducer />} />
       <Route path="filmmaker/create" element={<AddFilmmaker />} />
