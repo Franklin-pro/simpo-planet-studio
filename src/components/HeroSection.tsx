@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
 import { Phone } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import hero from '../assets/hero.png';
 
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -92,6 +95,7 @@ const HeroSection = () => {
                 className="bg-red-500 cursor-pointer rounded-lg text-white px-8 py-4 text-lg font-semibold hover:bg-red-600 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/login')}
               >
                 JOIN STUDIO TODAY
               </motion.button>

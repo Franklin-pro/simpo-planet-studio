@@ -27,6 +27,7 @@ import Dashboard from './pages/admin/Dashboard';
 import GalleryDetails from './pages/GalleryDetails';
 import ManageUsers from './components/Dashboard/ManageUsers';
 import Messages from './pages/admin/Messages';
+import ManageFilmmakers from './components/Dashboard/ManageFilmmakers';
 function App() {
 
   return (
@@ -56,6 +57,7 @@ function App() {
       <Route path="producer/manage" element={<ManageProducers />} />
       <Route path="producer/create" element={<CreateProducer />} />
       <Route path="filmmaker/create" element={<AddFilmmaker />} />
+      <Route path="filmmaker/manage" element={<ManageFilmmakers />} />
       <Route path="music/upload" element={<UploadMusics />} />
       <Route path="music/manage" element={<ManageMusic />} />
       <Route path="artists/manage" element={<ManagingArtist />} />

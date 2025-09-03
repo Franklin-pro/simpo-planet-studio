@@ -6,6 +6,7 @@ interface Message {
   _id: string;
   name: string;
   email: string;
+  phone: string;
   message: string;
   createdAt: string;
 }
@@ -22,7 +23,7 @@ function Messages() {
 
   const fetchMessages = async () => {
     try {
-      const response = await axios.get("https://simpo-planet-studio-bn.onrender.com/api/v1/messages");
+      const response = await axios.get("https://simpo-planet-studio-bn.onrender.com/api/v1/contact");
       setMessages(response.data || []);
     } catch (err) {
       setError("Failed to load messages.");
@@ -47,32 +48,20 @@ function Messages() {
           <p className="text-gray-600 dark:text-gray-400">View and manage contact messages</p>
         </div>
 
-        {/* Stats Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
-          <div className="flex items-center">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <Mail className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Messages</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{messages.length}</p>
-            </div>
-          </div>
-        </div>
-
         {/* Search */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b flex items-center flex-wrap gap-4 justify-between border-gray-200 dark:border-gray-700">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Search messages..."
               />
             </div>
+              <p className="text-2xl bg-blue-500/15 px-4 py-2 rounded-full font-bold text-gray-900 dark:text-white">{messages.length}</p>
           </div>
         </div>
 
@@ -101,7 +90,7 @@ function Messages() {
                       <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{message.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{message.name} <span className="text-xs bg-blue-500/15 p-1 rounded-full text-blue-500">{message.phone}</span></h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{message.email}</p>
                     </div>
                   </div>
