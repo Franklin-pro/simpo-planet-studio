@@ -90,16 +90,16 @@ const Dashboard = () => {
     const currentArtists = dashboardData.overview.totalArtists || 0;
     const currentMusic = dashboardData.overview.totalMusic || 0;
     const currentPlays = dashboardData.engagement.totalMusicPlays || 0;
-    const currentUsers = dashboardData.overview.totalUsers || 0;
+    // const currentUsers = dashboardData.overview.totalUsers || 0;
 
     return months.map((month, index) => {
       const progress = (index + 1) / 6;
       return {
         month,
-        artists: Math.floor(currentArtists * progress) || index + 1,
-        music: Math.floor(currentMusic * progress) || index + 1,
-        listens: Math.floor(currentPlays * progress) || index + 1,
-        views: Math.floor(currentUsers * progress) || index + 1,
+        artists: currentArtists > 0 ? Math.floor(currentArtists * progress) : 0,
+        music: currentMusic > 0 ? Math.floor(currentMusic * progress) : 0,
+        listens: currentPlays > 0 ? Math.floor(currentPlays * progress) : 0,
+        views: dashboardData.engagement.totalLikes > 0 ? Math.floor(dashboardData.engagement.totalLikes * progress) : 0,
       };
     });
   };
@@ -317,7 +317,7 @@ const Dashboard = () => {
         {/* Line Chart */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 relative border border-gray-100 dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-            Views & Listens Trend
+            Engagement Trend
           </h3>
           <div ref={chartContainerRef} className="h-64 relative">
             <svg
@@ -340,7 +340,7 @@ const Dashboard = () => {
                 />
               ))}
 
-              {/* Views Line */}
+              {/* Likes Line */}
               <polyline
                 fill="none"
                 stroke="#ef4444"
@@ -355,7 +355,7 @@ const Dashboard = () => {
                   .join(" ")}
               />
 
-              {/* Listens Line */}
+              {/* Plays Line */}
               <polyline
                 fill="none"
                 stroke="#8b5cf6"
@@ -439,7 +439,7 @@ const Dashboard = () => {
                 <div className="flex items-center">
                   <div
                     className={`w-3 h-3 rounded mr-2 ${
-                      hoveredPoint.type === "views"
+                      hoveredPoint.type === "likes"
                         ? "bg-red-500"
                         : "bg-purple-500"
                     }`}
@@ -453,13 +453,13 @@ const Dashboard = () => {
             <div className="flex items-center">
               <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                Views
+                Likes
               </span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                Listens
+                Plays
               </span>
             </div>
           </div>
