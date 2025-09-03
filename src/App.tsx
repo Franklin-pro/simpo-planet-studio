@@ -25,6 +25,7 @@ import AddFilmmaker from './pages/admin/AddFilmmaker';
 import { ThemeProvider } from './contexts/ThemeProvider';
 import Dashboard from './pages/admin/Dashboard';
 import GalleryDetails from './pages/GalleryDetails';
+import ManageUsers from './components/Dashboard/ManageUsers';
 function App() {
 
   return (
@@ -56,6 +57,7 @@ function App() {
       <Route path="music/upload" element={<UploadMusics />} />
       <Route path="music/manage" element={<ManageMusic />} />
       <Route path="artists/manage" element={<ManagingArtist />} />
+      <Route path="users/manage" element={<ManageUsers />} />
     </Route>
 
     <Route path="*" element={<NotFound />} />
