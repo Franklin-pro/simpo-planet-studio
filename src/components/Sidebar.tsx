@@ -12,6 +12,10 @@ const menus: MenuItem[] = [
     label: 'Dashboard',
     path: '/admin',
   },
+    {
+    label: 'Individual Users',
+    path: '/admin/users/manage',
+  },
   {
     label: 'Artists',
     items: [
