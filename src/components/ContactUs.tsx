@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Send, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ChangeEvent, FormEvent } from 'react';
 
@@ -11,255 +11,260 @@ const ContactSection = () => {
     phone: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
-const handleSubmit = async (e:FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  try {
-    const res = await axios.post("https://simpo-planet-studio-bn.onrender.com/api/v1/contact", form);
-    
-    if (res.status < 200 || res.status >= 300) {
-      throw new Error("Failed to send message");
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await axios.post("https://simpo-planet-studio-bn.onrender.com/api/v1/contact", form);
+      
+      if (res.status < 200 || res.status >= 300) {
+        throw new Error("Failed to send message");
+      }
+
+      alert("Message sent successfully!");
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
-    alert("Message sent successfully!");
-    setForm({ name: "", email: "", phone: "", message: "" });
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong. Please try again.");
-  }
-};
-
+  const contactInfo = [
+    {
+      icon: <Phone className="w-6 h-6" />,
+      title: "Phone",
+      details: "(+250) 783 054 403",
+      color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+    },
+    {
+      icon: <Mail className="w-6 h-6" />,
+      title: "Email",
+      details: "Simpoplanet@gmail.com",
+      color: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+    },
+    {
+      icon: <MapPin className="w-6 h-6" />,
+      title: "Address",
+      details: "Kigali, Rwanda, Remera-Giporoso, KN5rd",
+      color: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+    },
+    {
+      icon: <Clock className="w-6 h-6" />,
+      title: "Hours",
+      details: "Mon-Fri: 6AM-10PM | Sat-Sun: 8AM-8PM",
+      color: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
+    }
+  ];
 
   return (
-    <section id="contact" className="py-20 bg-black text-white">
-      <div className="container mx-auto px-4">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Get In <span className="text-red-500">Touch</span>
-          </h2>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Have questions or want to learn more about our music label? Fill out the form below or contact us directly. We look forward to hearing from you!
-          </p>
-        </motion.div>
+    <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-sm font-medium mb-4"
+          >
+            <MessageCircle className="h-4 w-4" />
+            Get In Touch
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
+          >
+            Let's Start a <span className="text-red-600 dark:text-red-400">Conversation</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
+          >
+            Ready to take your music to the next level? We'd love to hear from you and discuss how we can help bring your vision to life.
+          </motion.p>
+        </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-16">
           {/* Contact Information */}
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ type: "spring", stiffness: 100, damping: 10 }}
-            >
-              <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
-              <div className="space-y-4">
-                {/* Phone */}
-                <motion.div
-                  className="flex items-center gap-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "spring", stiffness: 100, damping: 10 }}
-                >
-                  <motion.div
-                    className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center"
-                    whileHover={{ rotate: 10 }}
-                  >
-                    <Phone className="w-6 h-6 text-white" />
-                  </motion.div>
-                  <div>
-                    <p className="font-semibold">Phone</p>
-                    <p className="text-gray-300">(+250) 783054403</p>
-                  </div>
-                </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
+          >
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                Contact Information
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-8">
+                Reach out to us through any of these channels. We're here to help you succeed.
+              </p>
+            </div>
 
-                {/* Email */}
+            <div className="space-y-6">
+              {contactInfo.map((info, index) => (
                 <motion.div
-                  className="flex items-center gap-4"
+                  key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ type: "spring", stiffness: 100, damping: 10 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
                 >
-                  <motion.div
-                    className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center"
-                    whileHover={{ rotate: 10 }}
-                  >
-                    <Mail className="w-6 h-6 text-white" />
-                  </motion.div>
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${info.color}`}>
+                    {info.icon}
+                  </div>
                   <div>
-                    <p className="font-semibold">Email</p>
-                    <p className="text-gray-300">Simpoplanet@gmail.com</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                      {info.title}
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      {info.details}
+                    </p>
                   </div>
                 </motion.div>
-
-                {/* Address */}
-                <motion.div
-                  className="flex items-center gap-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "spring", stiffness: 100, damping: 10 }}
-                >
-                  <motion.div
-                    className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center"
-                    whileHover={{ rotate: 10 }}
-                  >
-                    <MapPin className="w-6 h-6 text-white" />
-                  </motion.div>
-                  <div>
-                    <p className="font-semibold">Address</p>
-                    <p className="text-gray-300">Kigali, Rwanda, Remera-Giporoso, KN5rd</p>
-                  </div>
-                </motion.div>
-
-                {/* Hours */}
-                <motion.div
-                  className="flex items-center gap-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "spring", stiffness: 100, damping: 10 }}
-                >
-                  <motion.div
-                    className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center"
-                    whileHover={{ rotate: 10 }}
-                  >
-                    <Clock className="w-6 h-6 text-white" />
-                  </motion.div>
-                  <div>
-                    <p className="font-semibold">Hours</p>
-                    <p className="text-gray-300">Mon-Fri: 6AM-10PM</p>
-                    <p className="text-gray-300">Sat-Sun: 8AM-8PM</p>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
+              ))}
+            </div>
+          </motion.div>
 
           {/* Contact Form */}
           <motion.div
-            className="bg-gray-900 rounded-lg p-8"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
+            className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-200 dark:border-gray-700"
           >
-            <motion.h3
-              className="text-2xl font-bold mb-6"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ type: "spring", stiffness: 100, damping: 10 }}
-            >
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               Send us a Message
-            </motion.h3>
+            </h3>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="grid md:grid-cols-2 gap-4">
-                {/* Name */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "spring", stiffness: 100, damping: 10 }}
-                >
-                  <label className="block text-sm font-medium mb-2">Names / Artist Name</label>
-                  <motion.input
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Name / Artist Name
+                  </label>
+                  <input
                     type="text"
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    className="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                    placeholder="John"
-                    whileFocus={{ scale: 1.01, borderColor: "#ef4444" }}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                    placeholder="Your name"
                   />
-                </motion.div>
+                </div>
 
-                {/* Email */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "spring", stiffness: 100, damping: 10 }}
-                >
-                  <label className="block text-sm font-medium mb-2">Email</label>
-                  <motion.input
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Email
+                  </label>
+                  <input
                     type="email"
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                    placeholder="john@example.com"
-                    whileFocus={{ scale: 1.01, borderColor: "#ef4444" }}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                    placeholder="your@email.com"
                   />
-                </motion.div>
+                </div>
               </div>
 
-              {/* Phone */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 100, damping: 10 }}
-              >
-                <label className="block text-sm font-medium mb-2">Phone</label>
-                <motion.input
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Phone Number
+                </label>
+                <input
                   type="tel"
                   name="phone"
                   value={form.phone}
                   onChange={handleChange}
-                  className="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-red-500 focus:outline-none"
-                  placeholder="(123) 456-7890"
-                  whileFocus={{ scale: 1.01, borderColor: "#ef4444" }}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                  placeholder="+250 xxx xxx xxx"
                 />
-              </motion.div>
+              </div>
 
-              {/* Message */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 100, damping: 10 }}
-              >
-                <label className="block text-sm font-medium mb-2">Message</label>
-                <motion.textarea
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Message
+                </label>
+                <textarea
                   name="message"
                   value={form.message}
                   onChange={handleChange}
-                  rows={4}
-                  className="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-red-500 focus:outline-none resize-none"
-                  placeholder="Tell us about your studio label goals..."
-                  whileFocus={{ scale: 1.01, borderColor: "#ef4444" }}
-                ></motion.textarea>
-              </motion.div>
+                  required
+                  rows={5}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all resize-none"
+                  placeholder="Tell us about your project, goals, or any questions you have..."
+                />
+              </div>
 
-              {/* Submit Button */}
-              <motion.button
+              <button
                 type="submit"
-                className="w-full bg-red-500 text-white cursor-pointer py-3 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.02, boxShadow: "0px 0px 15px rgba(239, 68, 68, 0.5)" }}
-                whileTap={{ scale: 0.98 }}
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
               >
-                <Send className="w-5 h-5" />
-                Send Message
-              </motion.button>
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-5 w-5" />
+                    Send Message
+                  </>
+                )}
+              </button>
             </form>
           </motion.div>
         </div>
+
+        {/* Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mt-16"
+        >
+          <div className="bg-gradient-to-r from-red-600/15 to-red-700/10 rounded-2xl p-8 md:p-12">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Ready to Make Music History?
+            </h3>
+            <p className="text-red-100 mb-8 max-w-2xl mx-auto">
+              Join the Simpo Planet family and let's create something extraordinary together. 
+              Your musical journey starts with a simple conversation.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                Schedule a Call
+              </button>
+              <button className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
+                Visit Our Studio
+              </button>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

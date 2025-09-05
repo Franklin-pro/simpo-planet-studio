@@ -18,9 +18,9 @@ const Index = () => {
 <AboutSection/>
 <FounderSection/>
 <MissionVisionSection/>
-<Producers/>
-<ArtistSection/>
-<ArtGallery/>
+<Producers isHomePage={true} />
+<ArtistSection isHomePage={true} />
+<ArtGallery isHomePage={true} />
 <ContactSection/>
  <Footer/>
     </div>

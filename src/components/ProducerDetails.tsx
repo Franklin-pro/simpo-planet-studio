@@ -79,7 +79,7 @@ function ProducerDetails() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               {error || 'Producer Not Found'}
             </h1>
-            <Link to="/producers" className="text-blue-600 dark:text-blue-400 hover:underline">
+            <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline">
               Back to Producers
             </Link>
           </div>
@@ -98,7 +98,7 @@ function ProducerDetails() {
           {/* Main Content */}
           <div className="bg-white dark:bg-gray-800 rounded-xl mt-20 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                   {/* Back Link */}
-          <Link to="/producers" className="text-blue-600 mb-4 p-2 dark:text-blue-400 hover:underline inline-flex items-center gap-2">
+          <Link to="/" className="text-blue-600 mb-4 p-2 dark:text-blue-400 hover:underline inline-flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Producers
           </Link>

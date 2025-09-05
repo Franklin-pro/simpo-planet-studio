@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import light from '../assets/SIMPO-Logo.jpeg';
 // import dark from '../assets/dark.jpeg';
 
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 
 
@@ -38,12 +39,37 @@ const Header = () => {
             >
               Gallery
             </a>
-             <a
-             href='/filmmakers'
-              className="text-white hover:text-red-500 transition-colors"
-            >
-              Film Makers
-            </a>
+            <div className="relative">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-1 text-white hover:text-red-500 transition-colors"
+              >
+                Talent
+                <ChevronDown className="h-4 w-4" />
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2">
+                  <a
+                    href="/artists"
+                    className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-500 transition-colors"
+                  >
+                    Artists
+                  </a>
+                  <a
+                    href="/filmmakers"
+                    className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-500 transition-colors"
+                  >
+                    Filmmakers
+                  </a>
+                  <a
+                    href="/producers"
+                    className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-500 transition-colors"
+                  >
+                    Producers
+                  </a>
+                </div>
+              )}
+            </div>
             <a
             href='/musics'
               className="text-white hover:text-red-500 transition-colors"
@@ -98,11 +124,23 @@ const Header = () => {
               >
                 Gallery
               </a>
+              <a
+               href='/artists'
+                className="text-white hover:text-red-500 transition-colors text-left"
+              >
+                Artists
+              </a>
                   <a
                href='/filmmakers'
                 className="text-white hover:text-red-500 transition-colors text-left"
               >
-                Film Makers
+                Filmmakers
+              </a>
+              <a
+               href='/producers'
+                className="text-white hover:text-red-500 transition-colors text-left"
+              >
+                Producers
               </a>
               <a
               href="/contacts"

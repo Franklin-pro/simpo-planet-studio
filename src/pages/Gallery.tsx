@@ -6,10 +6,7 @@ function Gallery() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-black text-white pt-24">
-        <ArtGallery />
-      </div>
-
+      <ArtGallery />
       <Footer />
     </>
   );
