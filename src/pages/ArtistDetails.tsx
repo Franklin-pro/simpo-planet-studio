@@ -90,7 +90,7 @@ const ArtistDetails = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
         <div className="max-w-6xl mx-auto px-4 mt-20 sm:px-6 lg:px-8">
           {/* Back Link */}
-          <Link to="/artists" className="text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-flex items-center gap-2">
+          <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Artists
           </Link>

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Film, ZoomIn, Calendar } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -15,7 +17,7 @@ interface Filmmaker {
 const FilmMakerPage = () => {
   const [filmmakers, setFilmmakers] = useState<Filmmaker[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [filter, setFilter] = useState("All");
 
   useEffect(() => {
     fetchFilmmakers();
@@ -27,42 +29,31 @@ const FilmMakerPage = () => {
       const data = await response.json();
       setFilmmakers(data || []);
     } catch (err) {
-      setError('Failed to load filmmakers');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
+  const categories = ["All", ...new Set(filmmakers.map((f) => f.specialization))];
+  const filteredFilmmakers = filter === "All" ? filmmakers : filmmakers.filter((f) => f.specialization === filter);
+
   if (loading) {
     return (
       <>
         <Header/>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading filmmakers...</p>
+        <section className="py-20 bg-black">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="break-inside-avoid animate-pulse">
+                  <div className="bg-gray-800 rounded-2xl h-80 mb-8"></div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <Header/>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
-            <button 
-              onClick={fetchFilmmakers}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
+        </section>
+        <Footer/>
       </>
     );
   }
@@ -70,46 +61,109 @@ const FilmMakerPage = () => {
   return (
     <>
       <Header/>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-        <div className="max-w-7xl mx-auto px-4 mt-20 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Our Filmmakers</h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300">Meet our talented team of creative professionals</p>
+      <section className="py-20 bg-black text-white">
+        {/* Hero Section */}
+        <div className="relative py-20 px-4">
+          <div className="absolute inset-0 bg-gradient-to-b from-red-900/20 to-transparent"></div>
+          <div className="relative max-w-7xl mx-auto text-center">
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-6xl md:text-8xl font-bold mb-6"
+            >
+              Our <span className="text-red-500">Filmmakers</span>
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-xl text-gray-300 max-w-2xl mx-auto mb-12"
+            >
+              Meet the visionary creators behind stunning visual storytelling
+            </motion.p>
+
+            {/* Category Filters */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex flex-wrap justify-center gap-4 mb-16"
+            >
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setFilter(category)}
+                  className={`px-8 py-3 rounded-full font-medium transition-all duration-300 ${
+                    filter === category
+                      ? "bg-red-600 text-white shadow-lg shadow-red-600/25"
+                      : "bg-white/10 text-gray-300 hover:bg-white/20 backdrop-blur-sm border border-white/20"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </motion.div>
           </div>
-          
-          {filmmakers.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-400">No filmmakers found</p>
+        </div>
+
+        {/* Filmmakers Masonry Grid */}
+        <div className="max-w-7xl mx-auto px-4 pb-20">
+          {filteredFilmmakers.length === 0 ? (
+            <div className="text-center py-20">
+              <Film className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-2xl font-bold text-gray-400 mb-4">No filmmakers found</h3>
+              <p className="text-gray-500">Try selecting a different category</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filmmakers.map((filmmaker) => (
-                <div key={filmmaker._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                  <img 
-                    src={filmmaker.image || '/placeholder-image.jpg'} 
-                    alt={filmmaker.name}
-                    className="w-full h-64 object-cover object-top"
-                  />
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{filmmaker.name}</h3>
-                    <p className="text-blue-600 dark:text-blue-400 font-medium mb-3">{filmmaker.specialization}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{filmmaker.bio}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{filmmaker.experience} years exp.</span>
-                      <Link 
-                        to={`/filmmakers/${filmmaker._id}`}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-                      >
-                        View Details
-                      </Link>
+            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
+              {filteredFilmmakers.map((filmmaker, index) => (
+                <motion.div
+                  key={filmmaker._id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="break-inside-avoid group cursor-pointer"
+                >
+                  <Link to={`/filmmakers/${filmmaker._id}`}>
+                    <div className="relative overflow-hidden rounded-2xl bg-gray-900 shadow-2xl">
+                      <img
+                        src={filmmaker.image || "https://via.placeholder.com/400x500?text=Filmmaker"}
+                        alt={filmmaker.name}
+                        className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="absolute bottom-0 left-0 right-0 p-6">
+                          <h3 className="text-xl font-bold text-white mb-2">{filmmaker.name}</h3>
+                          <p className="text-gray-300 text-sm mb-4 line-clamp-2">{filmmaker.bio}</p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4 text-sm text-gray-300">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-4 w-4" />
+                                <span>{filmmaker.experience} years</span>
+                              </div>
+                              <span className="px-2 py-1 bg-red-600 rounded-full text-xs">
+                                {filmmaker.specialization}
+                              </span>
+                            </div>
+                            <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
+                              <ZoomIn className="h-5 w-5 text-white" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Hover Effect Border */}
+                      <div className="absolute inset-0 border-2 border-transparent group-hover:border-red-500/50 rounded-2xl transition-colors duration-500"></div>
                     </div>
-                  </div>
-                </div>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           )}
         </div>
-      </div>
+      </section>
       <Footer/>
     </>
   );

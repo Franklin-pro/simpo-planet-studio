@@ -28,6 +28,8 @@ import GalleryDetails from './pages/GalleryDetails';
 import ManageUsers from './components/Dashboard/ManageUsers';
 import Messages from './pages/admin/Messages';
 import ManageFilmmakers from './components/Dashboard/ManageFilmmakers';
+import ProducersPage from './pages/producers';
+import ArtistsPage from './pages/ArtistsPage';
 function App() {
 
   return (
@@ -43,6 +45,8 @@ function App() {
     <Route path="/gallery/:id" element={<GalleryDetails />} />
     <Route path="/abouts" element={<Abouts />} />
     <Route path="/musics" element={<Musics />} />
+    <Route path="/artists" element={<ArtistsPage />} />
+    <Route path="/producers" element={<ProducersPage />} />
     <Route path="/filmmakers" element={<FilmMakerPage />}/>
     <Route path="/filmmakers/:id" element={<FilmMakerDetailsPage />}/>
     <Route path="/login" element={<LoginAccount />} />

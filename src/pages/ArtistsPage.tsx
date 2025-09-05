@@ -1,16 +1,15 @@
-
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Producers from '../components/Producers';
+import ArtistSection from '../components/ArtistSection';
 
-function ProducersPage() {
+function ArtistsPage() {
   return (
     <div>
       <Header />
-      <Producers />
+      <ArtistSection />
       <Footer />
     </div>
   )
 }
 
-export default ProducersPage
+export default ArtistsPage

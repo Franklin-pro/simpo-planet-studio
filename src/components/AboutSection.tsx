@@ -1,57 +1,95 @@
-import { Award, Users, Clock, Target } from "lucide-react";
-import about from "../assets/about.png"; // Adjust the path as necessary
+import { Award, Users, Clock, Target, Music, Star, Globe, Heart } from "lucide-react";
+import about from "../assets/about.png";
 import { motion } from 'framer-motion';
 
 const AboutSection = () => {
   const stats = [
-    { icon: <Users className="w-8 h-8" />, number: "70+", label: "Artist Trained" },
-    { icon: <Award className="w-8 h-8" />, number: "15+", label: "Years Experience" },
-    { icon: <Clock className="w-8 h-8" />, number: "24/7", label: "Support Available" },
-    { icon: <Target className="w-8 h-8" />, number: "95%", label: "Success Rate" },
+    { icon: <Users className="w-6 h-6" />, number: "70+", label: "Artists Trained" },
+    { icon: <Award className="w-6 h-6" />, number: "15+", label: "Years Experience" },
+    { icon: <Clock className="w-6 h-6" />, number: "24/7", label: "Support Available" },
+    { icon: <Target className="w-6 h-6" />, number: "95%", label: "Success Rate" },
+  ];
+
+  const features = [
+    {
+      icon: <Music className="w-6 h-6" />,
+      title: "Professional Recording",
+      description: "State-of-the-art studio equipment and acoustics"
+    },
+    {
+      icon: <Star className="w-6 h-6" />,
+      title: "Artist Development",
+      description: "Comprehensive training and mentorship programs"
+    },
+    {
+      icon: <Globe className="w-6 h-6" />,
+      title: "Global Reach",
+      description: "International distribution and promotion networks"
+    },
+    {
+      icon: <Heart className="w-6 h-6" />,
+      title: "Community Focus",
+      description: "Supporting local talent and cultural expression"
+    }
   ];
 
   return (
-    <section id="about" className="py-20 bg-gray-900 text-white">
-      <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left - Image */}
+    <section id="about" className="py-20 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-16">
           <motion.div
-            className="relative w-full rounded-lg overflow-hidden"
-            initial={{ scale: 0.95, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1, ease: "easeInOut" }}
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <img src={about} alt="About Us" />
-          </motion.div>
-
-          {/* Right - Content */}
-          <motion.div
-            className="space-y-8"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeInOut" }}
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-sm font-medium mb-4"
           >
-            <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                About <span className="text-red-500">Our Label Music</span>
-              </h2>
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                SimpoPlanet is a dynamic music label based in East Africa,
-                Rwanda, with a mission to discover, nurture, and promote
-                emerging talent in the music industry. Through our
-                state-of-the-art Simpo Studio, we provide a creative space where
-                new singers and music producers can grow, express themselves,
+            <Heart className="h-4 w-4" />
+            About Our Label
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
+          >
+            Shaping the Future of <span className="text-red-600 dark:text-red-400">East African Music</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
+          >
+            Discover how we're revolutionizing the music industry in Rwanda and beyond
+          </motion.p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+          {/* Left - Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
+          >
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Our Mission & Vision
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                SimpoPlanet is a dynamic music label based in East Africa, Rwanda, with a mission to discover, 
+                nurture, and promote emerging talent in the music industry. Through our state-of-the-art Simpo Studio, 
+                we provide a creative space where new singers and music producers can grow, express themselves, 
                 and share their voices with the world.
               </p>
-              <p className="text-gray-300 text-lg leading-relaxed">
-                At SimpoPlanet, we believe in the power of music to inspire and
-                connect people. We are committed to supporting the next
-                generation of artists by offering them professional guidance,
-                high-quality production, and the exposure they need to reach a
-                wider audience. Join us on our journey to shape the future of
-                music—one artist at a time.
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                At SimpoPlanet, we believe in the power of music to inspire and connect people. We are committed 
+                to supporting the next generation of artists by offering them professional guidance, high-quality 
+                production, and the exposure they need to reach a wider audience.
               </p>
             </div>
 
@@ -60,22 +98,107 @@ const AboutSection = () => {
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
-                  className="text-center space-y-2"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.2, duration: 0.6, type: "spring", stiffness: 100 }}
-                  viewport={{ once: true, amount: 0.3 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center"
                 >
-                  <div className="text-red-500 flex justify-center">
-                    {stat.icon}
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg mb-3">
+                    <div className="text-red-600 dark:text-red-400">
+                      {stat.icon}
+                    </div>
                   </div>
-                  <div className="text-2xl font-bold">{stat.number}</div>
-                  <div className="text-gray-400 text-sm">{stat.label}</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{stat.number}</div>
+                  <div className="text-gray-600 dark:text-gray-400 text-sm">{stat.label}</div>
                 </motion.div>
               ))}
             </div>
           </motion.div>
+
+          {/* Right - Image */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative"
+          >
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              <img 
+                src={about} 
+                alt="About Simpo Planet Studio" 
+                className="w-full h-[500px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+              
+              {/* Floating Badge */}
+              <div className="absolute top-6 left-6 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                  <span className="text-gray-900 dark:text-white text-sm font-medium">Recording Live</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
+
+        {/* Features Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow duration-300"
+            >
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg mb-4">
+                <div className="text-red-600 dark:text-red-400">
+                  {feature.icon}
+                </div>
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                {feature.title}
+              </h4>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                {feature.description}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mt-16"
+        >
+          <div className="bg-gradient-to-r from-red-600/15 to-red-700/10 rounded-2xl p-8 md:p-12">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Ready to Start Your Musical Journey?
+            </h3>
+            <p className="text-red-100 mb-8 max-w-2xl mx-auto">
+              Join us on our journey to shape the future of music—one artist at a time. 
+              Let's create something amazing together.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                Get Started Today
+              </button>
+              <button className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
+                Learn More
+              </button>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
