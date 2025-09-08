@@ -59,7 +59,7 @@ const FounderSection = () => {
               <img
                 src={founder}
                 alt="Simpo Savior - Founder"
-                className="w-full h-[600px] object-cover"
+                className="w-full h-[600px] object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
               
