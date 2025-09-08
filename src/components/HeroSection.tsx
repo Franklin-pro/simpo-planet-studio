@@ -102,6 +102,7 @@ const HeroSection = () => {
                 className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border border-white/20 hover:border-red-500/50 rounded-full text-white font-semibold text-base sm:text-lg transition-all duration-300"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/musics')}
               >
                 Explore Music
               </motion.button>

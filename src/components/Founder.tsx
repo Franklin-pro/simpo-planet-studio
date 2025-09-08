@@ -168,12 +168,16 @@ const FounderSection = () => {
               with many across the continent, establishing Simpo Savior as a voice of conscious music.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <button
+              onClick={() => window.location.href = '/musics'}
+               className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
                 Listen Now
               </button>
-              <button className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
+              {/* <button 
+              onClick={() => window.location.href = '/discography'}
+              className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
                 View Discography
-              </button>
+              </button> */}
             </div>
           </div>
         </motion.div>

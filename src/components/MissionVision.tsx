@@ -166,11 +166,10 @@ const MissionVisionSection = () => {
               producer, or music enthusiast, there's a place for you in our community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <button 
+              onClick={() => window.location.href = '/contacts'}
+               className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
                 Join Our Community
-              </button>
-              <button className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
-                Learn More
               </button>
             </div>
           </div>

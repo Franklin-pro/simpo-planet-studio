@@ -21,11 +21,11 @@ const AboutSection = () => {
       title: "Artist Development",
       description: "Comprehensive training and mentorship programs"
     },
-    {
-      icon: <Globe className="w-6 h-6" />,
-      title: "Global Reach",
-      description: "International distribution and promotion networks"
-    },
+    // {
+    //   icon: <Globe className="w-6 h-6" />,
+    //   title: "Global Reach",
+    //   description: "International distribution and promotion networks"
+    // },
     {
       icon: <Heart className="w-6 h-6" />,
       title: "Community Focus",
@@ -131,14 +131,6 @@ const AboutSection = () => {
                 className="w-full h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-              
-              {/* Floating Badge */}
-              <div className="absolute top-6 left-6 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg p-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                  <span className="text-gray-900 dark:text-white text-sm font-medium">Recording Live</span>
-                </div>
-              </div>
             </div>
           </motion.div>
         </div>
@@ -190,10 +182,14 @@ const AboutSection = () => {
               Let's create something amazing together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <button
+              onClick={() => window.location.href = '/contacts'}
+               className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
                 Get Started Today
               </button>
-              <button className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
+              <button
+                onClick={() => window.location.href = '/abouts'}
+               className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
                 Learn More
               </button>
             </div>
