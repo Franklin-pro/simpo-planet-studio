@@ -320,6 +320,7 @@ function CreateProducer() {
                   maxLength: { value: 500, message: "Bio should not exceed 500 characters" }
                 })}
                 onChange={handleChange}
+                maxLength={500}
                 rows={5}
                 className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 ${errors.bio ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'}`}
                 placeholder="Describe your musical background, specialties, and approach to production..."
