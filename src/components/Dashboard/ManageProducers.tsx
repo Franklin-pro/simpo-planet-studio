@@ -25,6 +25,10 @@ export default function ManageProducers() {
     level: string;
     yearsExperience: number;
     profileImage: string;
+    genres: string[];
+    skills: string[];
+    credits: string[];
+    socialMedia: Record<string, string>;
   }
 
   useEffect(() => {
@@ -65,19 +69,36 @@ export default function ManageProducers() {
     setIsEditing(true);
   };
 
-  const handleUpdate = async () => {
-    if (!editingProducer) return;
+const handleUpdate = async () => {
+  if (!editingProducer) return;
 
-    try {
-      await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/producer/${editingProducer._id}`, editingProducer);
-      alert("Producer updated successfully.");
-      setIsEditing(false);
-      fetchProducers();
-    } catch (err) {
-      alert("Update failed.");
-      console.error(err);
-    }
-  };
+  try {
+    await axios.put(
+      `https://simpo-planet-studio-bn.onrender.com/api/v1/producer/${editingProducer._id}`,
+      {
+        name: editingProducer.name,
+        level: editingProducer.level,
+        bio: editingProducer.bio,
+        contactEmail: editingProducer.email,
+        yearsExperience: editingProducer.yearsExperience,
+
+        // stringify complex fields
+        genres: JSON.stringify(editingProducer.genres || []),
+        skills: JSON.stringify(editingProducer.skills || []),
+        credits: JSON.stringify(editingProducer.credits || []),
+        socialMedia: JSON.stringify(editingProducer.socialMedia || {}),
+      }
+    );
+
+    alert("Producer updated successfully.");
+    setIsEditing(false);
+    fetchProducers();
+  } catch (err) {
+    alert("Update failed.");
+    console.error(err);
+  }
+};
+
 
   const filterByDate = (producer: Producer) => {
     const now = new Date();
@@ -143,13 +164,18 @@ export default function ManageProducers() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">level</label>
-                  <input
-                    type="text"
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Level</label>
+                  <select
                     value={editingProducer.level}
                     onChange={(e) => setEditingProducer({ ...editingProducer, level: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                  >
+                    <option value="">Select Level</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Mid-level">Mid-level</option>
+                    <option value="Senior">Senior</option>
+                    <option value="Legendary">Legendary</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">yearsExperience (years)</label>
