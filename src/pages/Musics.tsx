@@ -540,7 +540,7 @@ const Musics = () => {
                   <img
                     src={music.coverImageUrl}
                     alt={music.title}
-                    className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-64 object-cover object-top transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x400?text=Music+Cover';
                     }}
