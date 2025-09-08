@@ -1,4 +1,4 @@
-import { Award, Users, Clock, Target, Music, Star, Globe, Heart } from "lucide-react";
+import { Award, Users, Clock, Target, Music, Star, Heart } from "lucide-react";
 import about from "../assets/about.png";
 import { motion } from 'framer-motion';
 
