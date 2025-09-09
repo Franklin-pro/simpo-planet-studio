@@ -25,7 +25,7 @@ export default function ManageProducers() {
     bio: string;
     level: string;
     yearsExperience: number;
-    profileImage: string;
+    image: string;
     genres: string[];
     skills: string[];
     credits: string[];
@@ -190,6 +190,21 @@ const handleUpdate = async () => {
                     onChange={(e) => setEditingProducer({ ...editingProducer, yearsExperience: parseInt(e.target.value) })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        // Handle file upload logic here
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Current: {editingProducer.image}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
@@ -363,8 +378,8 @@ const handleUpdate = async () => {
                       <td className="py-4 px-6">
                         <div className="flex items-center">
                           <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-600 overflow-hidden">
-                            {producer.profileImage ? (
-                              <img src={producer.profileImage} alt={producer.name} className="h-full w-full object-cover" />
+                            {producer.image ? (
+                              <img src={producer.image} alt={producer.name} className="h-full w-full object-cover" />
                             ) : (
                               <div className="h-full w-full flex items-center justify-center">
                                 <User className="h-6 w-6 text-gray-400" />
