@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import light from '../assets/SIMPO-Logo.jpeg';
 // import dark from '../assets/dark.jpeg';
 
@@ -7,11 +8,14 @@ import light from '../assets/SIMPO-Logo.jpeg';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const location = useLocation();
+  
+  const isActive = (path: string) => location.pathname === path;
 
 
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/15 backdrop-blur-sm">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="text-2xl font-bold text-white">
@@ -23,19 +27,31 @@ const Header = () => {
           
             <a
               href='/'
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
               Home
             </a>
             <a
               href="/abouts"
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/abouts') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
               About us
             </a>
             <a
              href='/gallery'
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/gallery') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
               Gallery
             </a>
@@ -72,13 +88,21 @@ const Header = () => {
             </div>
             <a
             href='/musics'
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/musics') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
               Musics
             </a>
             <a
             href='/contacts'
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/contacts') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
               Contact Us
             </a>
@@ -102,49 +126,81 @@ const Header = () => {
             <div className="flex flex-col space-y-4">
                  <a
               href="/"
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
              Home
             </a>
                   <a
               href="/abouts"
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/abouts') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
               About us
             </a>
                    <a
               href="/musics"
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/musics') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
              Musics
             </a>
               <a
                href='/gallery'
-                className="text-white hover:text-red-500 transition-colors text-left"
+                className={`transition-colors text-left ${
+                  isActive('/gallery') 
+                    ? 'text-red-500 font-bold' 
+                    : 'text-white hover:text-red-500'
+                }`}
               >
                 Gallery
               </a>
               <a
                href='/artists'
-                className="text-white hover:text-red-500 transition-colors text-left"
+                className={`transition-colors text-left ${
+                  isActive('/artists') 
+                    ? 'text-red-500 font-bold' 
+                    : 'text-white hover:text-red-500'
+                }`}
               >
                 Artists
               </a>
                   <a
                href='/filmmakers'
-                className="text-white hover:text-red-500 transition-colors text-left"
+                className={`transition-colors text-left ${
+                  isActive('/filmmakers') 
+                    ? 'text-red-500 font-bold' 
+                    : 'text-white hover:text-red-500'
+                }`}
               >
                 Filmmakers
               </a>
               <a
                href='/producers'
-                className="text-white hover:text-red-500 transition-colors text-left"
+                className={`transition-colors text-left ${
+                  isActive('/producers') 
+                    ? 'text-red-500 font-bold' 
+                    : 'text-white hover:text-red-500'
+                }`}
               >
                 Producers
               </a>
               <a
               href="/contacts"
-              className="text-white hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isActive('/contacts') 
+                  ? 'text-red-500 font-bold' 
+                  : 'text-white hover:text-red-500'
+              }`}
             >
               Contact us
             </a>

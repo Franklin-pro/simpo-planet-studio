@@ -400,7 +400,7 @@ const Musics = () => {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24 pb-16">
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-16">
           <div className="container mx-auto px-4 text-center py-20">
             <div className="animate-pulse flex flex-col items-center">
               <div className="h-12 w-64 bg-gray-800 rounded mb-4"></div>
@@ -426,7 +426,7 @@ const Musics = () => {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24 pb-16">
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-16">
           <div className="container mx-auto px-4 text-center py-20">
             <div className="bg-red-900/20 p-8 rounded-xl max-w-2xl mx-auto">
               <h2 className="text-2xl font-bold mb-4">Error Loading Music</h2>
@@ -449,7 +449,7 @@ const Musics = () => {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24 pb-16">
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-16">
           <div className="container mx-auto px-4 text-center py-20">
             <div className="bg-gray-800/20 p-8 rounded-xl max-w-2xl mx-auto">
               <h2 className="text-2xl font-bold mb-4">No Music Available</h2>
@@ -471,7 +471,7 @@ const Musics = () => {
   return (
     <>
       <Header />
-      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pt-24 pb-16'>
+      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-16'>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -479,7 +479,7 @@ const Musics = () => {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl pt-8 font-bold mb-4">
               Latest <span className='text-red-500'>Releases</span>
             </h1>
             <motion.p
@@ -496,7 +496,7 @@ const Musics = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
-                className="mt-6 bg-gray-800/50 p-4 rounded-lg max-w-md mx-auto"
+                className="mt-6 bg-gray-800/50 p-4 rounded-lg pt-5 max-w-md mx-auto"
               >
                 <p className="text-gray-300 mb-2 flex items-center justify-center">
                   <User size={16} className="mr-2" />

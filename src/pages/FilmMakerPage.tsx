@@ -42,7 +42,7 @@ const FilmMakerPage = () => {
     return (
       <>
         <Header/>
-        <section className="py-20 bg-black">
+        <section className=" bg-black">
           <div className="max-w-7xl mx-auto px-4">
             <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
               {[...Array(6)].map((_, i) => (
@@ -61,9 +61,9 @@ const FilmMakerPage = () => {
   return (
     <>
       <Header/>
-      <section className="py-20 bg-black text-white">
+      <section className=" bg-black text-white">
         {/* Hero Section */}
-        <div className="relative py-20 px-4">
+        <div className="relative py-8 px-4">
           <div className="absolute inset-0 bg-gradient-to-b from-red-900/20 to-transparent"></div>
           <div className="relative max-w-7xl mx-auto text-center">
             <motion.h1 
