@@ -14,6 +14,7 @@ export default function ManageMusic() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   interface MusicTrack {
     id: string;
@@ -21,10 +22,16 @@ export default function ManageMusic() {
     _id: string;
     title: string;
     artist: string;
+    album: string;
     genre: string;
-    duration: string;
+    duration: number;
     audioUrl: string;
-    image: string;
+    coverImageUrl: string;
+    youtubeLink: string;
+    tags: string[];
+    isActive: boolean;
+    playCount: number;
+    releaseDate: string;
   }
 
   useEffect(() => {
@@ -35,10 +42,9 @@ export default function ManageMusic() {
     try {
       const response = await axios.get("https://simpo-planet-studio-bn.onrender.com/api/v1/music");
       setMusicTracks(response.data.data.docs || []);
-      console.log(response.data.data.docs);
     } catch (err) {
+      console.error('fetching music tracks.',err);
       setError("Failed to load music tracks.");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -54,8 +60,8 @@ export default function ManageMusic() {
       setDeleteId(null);
       fetchMusicTracks();
     } catch (err) {
+      console.error('handle to delete.',err);
       alert("Delete failed.");
-      console.error(err);
     } finally {
       setIsDeleting(false);
     }
@@ -68,6 +74,7 @@ export default function ManageMusic() {
 
   const handleUpdate = async () => {
     if (!editingMusic) return;
+    setIsUpdating(true);
 
     try {
       await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/music/${editingMusic._id}`, editingMusic);
@@ -75,8 +82,11 @@ export default function ManageMusic() {
       setIsEditing(false);
       fetchMusicTracks();
     } catch (err) {
+      console.error('handle to update.',err);
       alert("Update failed.");
-      console.error(err);
+    }
+    finally {
+      setIsUpdating(false);
     }
   };
 
@@ -124,7 +134,7 @@ export default function ManageMusic() {
               <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Music Track</h2>
               </div>
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
                   <input
@@ -144,6 +154,15 @@ export default function ManageMusic() {
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Album</label>
+                  <input
+                    type="text"
+                    value={editingMusic.album}
+                    onChange={(e) => setEditingMusic({ ...editingMusic, album: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Genre</label>
                   <input
                     type="text"
@@ -153,13 +172,72 @@ export default function ManageMusic() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Duration</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Duration (seconds)</label>
                   <input
-                    type="text"
+                    type="number"
                     value={editingMusic.duration}
-                    onChange={(e) => setEditingMusic({ ...editingMusic, duration: e.target.value })}
+                    onChange={(e) => setEditingMusic({ ...editingMusic, duration: parseInt(e.target.value) })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Audio File</label>
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        // Handle file upload logic here
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Current: {editingMusic.audioUrl}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cover Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        // Handle file upload logic here
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Current: {editingMusic.coverImageUrl}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">YouTube Link</label>
+                  <input
+                    type="url"
+                    value={editingMusic.youtubeLink}
+                    onChange={(e) => setEditingMusic({ ...editingMusic, youtubeLink: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags (comma separated)</label>
+                  <input
+                    type="text"
+                    value={editingMusic.tags?.join(', ') || ''}
+                    onChange={(e) => setEditingMusic({ ...editingMusic, tags: e.target.value.split(',').map(tag => tag.trim()) })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={editingMusic.isActive}
+                      onChange={(e) => setEditingMusic({ ...editingMusic, isActive: e.target.checked })}
+                      className="mr-2"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Active</span>
+                  </label>
                 </div>
               </div>
               <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
@@ -173,7 +251,10 @@ export default function ManageMusic() {
                   onClick={handleUpdate}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                 >
-                  Update Track
+                  {
+                    isUpdating ? 'Updating...' : 'Update Track'
+                  }
+           
                 </button>
               </div>
             </div>
@@ -320,8 +401,8 @@ export default function ManageMusic() {
                       <td className="py-4 px-6">
                         <div className="flex items-center">
                           <div className="h-12 w-12 rounded-lg bg-gray-200 dark:bg-gray-600 overflow-hidden">
-                            {track.image ? (
-                              <img src={track.image} alt={track.title} className="h-full w-full object-cover" />
+                            {track.coverImageUrl ? (
+                              <img src={track.coverImageUrl} alt={track.title} className="h-full w-full object-cover" />
                             ) : (
                               <div className="h-full w-full flex items-center justify-center">
                                 <Music className="h-6 w-6 text-gray-400" />

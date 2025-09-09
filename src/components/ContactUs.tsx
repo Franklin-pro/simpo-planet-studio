@@ -24,7 +24,7 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await axios.post("https://simpo-planet-studio-bn.onrender.com/api/v1/contact", form);
+      const res = await axios.post("http://localhost:3000/api/v1/contact", form);
       
       if (res.status < 200 || res.status >= 300) {
         throw new Error("Failed to send message");
@@ -50,7 +50,7 @@ const ContactSection = () => {
     {
       icon: <Mail className="w-6 h-6" />,
       title: "Email",
-      details: "Simpoplanet@gmail.com",
+      details: "simpoplanet@gmail.com",
       color: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
     },
     {

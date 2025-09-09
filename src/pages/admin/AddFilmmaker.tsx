@@ -181,9 +181,11 @@ const AddFilmmaker = () => {
                 >
                   <option value="Director">Director</option>
                   <option value="Producer">Producer</option>
-                  <option value="Cinematographer">Cinematographer</option>
+                  <option value="Screenwriter">Makeup Artist</option>
+                  <option value="Editor">D.O.P</option>
+                  <option value="Sound Designer">Sound Designer</option>
+                  <option value="Actor">Graphic Design</option>
                   <option value="Editor">Editor</option>
-                  <option value="Writer">Writer</option>
                 </select>
               </div>
 

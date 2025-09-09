@@ -9,6 +9,7 @@ import ArtGallery from '../components/Gallery';
 import ContactSection from '../components/ContactUs';
 import Footer from '../components/Footer';
 import Producers from '../components/Producers';
+import PRpage from './PR-page';
 
 const Index = () => {
   return (
@@ -17,6 +18,7 @@ const Index = () => {
 <HeroSection/>
 <AboutSection/>
 <FounderSection/>
+<PRpage/>
 <MissionVisionSection/>
 <Producers isHomePage={true} />
 <ArtistSection isHomePage={true} />
