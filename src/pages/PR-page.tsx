@@ -1,13 +1,14 @@
 import { motion } from "framer-motion";
 import whatapp from "../assets/whatsapp.png";
+import pr from "../assets/PR.jpeg";
 
 
 function PRpage() {
   const prData = {
-    image: "https://physicaleducationandwellness.mit.edu/wp-content/uploads/Untitled-1.png",
-    name: "Sarah Johnson",
+    image: pr,
+    name: "Ladouce",
     role: "Public Relations Manager",
-    biography: "Sarah is a seasoned PR professional with over 8 years of experience in the music industry. She has successfully managed publicity campaigns for numerous artists, helping them build their brand and connect with their audience. Her expertise includes media relations, brand strategy, social media management, and crisis communication. Sarah's passion for music and her strategic approach have made her an invaluable asset to artists looking to elevate their public presence."
+    biography: "Ladouce is a seasoned PR professional with over 8 years of experience in the music industry. She has successfully managed publicity campaigns for numerous artists, helping them build their brand and connect with their audience. Her expertise includes media relations, brand strategy, social media management, and crisis communication. Sarah's passion for music and her strategic approach have made her an invaluable asset to artists looking to elevate their public presence."
   };
 
   return (

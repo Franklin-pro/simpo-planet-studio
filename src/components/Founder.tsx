@@ -22,7 +22,7 @@ const FounderSection = () => {
   ];
 
   return (
-    <section className=" bg-gray-50 dark:bg-gray-900">
+    <section className=" bg-gray-50 pb-20 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -148,39 +148,7 @@ const FounderSection = () => {
           </motion.div>
         </div>
 
-        {/* Featured Album Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-gradient-to-r from-red-600/15 to-red-700/10 rounded-2xl p-8 md:p-12 text-center"
-        >
-          <div className="max-w-3xl mx-auto">
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Featured Album
-            </h3>
-            <h4 className="text-xl md:text-2xl font-semibold text-red-100 mb-6">
-              "Africa, Why Do Your Profits Go Abroad?"
-            </h4>
-            <p className="text-red-100 leading-relaxed mb-8">
-              A bold musical critique of economic exploitation, neocolonialism, and the continuous 
-              loss of Africa's wealth to foreign interests. This groundbreaking album struck a chord 
-              with many across the continent, establishing Simpo Savior as a voice of conscious music.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-              onClick={() => window.location.href = '/musics'}
-               className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                Listen Now
-              </button>
-              {/* <button 
-              onClick={() => window.location.href = '/discography'}
-              className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
-                View Discography
-              </button> */}
-            </div>
-          </div>
-        </motion.div>
+
       </div>
     </section>
   );
