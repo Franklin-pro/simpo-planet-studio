@@ -14,13 +14,14 @@ export default function ManageProducers() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   interface Producer {
     id: string;
     createdAt: string;
     _id: string;
     name: string;
-    email: string;
+    contactEmail: string;
     bio: string;
     level: string;
     yearsExperience: number;
@@ -71,6 +72,7 @@ export default function ManageProducers() {
 
 const handleUpdate = async () => {
   if (!editingProducer) return;
+  setIsUpdating(true);
 
   try {
     await axios.put(
@@ -79,7 +81,7 @@ const handleUpdate = async () => {
         name: editingProducer.name,
         level: editingProducer.level,
         bio: editingProducer.bio,
-        contactEmail: editingProducer.email,
+        contactEmail: editingProducer.contactEmail,
         yearsExperience: editingProducer.yearsExperience,
 
         // stringify complex fields
@@ -96,6 +98,9 @@ const handleUpdate = async () => {
   } catch (err) {
     alert("Update failed.");
     console.error(err);
+  }
+  finally {
+    setIsUpdating(false);
   }
 };
 
@@ -158,8 +163,8 @@ const handleUpdate = async () => {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
                   <input
                     type="email"
-                    value={editingProducer.email}
-                    onChange={(e) => setEditingProducer({ ...editingProducer, email: e.target.value })}
+                    value={editingProducer.contactEmail}
+                    onChange={(e) => setEditingProducer({ ...editingProducer, contactEmail: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -209,7 +214,10 @@ const handleUpdate = async () => {
                   onClick={handleUpdate}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                 >
-                  Update Producer
+                 {
+                    isUpdating ? 'Updating...' : 'Update Track'
+                  }
+           
                 </button>
               </div>
             </div>
@@ -365,7 +373,7 @@ const handleUpdate = async () => {
                           </div>
                           <div className="ml-4">
                             <p className="font-medium text-gray-900 dark:text-white">{producer.name}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{producer.email}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{producer.contactEmail}</p>
                           </div>
                         </div>
                       </td>
