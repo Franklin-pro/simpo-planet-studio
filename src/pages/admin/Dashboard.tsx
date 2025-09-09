@@ -73,8 +73,8 @@ const Dashboard = () => {
     try {
       // Fetch both current analytics and historical data
       const [analyticsResponse, monthlyResponse] = await Promise.all([
-        fetch("http://localhost:3000/api/v1/dashboard/analytics"),
-        fetch(`http://localhost:3000/api/v1/dashboard/monthly-data?range=${timeRange}`)
+        fetch("https://simpo-planet-studio-bn.onrender.com/api/v1/dashboard/analytics"),
+        fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/dashboard/monthly-data?range=${timeRange}`)
       ]);
 
       if (!analyticsResponse.ok) throw new Error("Failed to fetch analytics data");
