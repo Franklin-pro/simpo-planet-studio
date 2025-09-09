@@ -62,7 +62,7 @@ const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
   }
 
   return (
-    <section id="artists" className="py-20 bg-black text-white">
+    <section id="artists" className=" bg-black text-white">
       {/* Hero Section */}
       <div className="relative py-20 px-4">
         <div className="absolute inset-0 bg-gradient-to-b from-red-900/20 to-transparent"></div>

@@ -133,8 +133,8 @@ function LoginAccount() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-6xl shadow-xl rounded-lg overflow-hidden transition-all duration-500 hover:shadow-2xl bg-white">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-8 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-6xl shadow-xl rounded-lg overflow-hidden transition-all duration-500 hover:shadow-2xl bg-white dark:bg-gray-800">
         {/* Form Side */}
         <div 
           ref={formContainerRef}
@@ -144,16 +144,16 @@ function LoginAccount() {
             <a href="/" className='flex items-center gap-2 mb-2 text-red-500 transition-colors hover:text-red-700'>
               <ArrowLeft size={18}/> <span>back to home</span>
             </a>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 transition-all duration-500">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-all duration-500">
               {isCreateAccount ? 'Create Account' : 'Holla, Welcome Back'}
             </h2>
-            <p className="text-gray-500 transition-all duration-500">
+            <p className="text-gray-500 dark:text-gray-400 transition-all duration-500">
               {isCreateAccount ? 'Join our admin team and get access to exclusive tools' : 'Hey, welcome back to your special place only admin can logged in'}
             </p>
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md animate-fade-in">
+            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-md animate-fade-in">
               {error}
             </div>
           )}
@@ -162,7 +162,7 @@ function LoginAccount() {
             <div className="space-y-4">
               {isCreateAccount && (
                 <div className="animate-fade-in-down">
-                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Full Name
                   </label>
                   <input
@@ -171,12 +171,12 @@ function LoginAccount() {
                     value={username}
                     onChange={(e) => setusername(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
                   />
                 </div>
               )}
               <div className={isCreateAccount ? 'animate-fade-in-down delay-100' : ''}>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Email
                 </label>
                 <input
@@ -185,11 +185,11 @@ function LoginAccount() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="stanley@gmail.com"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
                 />
               </div>
               <div className={isCreateAccount ? 'animate-fade-in-down delay-200' : ''}>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Password
                 </label>
                 <input
@@ -198,7 +198,7 @@ function LoginAccount() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
                 />
               </div>
 
@@ -213,7 +213,7 @@ function LoginAccount() {
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 accent-red-600 rounded focus:ring-red-500 cursor-pointer"
                   />
-                  <span className="text-gray-600">Remember me</span>
+                  <span className="text-gray-600 dark:text-gray-400">Remember me</span>
                 </label>
               </div>
             )}

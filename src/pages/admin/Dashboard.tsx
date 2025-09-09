@@ -1,16 +1,16 @@
 import { Music, Image, } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import type { MouseEvent } from "react";
 
 interface MonthlyData {
   month: string;
-  year: number;
+  year?: number;
   artists: number;
-  music: number;
+  musics?: number;
+  music?: number;
   listens: number;
-  views: number;
-  newUsers: number;
-  newGallery: number;
+  views?: number;
+  newUsers?: number;
+  newGallery?: number;
 }
 
 interface DashboardData {
@@ -55,7 +55,6 @@ interface DashboardData {
     totalEngagement: number;
     activeUsers: number;
   };
-  // Add monthly data
   monthlyData?: MonthlyData[];
 }
 
@@ -74,8 +73,8 @@ const Dashboard = () => {
     try {
       // Fetch both current analytics and historical data
       const [analyticsResponse, monthlyResponse] = await Promise.all([
-        fetch("https://simpo-planet-studio-bn.onrender.com/api/v1/dashboard/analytics"),
-        fetch(`https://simpo-planet-studio-bn.onrender.com/api/v1/dashboard/monthly-data?range=${timeRange}`)
+        fetch("http://localhost:3000/api/v1/dashboard/analytics"),
+        fetch(`http://localhost:3000/api/v1/dashboard/monthly-data?range=${timeRange}`)
       ]);
 
       if (!analyticsResponse.ok) throw new Error("Failed to fetch analytics data");
@@ -86,7 +85,12 @@ const Dashboard = () => {
       // If monthly endpoint exists, use it
       if (monthlyResponse.ok) {
         const monthlyResult = await monthlyResponse.json();
-        monthlyData = monthlyResult.data || [];
+        monthlyData = (monthlyResult.data || []).map((item: any) => ({
+          ...item,
+          music: item.musics || item.music || 0,
+          views: item.views || 0,
+          year: item.year || new Date().getFullYear()
+        }));
       } else {
         // Fallback: generate realistic sample data based on current totals
         monthlyData = generateSampleMonthlyData(analyticsResult.data, timeRange);
@@ -103,43 +107,67 @@ const Dashboard = () => {
     }
   };
 
-  // Fallback function to generate realistic sample data
+  // FIXED: Improved fallback function with proper growth logic
   const generateSampleMonthlyData = (currentData: any, range: string): MonthlyData[] => {
     const monthCount = range === '6months' ? 6 : range === '12months' ? 12 : 24;
     const months = [];
     const currentDate = new Date();
     
+    // Ensure minimum values for realistic charts
+    const totalArtists = Math.max(currentData.overview?.totalArtists || 0, 100);
+    const totalMusic = Math.max(currentData.overview?.totalMusic || 0, 150);
+    const totalPlays = Math.max(currentData.engagement?.totalMusicPlays || 0, 1000);
+    const totalLikes = Math.max(currentData.engagement?.totalLikes || 0, 500);
+    
     for (let i = monthCount - 1; i >= 0; i--) {
       const date = new Date(currentDate);
       date.setMonth(date.getMonth() - i);
       
-      // Create more realistic growth patterns with some randomness
-      const baseProgress = (monthCount - i) / monthCount;
-      const randomFactor = 0.7 + (Math.random() * 0.6); // Random between 0.7-1.3
-      const progress = Math.min(baseProgress * randomFactor, 1);
+      // Create PROPER growth pattern - starts low, grows to current totals
+      const progress = Math.pow((monthCount - i) / monthCount, 0.8); // Slightly curved growth
+      
+      // Add some realistic variance (±10%) but maintain growth trend
+      const variance = 0.9 + (Math.random() * 0.2); // Between 0.9 and 1.1
+      const adjustedProgress = Math.min(progress * variance, 1);
+      
+      // Calculate monthly growth increments
+      const monthlyGrowth = {
+        newArtists: Math.floor(Math.random() * 8 + 2), // 2-10 new artists per month
+        newMusic: Math.floor(Math.random() * 12 + 3), // 3-15 new music per month
+        monthlyPlays: Math.floor(Math.random() * 100 + 50), // 50-150 new plays
+        monthlyLikes: Math.floor(Math.random() * 30 + 10), // 10-40 new likes
+      };
       
       months.push({
         month: date.toLocaleDateString('en-US', { month: 'short' }),
         year: date.getFullYear(),
-        artists: Math.floor((currentData.overview?.totalArtists || 0) * progress),
-        music: Math.floor((currentData.overview?.totalMusic || 0) * progress),
-        listens: Math.floor((currentData.engagement?.totalMusicPlays || 0) * progress),
-        views: Math.floor((currentData.engagement?.totalLikes || 0) * progress),
-        newUsers: Math.floor(Math.random() * 50 + 10), // Random new users per month
-        newGallery: Math.floor(Math.random() * 30 + 5), // Random new gallery items
+        artists: Math.floor(totalArtists * adjustedProgress),
+        music: Math.floor(totalMusic * adjustedProgress),
+        listens: Math.floor(totalPlays * adjustedProgress),
+        views: Math.floor(totalLikes * adjustedProgress),
+        newUsers: monthlyGrowth.newArtists,
+        newGallery: Math.floor(Math.random() * 20 + 5),
       });
+    }
+    
+    // ENSURE the data actually increases over time by post-processing
+    for (let i = 1; i < months.length; i++) {
+      months[i].artists = Math.max(months[i].artists, months[i-1].artists);
+      months[i].music = Math.max(months[i].music, months[i-1].music);
+      months[i].listens = Math.max(months[i].listens, months[i-1].listens);
+      months[i].views = Math.max(months[i].views, months[i-1].views);
     }
     
     return months;
   };
 
   const [hoveredBar, setHoveredBar] = useState<number | null>(null);
-  const [hoveredPoint, setHoveredPoint] = useState<{
-    type: string;
-    index: number;
-    value: number;
-    month: string;
-  } | null>(null);
+  // const [hoveredPoint, setHoveredPoint] = useState<{
+  //   type: string;
+  //   index: number;
+  //   value: number;
+  //   month: string;
+  // } | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
@@ -148,12 +176,12 @@ const Dashboard = () => {
 
   // Calculate maximum values for scaling
   const maxArtists = chartData.length > 0 ? Math.max(...chartData.map(d => d.artists)) : 1;
-  const maxMusic = chartData.length > 0 ? Math.max(...chartData.map(d => d.music)) : 1;
+  const maxMusic = chartData.length > 0 ? Math.max(...chartData.map(d => d.music || 0)) : 1;
   const maxListens = chartData.length > 0 ? Math.max(...chartData.map(d => d.listens)) : 1;
-  const maxViews = chartData.length > 0 ? Math.max(...chartData.map(d => d.views)) : 1;
+  // const maxViews = chartData.length > 0 ? Math.max(...chartData.map(d => d.views || 0)) : 1;
 
   // Handle tooltip positioning
-  const handleBarHover = (index: number, e: MouseEvent) => {
+  const handleBarHover = (index: number, e: any) => {
     setHoveredBar(index);
     if (chartContainerRef.current) {
       const rect = chartContainerRef.current.getBoundingClientRect();
@@ -164,22 +192,22 @@ const Dashboard = () => {
     }
   };
 
-  const handlePointHover = (
-    type: string,
-    index: number,
-    value: number,
-    month: string,
-    e: MouseEvent
-  ) => {
-    setHoveredPoint({ type, index, value, month });
-    if (chartContainerRef.current) {
-      const rect = chartContainerRef.current.getBoundingClientRect();
-      setTooltipPosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-    }
-  };
+  // const handlePointHover = (
+  //   type: string,
+  //   index: number,
+  //   value: number,
+  //   month: string,
+  //   e: any
+  // ) => {
+  //   setHoveredPoint({ type, index, value, month });
+  //   if (chartContainerRef.current) {
+  //     const rect = chartContainerRef.current.getBoundingClientRect();
+  //     setTooltipPosition({
+  //       x: e.clientX - rect.left,
+  //       y: e.clientY - rect.top,
+  //     });
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -293,21 +321,21 @@ const Dashboard = () => {
                   <div
                     className="w-3 bg-blue-500 rounded-t hover:bg-blue-600 transition-all duration-200 cursor-pointer"
                     style={{
-                      height: `${Math.max((data.artists / maxArtists) * 80, 4)}%`,
+                      height: `${Math.max((data.artists / maxArtists) * 200, 8)}px`,
                     }}
                     title={`Artists: ${data.artists}`}
                   ></div>
                   <div
                     className="w-3 bg-green-500 rounded-t hover:bg-green-600 transition-all duration-200 cursor-pointer"
                     style={{
-                      height: `${Math.max((data.music / maxMusic) * 80, 4)}%`,
+                      height: `${Math.max(((data.music || 0) / maxMusic) * 200, 8)}px`,
                     }}
-                    title={`Music: ${data.music}`}
+                    title={`Music: ${data.music || 0}`}
                   ></div>
                   <div
                     className="w-3 bg-purple-500 rounded-t hover:bg-purple-600 transition-all duration-200 cursor-pointer"
                     style={{
-                      height: `${Math.max((data.listens / maxListens) * 80, 4)}%`,
+                      height: `${Math.max((data.listens / maxListens) * 200, 8)}px`,
                     }}
                     title={`Listens: ${data.listens}`}
                   ></div>
@@ -337,7 +365,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex items-center mb-1">
                   <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-                  <span>Music: {chartData[hoveredBar].music}</span>
+                  <span>Music: {chartData[hoveredBar].music || 0}</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
@@ -362,146 +390,77 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Line Chart */}
+        {/* Pie Chart */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 relative border border-gray-100 dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-            Engagement Trend ({timeRange.replace('months', 'M')})
+            Content Distribution
           </h3>
-          <div ref={chartContainerRef} className="h-64 relative">
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-            >
-              {/* Grid lines */}
-              {[0, 25, 50, 75, 100].map((val) => (
-                <line
-                  key={val}
-                  x1="0"
-                  y1={val}
-                  x2="100"
-                  y2={val}
-                  stroke="#e5e7eb"
-                  strokeWidth="0.5"
-                  strokeDasharray="2,2"
-                  className="dark:stroke-gray-700"
-                />
-              ))}
-
-              {/* Only render lines if we have data */}
-              {chartData.length > 1 && (
-                <>
-                  {/* Likes Line */}
-                  <polyline
-                    fill="none"
-                    stroke="#ef4444"
-                    strokeWidth="2"
-                    points={chartData
-                      .map(
-                        (data, index) =>
-                          `${(index / (chartData.length - 1)) * 90 + 5},${
-                            95 - (data.views / maxViews) * 70
-                          }`
-                      )
-                      .join(" ")}
-                  />
-
-                  {/* Plays Line */}
-                  <polyline
-                    fill="none"
-                    stroke="#8b5cf6"
-                    strokeWidth="2"
-                    points={chartData
-                      .map(
-                        (data, index) =>
-                          `${(index / (chartData.length - 1)) * 90 + 5},${
-                            95 - (data.listens / maxListens) * 70
-                          }`
-                      )
-                      .join(" ")}
-                  />
-                </>
-              )}
-
-              {/* Views Points */}
-              {chartData.map((data, index) => (
-                <circle
-                  key={`views-${index}`}
-                  cx={chartData.length === 1 ? 50 : (index / (chartData.length - 1)) * 90 + 5}
-                  cy={95 - (data.views / maxViews) * 70}
-                  r="2"
-                  fill="#ef4444"
-                  className="cursor-pointer transition-all hover:r-3"
-                  onMouseEnter={(e) =>
-                    handlePointHover("likes", index, data.views, data.month, e)
-                  }
-                  onMouseLeave={() => setHoveredPoint(null)}
-                />
-              ))}
-
-              {/* Listens Points */}
-              {chartData.map((data, index) => (
-                <circle
-                  key={`listens-${index}`}
-                  cx={chartData.length === 1 ? 50 : (index / (chartData.length - 1)) * 90 + 5}
-                  cy={95 - (data.listens / maxListens) * 70}
-                  r="2"
-                  fill="#8b5cf6"
-                  className="cursor-pointer transition-all hover:r-3"
-                  onMouseEnter={(e) =>
-                    handlePointHover("plays", index, data.listens, data.month, e)
-                  }
-                  onMouseLeave={() => setHoveredPoint(null)}
-                />
-              ))}
+          <div className="h-64 flex items-center justify-center">
+            <svg className="w-48 h-48" viewBox="0 0 200 200">
+              {(() => {
+                const totalArtists = dashboardData?.overview.totalArtists || 0;
+                const totalMusic = dashboardData?.overview.totalMusic || 0;
+                const totalGallery = dashboardData?.overview.totalGalleryItems || 0;
+                const totalFilmmakers = dashboardData?.overview.totalFilmmakers || 0;
+                const total = totalArtists + totalMusic + totalGallery + totalFilmmakers;
+                
+                if (total === 0) return <text x="100" y="100" textAnchor="middle" className="fill-gray-400">No data</text>;
+                
+                let currentAngle = 0;
+                const segments = [
+                  { value: totalArtists, color: '#3b82f6', label: 'Artists' },
+                  { value: totalMusic, color: '#10b981', label: 'Music' },
+                  { value: totalGallery, color: '#f59e0b', label: 'Gallery' },
+                  { value: totalFilmmakers, color: '#8b5cf6', label: 'Filmmakers' }
+                ].filter(s => s.value > 0);
+                
+                return segments.map((segment, index) => {
+                  const percentage = segment.value / total;
+                  const angle = percentage * 360;
+                  const startAngle = currentAngle;
+                  const endAngle = currentAngle + angle;
+                  currentAngle += angle;
+                  
+                  const startAngleRad = (startAngle * Math.PI) / 180;
+                  const endAngleRad = (endAngle * Math.PI) / 180;
+                  
+                  const x1 = 100 + 80 * Math.cos(startAngleRad);
+                  const y1 = 100 + 80 * Math.sin(startAngleRad);
+                  const x2 = 100 + 80 * Math.cos(endAngleRad);
+                  const y2 = 100 + 80 * Math.sin(endAngleRad);
+                  
+                  const largeArcFlag = angle > 180 ? 1 : 0;
+                  
+                  return (
+                    <path
+                      key={index}
+                      d={`M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
+                      fill={segment.color}
+                      className="hover:opacity-80 cursor-pointer"
+                    >
+                      <title>{`${segment.label}: ${segment.value}`}</title>
+                    </path>
+                  );
+                });
+              })()}
             </svg>
-
-            {/* X-axis labels */}
-            <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2">
-              {chartData.map((data, index) => (
-                <span
-                  key={index}
-                  className="text-xs text-gray-600 dark:text-gray-400"
-                  style={{
-                    marginLeft: index === 0 ? "0" : "-2%",
-                    marginRight: index === chartData.length - 1 ? "0" : "-2%",
-                  }}
-                >
-                  {data.month}
-                </span>
-              ))}
-            </div>
-
-            {/* Tooltip */}
-            {hoveredPoint && (
-              <div
-                className="absolute bg-gray-900 dark:bg-gray-700 text-white p-2 rounded text-xs whitespace-nowrap z-10 shadow-lg pointer-events-none"
-                style={{
-                  left: `${tooltipPosition.x}px`,
-                  top: `${tooltipPosition.y - 60}px`,
-                  transform: "translateX(-50%)",
-                }}
-              >
-                <div className="font-semibold">{hoveredPoint.month}</div>
-                <div className="flex items-center">
-                  <div
-                    className={`w-3 h-3 rounded mr-2 ${
-                      hoveredPoint.type === "likes" ? "bg-red-500" : "bg-purple-500"
-                    }`}
-                  ></div>
-                  {hoveredPoint.value} {hoveredPoint.type}
-                </div>
-              </div>
-            )}
           </div>
-          <div className="flex justify-center space-x-6 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex justify-center space-x-4 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
             <div className="flex items-center">
-              <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
-              <span className="text-sm text-gray-600 dark:text-gray-400">Likes</span>
+              <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Artists ({dashboardData?.overview.totalArtists || 0})</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Music ({dashboardData?.overview.totalMusic || 0})</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Gallery ({dashboardData?.overview.totalGalleryItems || 0})</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
-              <span className="text-sm text-gray-600 dark:text-gray-400">Plays</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Filmmakers ({dashboardData?.overview.totalFilmmakers || 0})</span>
             </div>
           </div>
         </div>

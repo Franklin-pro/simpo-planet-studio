@@ -8,7 +8,7 @@ function Abouts() {
   return (
    <>
    <Header/>
-   <div className='min-h-screen bg-black text-white pt-24'>
+   <div className='min-h-screen bg-black text-white'>
    <AboutSection/>
    <MissionVisionSection/>
    </div>
