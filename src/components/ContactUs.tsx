@@ -12,6 +12,7 @@ const ContactSection = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({
@@ -24,17 +25,19 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await axios.post("http://localhost:3000/api/v1/contact", form);
+      const res = await axios.post("https://simpo-planet-studio-bn.onrender.com/api/v1/contact", form);
       
       if (res.status < 200 || res.status >= 300) {
         throw new Error("Failed to send message");
       }
 
-      alert("Message sent successfully!");
+      setMessage({ type: 'success', text: 'Message sent successfully!' });
       setForm({ name: "", email: "", phone: "", message: "" });
+      setTimeout(() => setMessage({ type: '', text: '' }), 5000);
     } catch (err) {
       console.error(err);
-      alert("Something went wrong. Please try again.");
+      setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
+      setTimeout(() => setMessage({ type: '', text: '' }), 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -156,6 +159,12 @@ const ContactSection = () => {
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               Send us a Message
             </h3>
+
+            {message.text && (
+              <div className={`mb-6 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'}`}>
+                {message.text}
+              </div>
+            )}
 
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid md:grid-cols-2 gap-6">

@@ -33,6 +33,7 @@ const AddFilmmaker = () => {
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const convertToBase64 = (file: File): Promise<string> => {
@@ -82,7 +83,7 @@ const AddFilmmaker = () => {
       const result = await response.json();
       
       if (result.success) {
-        alert('Filmmaker created successfully!');
+        setMessage({ type: 'success', text: 'Filmmaker created successfully!' });
         setFormData({
           name: '',
           bio: '',
@@ -95,10 +96,11 @@ const AddFilmmaker = () => {
         });
         setImagePreview(null);
       } else {
-        alert('Error: ' + result.message);
+        setMessage({ type: 'error', text: result.message || 'Failed to create filmmaker.' });
       }
     } catch (error) {
-      alert('Error creating filmmaker: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      console.error('Error submitting form:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -146,6 +148,14 @@ const AddFilmmaker = () => {
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-8">
+            <p>{
+            message.type === 'success' ? (
+              <div className="text-green-600 p-4">{message.text}</div>
+            ) : message.type === 'error' ? (
+              <div className="text-red-600 p-4">{message.text}</div>
+            ) : null
+          
+            }</p>
           {/* Personal Information */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-6">

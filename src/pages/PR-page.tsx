@@ -8,7 +8,7 @@ function PRpage() {
     image: pr,
     name: "Ladouce",
     role: "Public Relations Manager",
-    biography: "Ladouce is a seasoned PR professional with over 8 years of experience in the music industry. She has successfully managed publicity campaigns for numerous artists, helping them build their brand and connect with their audience. Her expertise includes media relations, brand strategy, social media management, and crisis communication. Sarah's passion for music and her strategic approach have made her an invaluable asset to artists looking to elevate their public presence."
+    biography: "Ladouce is a seasoned PR professional with over 8 years of experience in the music industry. She has successfully managed publicity campaigns for numerous artists, helping them build their brand and connect with their audience. Her expertise includes media relations, brand strategy, social media management, and crisis communication. Ladouce's passion for music and her strategic approach have made her an invaluable asset to artists looking to elevate their public presence."
   };
 
   return (
