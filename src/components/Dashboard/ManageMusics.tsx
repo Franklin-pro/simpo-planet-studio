@@ -15,6 +15,7 @@ export default function ManageMusic() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
 
   interface MusicTrack {
     id: string;
@@ -61,7 +62,7 @@ export default function ManageMusic() {
       fetchMusicTracks();
     } catch (err) {
       console.error('handle to delete.',err);
-      alert("Delete failed.");
+      setMessage({ type: 'error', text: 'Delete failed.' });
     } finally {
       setIsDeleting(false);
     }
@@ -78,12 +79,12 @@ export default function ManageMusic() {
 
     try {
       await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/music/${editingMusic._id}`, editingMusic);
-      alert("Music track updated successfully.");
+      setMessage({ type: 'success', text: 'Music track updated successfully.' });
       setIsEditing(false);
       fetchMusicTracks();
     } catch (err) {
       console.error('handle to update.',err);
-      alert("Update failed.");
+      setMessage({ type: 'error', text: 'Update failed.' });
     }
     finally {
       setIsUpdating(false);
@@ -312,6 +313,14 @@ export default function ManageMusic() {
 
         {/* Table Container */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <p>{
+            message.type === 'success' ? (
+              <div className="text-green-600 p-4">{message.text}</div>
+            ) : message.type === 'error' ? (
+              <div className="text-red-600 p-4">{message.text}</div>
+            ) : null
+          
+            }</p>
           {/* Table Header with Search and Filter */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

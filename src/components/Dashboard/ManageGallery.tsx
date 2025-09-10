@@ -14,6 +14,7 @@ export default function ManageGallery() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
 
   interface Gallery {
     id: string;
@@ -51,7 +52,7 @@ export default function ManageGallery() {
       setDeleteId(null);
       fetchGalleries();
     } catch (err) {
-      alert("Delete failed.");
+      setMessage({ type: 'error', text: 'Delete failed.' });
       console.error(err);
     } finally {
       setIsDeleting(false);
@@ -68,11 +69,11 @@ export default function ManageGallery() {
 
     try {
       await axios.put(`https://simpo-planet-studio-bn.onrender.com/api/v1/gallery/${editingGallery._id}`, editingGallery);
-      alert("Gallery updated successfully.");
+      setMessage({ type: 'success', text: 'Gallery updated successfully.' });
       setIsEditing(false);
       fetchGalleries();
     } catch (err) {
-      alert("Update failed.");
+      setMessage({ type: 'error', text: 'Update failed.' });
       console.error(err);
     }
   };
@@ -223,6 +224,14 @@ export default function ManageGallery() {
 
         {/* Table Container */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <p>{
+            message.type === 'success' ? (
+              <div className="text-green-600 p-4">{message.text}</div>
+            ) : message.type === 'error' ? (
+              <div className="text-red-600 p-4">{message.text}</div>
+            ) : null
+          
+            }</p>
           {/* Table Header with Search and Filter */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

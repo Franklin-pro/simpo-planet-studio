@@ -9,6 +9,7 @@ export default function ManageUsers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [showDropdown, setShowDropdown] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
 
   interface User {
     id: string;
@@ -43,7 +44,7 @@ export default function ManageUsers() {
       });
       fetchUsers();
     } catch (err) {
-      alert("Failed to update user status.");
+      setMessage({ type: 'error', text: 'Failed to update user status.' });
       console.error(err);
     }
   };
@@ -138,6 +139,14 @@ export default function ManageUsers() {
 
         {/* Table Container */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <p>{
+            message.type === 'success' ? (
+              <div className="text-green-600 p-4">{message.text}</div>
+            ) : message.type === 'error' ? (
+              <div className="text-red-600 p-4">{message.text}</div>
+            ) : null
+          
+            }</p>
           {/* Table Header with Search and Filter */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

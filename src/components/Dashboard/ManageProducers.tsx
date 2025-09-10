@@ -15,6 +15,7 @@ export default function ManageProducers() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
 
   interface Producer {
     id: string;
@@ -58,7 +59,7 @@ export default function ManageProducers() {
       setDeleteId(null);
       fetchProducers();
     } catch (err) {
-      alert("Delete failed.");
+     setMessage({ type: 'error', text: 'Delete failed.' });
       console.error(err);
     } finally {
       setIsDeleting(false);
@@ -92,11 +93,11 @@ const handleUpdate = async () => {
       }
     );
 
-    alert("Producer updated successfully.");
+    setMessage({ type: 'success', text: 'Producer updated successfully.' });
     setIsEditing(false);
     fetchProducers();
   } catch (err) {
-    alert("Update failed.");
+    setMessage({ type: 'error', text: 'Update failed.' });
     console.error(err);
   }
   finally {
@@ -290,6 +291,14 @@ const handleUpdate = async () => {
 
         {/* Table Container */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <p>{
+            message.type === 'success' ? (
+              <div className="text-green-600 p-4">{message.text}</div>
+            ) : message.type === 'error' ? (
+              <div className="text-red-600 p-4">{message.text}</div>
+            ) : null
+          
+            }</p>
           {/* Table Header with Search and Filter */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
