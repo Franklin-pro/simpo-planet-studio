@@ -28,7 +28,7 @@ interface ProducerFormData {
 }
 
 function CreateProducer() {
-  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<ProducerFormData>({
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset, trigger } = useForm<ProducerFormData>({
     defaultValues: {
       genres: [],
       skills: [],
@@ -42,7 +42,8 @@ function CreateProducer() {
         youtube: '',
         appleMusic: ''
       }
-    }
+    },
+    mode: 'onChange'
   });
 
   const [activeTab, setActiveTab] = useState('basic');
@@ -50,16 +51,35 @@ function CreateProducer() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [genreError, setGenreError] = useState('');
+  const [skillError, setSkillError] = useState('');
+  const [imageError, setImageError] = useState('');
+
+    const socialMediaPatterns = {
+    instagram: /^[a-zA-Z0-9._]{0,30}$/,
+    twitter: /^[a-zA-Z0-9_]{0,15}$/,
+    facebook: /^[a-zA-Z0-9.]{5,}$/,
+    spotify: /^https?:\/\/(open\.spotify\.com\/artist\/|spoti\.fi\/)/,
+    soundCloud: /^https?:\/\/(soundcloud\.com\/)/,
+    youtube: /^https?:\/\/(www\.youtube\.com\/channel\/|youtube\.com\/channel\/|youtu\.be\/)/,
+    appleMusic: /^https?:\/\/(music\.apple\.com\/)/,
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Check file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        setImageError('File size must be less than 5MB');
+        return;
+      }
+      
       setImageFile(file);
+      setImageError('');
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
-        // Optionally set the form value for validation, but we won't rely on it for submission
-        setValue('image', e.target?.result as string);
+        setValue('image', e.target?.result as string, { shouldValidate: true });
       };
       reader.readAsDataURL(file);
     }
@@ -69,11 +89,12 @@ function CreateProducer() {
     setImageFile(null);
     setImagePreview(null);
     setValue('image', '');
+    setImageError('Profile image is required');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setValue(name as keyof ProducerFormData, value);
+    setValue(name as keyof ProducerFormData, value, { shouldValidate: true });
   };
 
   const convertToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
@@ -85,7 +106,99 @@ function CreateProducer() {
     });
   };
 
+  const validateForm = async () => {
+    // Validate current tab before proceeding
+    if (activeTab === 'basic') {
+      const isValid = await trigger(['name', 'level', 'bio']);
+      if (!isValid || !imageFile) {
+        if (!imageFile) setImageError('Profile image is required');
+        return false;
+      }
+    } else if (activeTab === 'details') {
+      const genres = watch('genres');
+      const skills = watch('skills');
+      
+      if (!genres || genres.length === 0) {
+        setGenreError('Please select at least one genre');
+        return false;
+      }
+      
+      if (!skills || skills.length === 0) {
+        setSkillError('Please select at least one skill');
+        return false;
+      }
+      
+      const isValid = await trigger(['yearsExperience', 'contactEmail']);
+      if (!isValid) return false;
+    }
+    
+    return true;
+  };
+
+    const validateSocialMedia = (field: keyof ProducerFormData['socialMedia'], value: string) => {
+    if (!value) return true; // Empty is allowed
+    
+    switch (field) {
+      case 'instagram':
+        return socialMediaPatterns.instagram.test(value) || 
+               "Instagram username can only contain letters, numbers, periods and underscores (max 30 characters)";
+      case 'twitter':
+        return socialMediaPatterns.twitter.test(value) || 
+               "Twitter username can only contain letters, numbers and underscores (max 15 characters)";
+      case 'facebook':
+        return socialMediaPatterns.facebook.test(value) || 
+               "Please enter a valid Facebook username (at least 5 characters)";
+      case 'spotify':
+        return socialMediaPatterns.spotify.test(value) || 
+               "Please enter a valid Spotify artist URL (should start with https://open.spotify.com/artist/ or https://spoti.fi/)";
+      case 'soundCloud':
+        return socialMediaPatterns.soundCloud.test(value) || 
+               "Please enter a valid SoundCloud URL (should start with https://soundcloud.com/)";
+      case 'youtube':
+        return socialMediaPatterns.youtube.test(value) || 
+               "Please enter a valid YouTube channel URL (should be a channel link)";
+      case 'appleMusic':
+        return socialMediaPatterns.appleMusic.test(value) || 
+               "Please enter a valid Apple Music URL (should start with https://music.apple.com/)";
+      default:
+        return true;
+    }
+  };
+
+  const handleTabChange = async (tab: string) => {
+    const isValid = await validateForm();
+    if (isValid) {
+      setActiveTab(tab);
+      // Clear errors when changing tabs
+      setGenreError('');
+      setSkillError('');
+      setImageError('');
+    }
+  };
+
   const onSubmit = async (data: ProducerFormData) => {
+    // Final validation before submission
+    if (!imageFile) {
+      setImageError('Profile image is required');
+      setActiveTab('basic');
+      return;
+    }
+    
+    const genres = watch('genres');
+    const skills = watch('skills');
+    
+    if (!genres || genres.length === 0) {
+      setGenreError('Please select at least one genre');
+      setActiveTab('details');
+      return;
+    }
+    
+    if (!skills || skills.length === 0) {
+      setSkillError('Please select at least one skill');
+      setActiveTab('details');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
@@ -128,6 +241,9 @@ function CreateProducer() {
         setImagePreview(null);
         setActiveTab('basic');
         setSubmitStatus('idle');
+        setGenreError('');
+        setSkillError('');
+        setImageError('');
       }, 2000);
       
     } catch (error) {
@@ -143,7 +259,7 @@ function CreateProducer() {
     setValue('socialMedia', {
       ...currentSocialMedia,
       [field]: value
-    });
+    }, { shouldValidate: true });
   };
 
   const addCredit = () => {
@@ -158,20 +274,30 @@ function CreateProducer() {
 
   const toggleGenre = (genre: string) => {
     const currentGenres = watch('genres') ?? [];
+    let newGenres;
+    
     if (currentGenres.includes(genre)) {
-      setValue('genres', currentGenres.filter(g => g !== genre));
+      newGenres = currentGenres.filter(g => g !== genre);
     } else {
-      setValue('genres', [...currentGenres, genre]);
+      newGenres = [...currentGenres, genre];
     }
+    
+    setValue('genres', newGenres, { shouldValidate: true });
+    setGenreError(newGenres.length === 0 ? 'Please select at least one genre' : '');
   };
 
   const toggleSkill = (skill: string) => {
     const currentSkills = watch('skills') ?? [];
+    let newSkills;
+    
     if (currentSkills.includes(skill)) {
-      setValue('skills', currentSkills.filter(s => s !== skill));
+      newSkills = currentSkills.filter(s => s !== skill);
     } else {
-      setValue('skills', [...currentSkills, skill]);
+      newSkills = [...currentSkills, skill];
     }
+    
+    setValue('skills', newSkills, { shouldValidate: true });
+    setSkillError(newSkills.length === 0 ? 'Please select at least one skill' : '');
   };
 
   const genreOptions = [
@@ -215,14 +341,14 @@ function CreateProducer() {
           Basic Info
         </button>
         <button
-          onClick={() => setActiveTab('details')}
+          onClick={() => handleTabChange('details')}
           className={`px-4 py-2 font-medium ${activeTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 dark:text-gray-400'}`}
         >
           <Award className="inline mr-2" size={16} />
           Details
         </button>
         <button
-          onClick={() => setActiveTab('social')}
+          onClick={() => handleTabChange('social')}
           className={`px-4 py-2 font-medium ${activeTab === 'social' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 dark:text-gray-400'}`}
         >
           <Link className="inline mr-2" size={16} />
@@ -241,7 +367,12 @@ function CreateProducer() {
                 <input
                   id="name"
                   type="text"
-                  {...register("name", { required: "Name is required", minLength: { value: 2, message: "Name must be at least 2 characters" } })}
+                  {...register("name", { 
+                    required: "Name is required", 
+                    minLength: { value: 2, message: "Name must be at least 2 characters" },
+                    maxLength: { value: 50, message: "Name must not exceed 50 characters" },
+                    pattern: { value: /^[a-zA-Z\s\-']+$/, message: "Name can only contain letters, spaces, hyphens, and apostrophes" }
+                  })}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${errors.name ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-200'}`}
                   placeholder="e.g. Max Martin"
@@ -255,7 +386,10 @@ function CreateProducer() {
                 </label>
                 <select
                   id="level"
-                  {...register("level", { required: "Level is required" })}
+                  {...register("level", { 
+                    required: "Experience level is required",
+                    validate: value => value !== "" || "Please select an experience level"
+                  })}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${errors.level ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-200'}`}
                 >
@@ -270,7 +404,7 @@ function CreateProducer() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Profile Image (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Profile Image <span className="text-red-500">*</span></label>
               {!imageFile ? (
                 <div className="flex items-center justify-center w-full">
                   <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
@@ -306,6 +440,7 @@ function CreateProducer() {
                   </button>
                 </div>
               )}
+              {imageError && <p className="mt-1 text-sm text-red-600">{imageError}</p>}
             </div>
             
             <div>
@@ -334,7 +469,7 @@ function CreateProducer() {
             <div className="flex justify-end">
               <button
                 type="button"
-                onClick={() => setActiveTab('details')}
+                onClick={() => handleTabChange('details')}
                 className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
                 Next: Professional Details
@@ -356,17 +491,13 @@ function CreateProducer() {
                       key={genre}
                       type="button"
                       onClick={() => toggleGenre(genre)}
-                      className={`px-3 py-1 rounded-full text-sm transition-colors ${watch('genres')?.includes(genre) ? 'bg-blue-200 text-blue-800 border border-blue-300' : 'bg-gray-100 dark:bg-gray-500 dark:text-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-500'}`}
+                      className={`px-3 py-1 rounded-full text-sm transition-colors ${watch('genres')?.includes(genre) ? 'bg-blue-600 text-white border border-blue-700' : 'bg-gray-100 dark:bg-gray-500 dark:text-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200 dark:hover:bg-gray-400'}`}
                     >
                       {genre}
                     </button>
                   ))}
                 </div>
-                <input
-                  type="hidden"
-                  {...register("genres", { validate: value => (value?.length ?? 0) > 0 || "Select at least one genre" })}
-                />
-                {errors.genres && <p className="mt-1 text-sm text-red-600">{errors.genres.message}</p>}
+                {genreError && <p className="mt-1 text-sm text-red-600">{genreError}</p>}
               </div>
               
               <div>
@@ -379,17 +510,13 @@ function CreateProducer() {
                       key={skill}
                       type="button"
                       onClick={() => toggleSkill(skill)}
-                      className={`px-3 py-1 rounded-full text-sm transition-colors ${watch('skills')?.includes(skill) ? 'bg-blue-200 text-blue-800 border border-blue-300' : 'bg-gray-100 dark:bg-gray-500 dark:text-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-500'}`}
+                      className={`px-3 py-1 rounded-full text-sm transition-colors ${watch('skills')?.includes(skill) ? 'bg-blue-600 text-white border border-blue-700' : 'bg-gray-100 dark:bg-gray-500 dark:text-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200 dark:hover:bg-gray-400'}`}
                     >
                       {skill}
                     </button>
                   ))}
                 </div>
-                <input
-                  type="hidden"
-                  {...register("skills", { validate: value => (value?.length ?? 0) > 0 || "Select at least one skill" })}
-                />
-                {errors.skills && <p className="mt-1 text-sm text-red-600">{errors.skills.message}</p>}
+                {skillError && <p className="mt-1 text-sm text-red-600">{skillError}</p>}
               </div>
             </div>
             
@@ -404,8 +531,8 @@ function CreateProducer() {
                   {...register("yearsExperience", { 
                     valueAsNumber: true, 
                     required: "Years of experience is required",
-                    min: { value: 0, message: "Must be at least 0" }, 
-                    max: { value: 50, message: "Must be at most 50" } 
+                    min: { value: 0, message: "Must be at least 0 years" }, 
+                    max: { value: 50, message: "Must be at most 50 years" }
                   })}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 ${errors.yearsExperience ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'}`}
@@ -426,8 +553,9 @@ function CreateProducer() {
                     required: "Email is required",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Please enter a valid email"
-                    }
+                      message: "Please enter a valid email address"
+                    },
+                    maxLength: { value: 100, message: "Email must not exceed 100 characters" }
                   })}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300  rounded-lg focus:outline-none focus:ring-2 ${errors.contactEmail ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'}`}
@@ -507,7 +635,7 @@ function CreateProducer() {
               </button>
               <button
                 type="button"
-                onClick={() => setActiveTab('social')}
+                onClick={() => handleTabChange('social')}
                 className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
                 Next: Social & Links
@@ -516,11 +644,11 @@ function CreateProducer() {
           </div>
         )}
         
-        {activeTab === 'social' && (
+          {activeTab === 'social' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Instagram
                 </label>
                 <div className="flex">
@@ -530,17 +658,24 @@ function CreateProducer() {
                   <input
                     id="instagram"
                     type="text"
-                    value={watch('socialMedia.instagram') ?? ''}
+                    {...register("socialMedia.instagram", {
+                      validate: (value) => validateSocialMedia('instagram', value)
+                    })}
                     onChange={(e) => handleSocialMediaChange('instagram', e.target.value)}
-                    className="flex-1 min-w-0 block w-full px-3 py-2 dark:bg-gray-700 dark:text-gray-300  rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    className={`flex-1 min-w-0 block w-full px-3 py-2 dark:bg-gray-700 dark:text-gray-300 rounded-none rounded-r-md border-gray-300 focus:outline-none focus:ring-2 ${
+                      errors.socialMedia?.instagram ? 'border-red-500 focus:ring-red-200' : 'focus:ring-blue-200 focus:border-blue-500'
+                    }`}
                     placeholder="yourusername"
                   />
                 </div>
+                {errors.socialMedia?.instagram && (
+                  <p className="mt-1 text-sm text-red-600">{errors.socialMedia.instagram.message}</p>
+                )}
               </div>
               
               <div>
-                <label htmlFor="twitter" className="block text-sm font-medium text-gray-700 mb-1">
-                  Twitter
+                <label htmlFor="twitter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Twitter / X
                 </label>
                 <div className="flex">
                   <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
@@ -549,18 +684,25 @@ function CreateProducer() {
                   <input
                     id="twitter"
                     type="text"
-                    value={watch('socialMedia.twitter') ?? ''}
+                    {...register("socialMedia.twitter", {
+                      validate: (value) => validateSocialMedia('twitter', value)
+                    })}
                     onChange={(e) => handleSocialMediaChange('twitter', e.target.value)}
-                    className="flex-1 min-w-0 block w-full dark:bg-gray-700 dark:text-gray-300 px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    className={`flex-1 min-w-0 block w-full dark:bg-gray-700 dark:text-gray-300 px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:outline-none focus:ring-2 ${
+                      errors.socialMedia?.twitter ? 'border-red-500 focus:ring-red-200' : 'focus:ring-blue-200 focus:border-blue-500'
+                    }`}
                     placeholder="yourusername"
                   />
                 </div>
+                {errors.socialMedia?.twitter && (
+                  <p className="mt-1 text-sm text-red-600">{errors.socialMedia.twitter.message}</p>
+                )}
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="facebook" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="facebook" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Facebook
                 </label>
                 <div className="flex">
@@ -570,72 +712,107 @@ function CreateProducer() {
                   <input
                     id="facebook"
                     type="text"
-                    value={watch('socialMedia.facebook') ?? ''}
+                    {...register("socialMedia.facebook", {
+                      validate: (value) => validateSocialMedia('facebook', value)
+                    })}
                     onChange={(e) => handleSocialMediaChange('facebook', e.target.value)}
-                    className="flex-1 min-w-0 block w-full px-3 dark:bg-gray-700 dark:text-gray-300 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    className={`flex-1 min-w-0 block w-full px-3 dark:bg-gray-700 dark:text-gray-300 py-2 rounded-none rounded-r-md border-gray-300 focus:outline-none focus:ring-2 ${
+                      errors.socialMedia?.facebook ? 'border-red-500 focus:ring-red-200' : 'focus:ring-blue-200 focus:border-blue-500'
+                    }`}
                     placeholder="yourusername"
                   />
                 </div>
+                {errors.socialMedia?.facebook && (
+                  <p className="mt-1 text-sm text-red-600">{errors.socialMedia.facebook.message}</p>
+                )}
               </div>
               
               <div>
-                <label htmlFor="spotify" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="spotify" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Spotify Artist Page
                 </label>
                 <input
                   id="spotify"
                   type="url"
-                  value={watch('socialMedia.spotify') ?? ''}
+                  {...register("socialMedia.spotify", {
+                    validate: (value) => validateSocialMedia('spotify', value)
+                  })}
                   onChange={(e) => handleSocialMediaChange('spotify', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.socialMedia?.spotify ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
+                  }`}
                   placeholder="https://open.spotify.com/artist/..."
                 />
+                {errors.socialMedia?.spotify && (
+                  <p className="mt-1 text-sm text-red-600">{errors.socialMedia.spotify.message}</p>
+                )}
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="soundCloud" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="soundCloud" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   SoundCloud
                 </label>
                 <input
                   id="soundCloud"
                   type="url"
-                  value={watch('socialMedia.soundCloud') ?? ''}
+                  {...register("socialMedia.soundCloud", {
+                    validate: (value) => validateSocialMedia('soundCloud', value)
+                  })}
                   onChange={(e) => handleSocialMediaChange('soundCloud', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.socialMedia?.soundCloud ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
+                  }`}
                   placeholder="https://soundcloud.com/yourusername"
                 />
+                {errors.socialMedia?.soundCloud && (
+                  <p className="mt-1 text-sm text-red-600">{errors.socialMedia.soundCloud.message}</p>
+                )}
               </div>
               
               <div>
-                <label htmlFor="youtube" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="youtube" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   YouTube Channel
                 </label>
                 <input
                   id="youtube"
                   type="url"
-                  value={watch('socialMedia.youtube') ?? ''}
+                  {...register("socialMedia.youtube", {
+                    validate: (value) => validateSocialMedia('youtube', value)
+                  })}
                   onChange={(e) => handleSocialMediaChange('youtube', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.socialMedia?.youtube ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
+                  }`}
                   placeholder="https://youtube.com/yourchannel"
                 />
+                {errors.socialMedia?.youtube && (
+                  <p className="mt-1 text-sm text-red-600">{errors.socialMedia.youtube.message}</p>
+                )}
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="appleMusic" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="appleMusic" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Apple Music
                 </label>
                 <input
                   id="appleMusic"
                   type="url"
-                  value={watch('socialMedia.appleMusic') ?? ''}
+                  {...register("socialMedia.appleMusic", {
+                    validate: (value) => validateSocialMedia('appleMusic', value)
+                  })}
                   onChange={(e) => handleSocialMediaChange('appleMusic', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className={`w-full px-4 py-3 border dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.socialMedia?.appleMusic ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
+                  }`}
                   placeholder="https://music.apple.com/artist/..."
                 />
+                {errors.socialMedia?.appleMusic && (
+                  <p className="mt-1 text-sm text-red-600">{errors.socialMedia.appleMusic.message}</p>
+                )}
               </div>
             </div>
             
