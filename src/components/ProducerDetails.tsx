@@ -226,7 +226,7 @@ function ProducerDetails() {
                     <div className="flex flex-wrap gap-3">
                       {producer.socialMedia.instagram && (
                         <a
-                          href={producer.socialMedia.instagram}
+                          href={`https://instagram.com/${producer.socialMedia.instagram}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-2 px-4 py-2 bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-400 rounded-lg hover:bg-pink-200 dark:hover:bg-pink-900/50 transition-colors"
@@ -238,7 +238,7 @@ function ProducerDetails() {
                       )}
                       {producer.socialMedia.twitter && (
                         <a
-                          href={producer.socialMedia.twitter}
+                          href={`https://twitter.com/${producer.socialMedia.twitter}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
@@ -262,7 +262,7 @@ function ProducerDetails() {
                       )}
                       {producer.socialMedia.facebook && (
                         <a
-                          href={producer.socialMedia.facebook}
+                          href={`https://facebook.com/${producer.socialMedia.facebook}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
