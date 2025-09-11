@@ -471,7 +471,7 @@ const Musics = () => {
   return (
     <>
       <Header />
-      <div className='min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-16'>
+      <div className='min-h-screen bg-white bg-gradient-to-b dark:from-gray-900 dark:to-black dark:text-white pb-16'>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -486,7 +486,7 @@ const Musics = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-lg text-gray-400 max-w-2xl mx-auto"
+              className="text-lg dark:text-gray-400 text-gray-900 max-w-2xl mx-auto"
             >
               Discover the hottest tracks from your favorite artists
             </motion.p>
@@ -496,9 +496,9 @@ const Musics = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
-                className="mt-6 bg-gray-800/50 p-4 rounded-lg pt-5 max-w-md mx-auto"
+                className="mt-6 dark:bg-gray-800/50 bg-gray-100 p-4 rounded-lg pt-5 max-w-md mx-auto"
               >
-                <p className="text-gray-300 mb-2 flex items-center justify-center">
+                <p className="dark:text-gray-300 text-gray-500 mb-2 flex items-center justify-center">
                   <User size={16} className="mr-2" />
                   Sign in to track your listening history
                 </p>
@@ -534,7 +534,7 @@ const Musics = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
                 whileHover={{ y: -5 }}
-                className="bg-gray-800/50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-700/30"
+                className="dark:bg-gray-800/50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-700/30"
               >
                 <div className="relative group">
                   <img
@@ -642,7 +642,7 @@ const Musics = () => {
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
-                className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-700 max-w-md w-full relative"
+                className="dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-700 max-w-md w-full relative"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button

@@ -62,10 +62,10 @@ const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
   }
 
   return (
-    <section id="artists" className=" bg-black text-white">
+    <section id="artists" className=" dark:bg-black bg-gray-50 dark:text-white text-gray-900">
       {/* Hero Section */}
       <div className="relative py-20 px-4">
-        <div className="absolute inset-0 bg-gradient-to-b from-red-900/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-b dark:from-red-900/20 to-transparent"></div>
         <div className="relative max-w-7xl mx-auto text-center">
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
@@ -78,7 +78,7 @@ const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-gray-300 max-w-2xl mx-auto mb-12"
+            className="text-xl max-w-2xl mx-auto mb-12"
           >
             Meet the incredible talent that defines our sound and vision
           </motion.p>
@@ -175,7 +175,7 @@ const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
           >
             <Link
               to="/artists"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-full font-medium transition-colors"
+              className="inline-flex text-white items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-full font-medium transition-colors"
             >
               <Eye className="h-5 w-5" />
               View All Artists

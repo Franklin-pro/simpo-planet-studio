@@ -173,7 +173,7 @@ const AboutSection = () => {
           viewport={{ once: true }}
           className="text-center mt-16"
         >
-          <div className="bg-gradient-to-r from-red-600/15 to-red-700/10 rounded-2xl p-8 md:p-12">
+          <div className="bg-gradient-to-r dark:from-red-600/15 dark:to-red-700/10 from-red-600 to-red-700 rounded-2xl p-8 md:p-12">
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
               Ready to Start Your Musical Journey?
             </h3>
