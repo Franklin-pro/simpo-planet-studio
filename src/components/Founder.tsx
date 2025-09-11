@@ -1,23 +1,26 @@
 import founder from "../assets/founder.jpeg";
 import { motion } from "framer-motion";
 import { Quote, Music, Award, Globe, Star } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const FounderSection = () => {
+  const { t } = useTranslation();
+  
   const achievements = [
     {
       icon: <Music className="w-6 h-6" />,
-      title: "Reggae Pioneer",
-      description: "Leading voice in East African reggae music"
+      title: t('founder.achievements.pioneer'),
+      description: t('founder.achievements.pioneerDesc')
     },
     {
       icon: <Globe className="w-6 h-6" />,
-      title: "Pan-Africanist",
-      description: "Advocate for African unity and consciousness"
+      title: t('founder.achievements.panAfricanist'),
+      description: t('founder.achievements.panAfricanistDesc')
     },
     {
       icon: <Award className="w-6 h-6" />,
-      title: "Acclaimed Artist",
-      description: "Groundbreaking debut album recognition"
+      title: t('founder.achievements.artist'),
+      description: t('founder.achievements.artistDesc')
     }
   ];
 
@@ -33,7 +36,7 @@ const FounderSection = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-sm font-medium mb-4"
           >
             <Star className="h-4 w-4" />
-            Meet Our Founder
+            {t('founder.badge')}
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -42,7 +45,7 @@ const FounderSection = () => {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
           >
-            The Visionary Behind <span className="text-red-600 dark:text-red-400">Simpo Planet</span>
+            {t('founder.title')} <span className="text-red-600 dark:text-red-400">{t('founder.titleHighlight')}</span>
           </motion.h2>
         </div>
 
@@ -69,9 +72,9 @@ const FounderSection = () => {
                   <Quote className="h-6 w-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-1" />
                   <div>
                     <p className="text-gray-900 dark:text-white font-medium text-sm">
-                      "Music is the weapon against injustice and the bridge for African unity."
+                      "{t('founder.quote')}"
                     </p>
-                    <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">- Simpo Savior</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">- {t('founder.name')}</p>
                   </div>
                 </div>
               </div>
@@ -89,35 +92,29 @@ const FounderSection = () => {
             <div className="space-y-6">
               <div>
                 <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  Simpo Savior
+                  {t('founder.name')}
                 </h3>
                 <p className="text-red-600 dark:text-red-400 font-semibold text-lg">
-                  Founder & Creative Director
+                  {t('founder.role')}
                 </p>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Born Ndizihiwe Alain Jean Sauveur
+                  {t('founder.birthName')}
                 </p>
               </div>
 
               <div className="space-y-4">
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Simpo Savior is a Rwandan reggae artist and outspoken Pan-Africanist whose music 
-                  is a powerful blend of rhythm, resistance, and reflection. Known for his deep lyrics 
-                  and soulful sound, Simpo uses his voice as a weapon against injustice and a bridge 
-                  for African unity.
+                  {t('founder.description1')}
                 </p>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Rooted in the spirit of reggae legends but uniquely shaped by his East African heritage, 
-                  Simpo Savior stands as one of the voices of conscious music in Rwanda and beyond. His 
-                  groundbreaking debut album "Africa, Why Do Your Profits Go Abroad?" established him as 
-                  not only a musician but also a messenger.
+                  {t('founder.description2')}
                 </p>
               </div>
             </div>
 
             {/* Achievements */}
             <div className="space-y-4">
-              <h4 className="text-xl font-semibold text-gray-900 dark:text-white">Key Achievements</h4>
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white">{t('founder.achievementsTitle')}</h4>
               <div className="space-y-3">
                 {achievements.map((achievement, index) => (
                   <motion.div

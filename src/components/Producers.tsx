@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, Facebook, Instagram, Twitter, Heart, ZoomIn, Music } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 interface Producer {
   _id: string;
@@ -38,6 +39,12 @@ function Producers({ isHomePage = false }: ProducersProps) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
+  // Update activeCategory when language changes
+  useEffect(() => {
+    setActiveCategory(t('producers.all'));
+  }, [i18n.language, t]);
 
   useEffect(() => {
     const fetchProducers = async () => {
@@ -57,11 +64,10 @@ function Producers({ isHomePage = false }: ProducersProps) {
     fetchProducers();
   }, []);
 
-  const categories = ["All", ...new Set(producers.map(p => p.level))];
-  let filteredProducers = activeCategory === "All"
+  const categories = [t('producers.all'), ...new Set(producers.map(p => p.level))];
+  let filteredProducers = activeCategory === t('producers.all')
     ? producers
     : producers.filter(p => p.level === activeCategory);
-  
   // Limit to 4 items on home page
   if (isHomePage) {
     filteredProducers = filteredProducers.slice(0, 4);
@@ -94,7 +100,7 @@ function Producers({ isHomePage = false }: ProducersProps) {
             animate={{ opacity: 1, y: 0 }}
             className="text-6xl md:text-8xl font-bold mb-6"
           >
-            Our <span className="text-red-500">Producers</span>
+            {t('producers.title')} <span className="text-red-500">{t('producers.titleHighlight')}</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -102,7 +108,7 @@ function Producers({ isHomePage = false }: ProducersProps) {
             transition={{ delay: 0.2 }}
             className="text-xl dark:text-gray-300 text-gray-900 max-w-2xl mx-auto mb-12"
           >
-            Discover the masterminds behind the beats and melodies
+            {t('producers.subtitle')}
           </motion.p>
 
           {/* Category Filters */}
@@ -134,8 +140,8 @@ function Producers({ isHomePage = false }: ProducersProps) {
         {filteredProducers.length === 0 ? (
           <div className="text-center py-20">
             <Music className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-2xl font-bold text-gray-400 mb-4">No producers found</h3>
-            <p className="text-gray-500">Try selecting a different category</p>
+            <h3 className="text-2xl font-bold text-gray-400 mb-4">{t('producers.noProducersTitle')}</h3>
+            <p className="text-gray-500">{t('producers.noProducersText')}</p>
           </div>
         ) : (
           <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
@@ -164,7 +170,7 @@ function Producers({ isHomePage = false }: ProducersProps) {
                         <div className="flex items-center gap-4 text-sm text-gray-300">
                           <div className="flex items-center gap-1">
                             <Heart className="h-4 w-4" />
-                            <span>{producer.yearsExperience}+ years</span>
+                            <span>{producer.yearsExperience}+ {t('producers.years')}</span>
                           </div>
                           <span className={`px-2 py-1 rounded-full text-xs ${
                             producer.level === "Senior" 

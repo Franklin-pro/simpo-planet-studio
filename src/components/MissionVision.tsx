@@ -1,27 +1,30 @@
 import { Target, Eye, Heart, Music, Globe, Award } from "lucide-react";
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const MissionVisionSection = () => {
+  const { t } = useTranslation();
+  
   const coreValues = [
     { 
       icon: <Music className="w-6 h-6" />, 
-      title: "Innovation", 
-      desc: "Pushing creative boundaries in music production" 
+      title: t('mission.innovation'), 
+      desc: t('mission.innovationDesc')
     },
     { 
       icon: <Heart className="w-6 h-6" />, 
-      title: "Passion", 
-      desc: "Genuine love for music and artist development" 
+      title: t('mission.passion'), 
+      desc: t('mission.passionDesc')
     },
     { 
       icon: <Globe className="w-6 h-6" />, 
-      title: "Unity", 
-      desc: "Building bridges through African musical heritage" 
+      title: t('mission.unity'), 
+      desc: t('mission.unityDesc')
     },
     { 
       icon: <Award className="w-6 h-6" />, 
-      title: "Excellence", 
-      desc: "Commitment to the highest quality standards" 
+      title: t('mission.excellence'), 
+      desc: t('mission.excellenceDesc')
     }
   ];
 
@@ -37,7 +40,7 @@ const MissionVisionSection = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-sm font-medium mb-4"
           >
             <Target className="h-4 w-4" />
-            Our Purpose & Direction
+            {t('mission.badge')}
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -46,7 +49,7 @@ const MissionVisionSection = () => {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
           >
-            Mission, Vision & <span className="text-red-600 dark:text-red-400">Values</span>
+            {t('mission.title')} <span className="text-red-600 dark:text-red-400">{t('mission.titleHighlight')}</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -55,7 +58,7 @@ const MissionVisionSection = () => {
             transition={{ delay: 0.2 }}
             className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
-            Discover what drives us to empower the next generation of East African musical talent
+            {t('mission.subtitle')}
           </motion.p>
         </div>
 
@@ -74,15 +77,12 @@ const MissionVisionSection = () => {
                 <Target className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Our Mission</h3>
-                <p className="text-red-600 dark:text-red-400 font-medium">What We Do</p>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t('mission.missionTitle')}</h3>
+                <p className="text-red-600 dark:text-red-400 font-medium">{t('mission.missionSubtitle')}</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
-              At SimpoPlanet Music Label, our mission is to discover and empower new musical talent 
-              across Rwanda and East Africa. We are dedicated to promoting upcoming singers and music 
-              producers by providing them with access to professional recording, production, and 
-              promotional opportunities through Simpo Studio.
+              {t('mission.missionText')}
             </p>
           </motion.div>
 
@@ -99,15 +99,12 @@ const MissionVisionSection = () => {
                 <Eye className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Our Vision</h3>
-                <p className="text-blue-600 dark:text-blue-400 font-medium">Where We're Going</p>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t('mission.visionTitle')}</h3>
+                <p className="text-blue-600 dark:text-blue-400 font-medium">{t('mission.visionSubtitle')}</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
-              Our vision is to be a leading music label in East Africa, known for nurturing and 
-              promoting the next generation of musical talent. We aim to create a vibrant community 
-              of artists who can express themselves freely and reach audiences worldwide through our 
-              commitment to quality and innovation.
+              {t('mission.visionText')}
             </p>
           </motion.div>
         </div>
@@ -119,9 +116,9 @@ const MissionVisionSection = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Core Values</h3>
+          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{t('mission.valuesTitle')}</h3>
           <p className="text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-            The fundamental principles that guide our decisions and shape our culture
+            {t('mission.valuesSubtitle')}
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -159,17 +156,16 @@ const MissionVisionSection = () => {
         >
           <div className="bg-gradient-to-r dark:from-red-600/15 dark:to-red-700/10 from-red-600 to-red-700 rounded-2xl p-8 md:p-12">
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Ready to Be Part of Our Mission?
+              {t('mission.ctaTitle')}
             </h3>
             <p className="text-red-100 mb-8 max-w-2xl mx-auto">
-              Join us in shaping the future of East African music. Whether you're an artist, 
-              producer, or music enthusiast, there's a place for you in our community.
+              {t('mission.ctaText')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
               onClick={() => window.location.href = '/contacts'}
                className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                Join Our Community
+                {t('mission.ctaButton')}
               </button>
             </div>
           </div>

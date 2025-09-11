@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, Sun, Moon } from 'lucide-react';
+import { Menu, X, ChevronDown, Sun, Moon, Globe } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import light from '../assets/SIMPO-Logo.jpeg';
 // import dark from '../assets/dark.jpeg';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
+  const { t, i18n } = useTranslation();
   
   const isActive = (path: string) => location.pathname === path;
 
@@ -38,6 +41,20 @@ const Header = () => {
     setIsDarkMode(!isDarkMode);
   };
 
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    setIsLanguageOpen(false);
+  };
+
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' }
+  ];
+
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+
   return (
     <header className="sticky top-0 left-0 right-0 z-50 dark:bg-black/95 bg-white backdrop-blur-sm shadow-md">
       <div className="container mx-auto px-4 py-4">
@@ -57,7 +74,7 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-              Home
+              {t('nav.home')}
             </a>
             <a
               href="/abouts"
@@ -67,7 +84,7 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-              About us
+              {t('nav.about')}
             </a>
             <a
              href='/gallery'
@@ -77,14 +94,14 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-              Gallery
+              {t('nav.gallery')}
             </a>
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-1 dark:text-white hover:text-red-500 transition-colors"
               >
-                Talent
+                {t('nav.talent')}
                 <ChevronDown className="h-4 w-4" />
               </button>
               {isDropdownOpen && (
@@ -93,19 +110,19 @@ const Header = () => {
                     href="/artists"
                     className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-500 transition-colors"
                   >
-                    Artists
+                    {t('nav.artists')}
                   </a>
                   <a
                     href="/filmmakers"
                     className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-500 transition-colors"
                   >
-                    Filmmakers
+                    {t('nav.filmmakers')}
                   </a>
                   <a
                     href="/producers"
                     className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-500 transition-colors"
                   >
-                    Producers
+                    {t('nav.producers')}
                   </a>
                 </div>
               )}
@@ -118,7 +135,7 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-              Musics
+              {t('nav.musics')}
             </a>
             <a
             href='/contacts'
@@ -128,8 +145,36 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-              Contact Us
+              {t('nav.contact')}
             </a>
+            
+            {/* Language Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                className="flex items-center gap-2 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                aria-label="Change language"
+              >
+                <Globe size={16} className="dark:text-white" />
+                <span className="text-sm dark:text-white">{currentLanguage.flag}</span>
+              </button>
+              {isLanguageOpen && (
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => changeLanguage(lang.code)}
+                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-3 ${
+                        i18n.language === lang.code ? 'bg-red-50 dark:bg-red-900/20 text-red-500' : 'text-gray-700 dark:text-gray-300'
+                      }`}
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             
             {/* Theme Toggle Button */}
             <button
@@ -141,12 +186,40 @@ const Header = () => {
             </button>
             
             <a href='/login' className="bg-red-500 uppercase rounded-lg cursor-pointer text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors">
-              Login
+              {t('nav.login')}
             </a>
           </nav>
 
           {/* Mobile Menu Button and Theme Toggle */}
-          <div className="flex items-center gap-4 md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
+            {/* Mobile Language Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                className="flex items-center gap-1 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                aria-label="Change language"
+              >
+                <Globe size={16} className="dark:text-white" />
+                <span className="text-sm dark:text-white">{currentLanguage.flag}</span>
+              </button>
+              {isLanguageOpen && (
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => changeLanguage(lang.code)}
+                      className={`w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-3 ${
+                        i18n.language === lang.code ? 'bg-red-50 dark:bg-red-900/20 text-red-500' : 'text-gray-700 dark:text-gray-300'
+                      }`}
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
@@ -176,7 +249,7 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-             Home
+             {t('nav.home')}
             </a>
                   <a
               href="/abouts"
@@ -186,7 +259,7 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-              About us
+              {t('nav.about')}
             </a>
                    <a
               href="/musics"
@@ -196,7 +269,7 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-             Musics
+             {t('nav.musics')}
             </a>
               <a
                href='/gallery'
@@ -206,7 +279,7 @@ const Header = () => {
                     : 'dark:text-white hover:text-red-500'
                 }`}
               >
-                Gallery
+                {t('nav.gallery')}
               </a>
               <a
                href='/artists'
@@ -216,7 +289,7 @@ const Header = () => {
                     : 'dark:text-white hover:text-red-500'
                 }`}
               >
-                Artists
+                {t('nav.artists')}
               </a>
                   <a
                href='/filmmakers'
@@ -226,7 +299,7 @@ const Header = () => {
                     : 'dark:text-white hover:text-red-500'
                 }`}
               >
-                Filmmakers
+                {t('nav.filmmakers')}
               </a>
               <a
                href='/producers'
@@ -236,7 +309,7 @@ const Header = () => {
                     : 'dark:text-white hover:text-red-500'
                 }`}
               >
-                Producers
+                {t('nav.producers')}
               </a>
               <a
               href="/contacts"
@@ -246,12 +319,12 @@ const Header = () => {
                   : 'dark:text-white hover:text-red-500'
               }`}
             >
-              Contact us
+              {t('nav.contact')}
             </a>
               <a
                href="/login"
                className="bg-red-500 uppercase rounded-md dark:text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors w-fit">
-                Login
+                {t('nav.login')}
               </a>
             </div>
           </nav>

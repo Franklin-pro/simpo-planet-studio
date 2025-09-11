@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Eye, ZoomIn } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 interface GalleryItem {
   _id: string;
@@ -21,10 +22,16 @@ interface ArtGalleryProps {
 
 export default function ArtGallery({ isHomePage = false }: ArtGalleryProps) {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [filter, setFilter] = useState("All");
   const [images, setImages] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Update filter when language changes
+  useEffect(() => {
+    setFilter(t('gallery.all'));
+  }, [i18n.language, t]);
 
   useEffect(() => {
     const fetchGalleryData = async () => {
@@ -65,8 +72,8 @@ export default function ArtGallery({ isHomePage = false }: ArtGalleryProps) {
     fetchGalleryData();
   }, []);
 
-  const categories = ["All", ...new Set(images.map((img) => img.category))];
-  let filteredImages = filter === "All" ? images : images.filter((img) => img.category === filter);
+  const categories = [t('gallery.all'), ...new Set(images.map((img) => img.category))];
+  let filteredImages = filter === t('gallery.all') ? images : images.filter((img) => img.category === filter);
   
   // Limit to 4 items on home page
   if (isHomePage) {
@@ -97,12 +104,12 @@ export default function ArtGallery({ isHomePage = false }: ArtGalleryProps) {
     return (
       <div className="min-h-screen dark:bg-black bg-white flex items-center justify-center">
         <div className="text-center dark:text-white text-black">
-          <h2 className="text-2xl font-bold mb-4">Failed to load gallery</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('gallery.failedToLoad')}</h2>
           <button
             onClick={() => window.location.reload()}
             className="px-6 py-3 bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
           >
-            Retry
+            {t('gallery.retry')}
           </button>
         </div>
       </div>
@@ -120,7 +127,7 @@ export default function ArtGallery({ isHomePage = false }: ArtGalleryProps) {
             animate={{ opacity: 1, y: 0 }}
             className="text-6xl md:text-8xl font-bold mb-6"
           >
-            Visual <span className="text-red-500">Gallery</span>
+            {t('gallery.title')} <span className="text-red-500">{t('gallery.titleHighlight')}</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -128,7 +135,7 @@ export default function ArtGallery({ isHomePage = false }: ArtGalleryProps) {
             transition={{ delay: 0.2 }}
             className="text-xl dark:text-gray-300 text-gray-900 max-w-2xl mx-auto mb-12"
           >
-            Immerse yourself in a world of stunning photography and artistic expression
+            {t('gallery.subtitle')}
           </motion.p>
 
           {/* Category Filters */}
@@ -159,8 +166,8 @@ export default function ArtGallery({ isHomePage = false }: ArtGalleryProps) {
       <div className="max-w-7xl mx-auto px-4 pb-20">
         {filteredImages.length === 0 ? (
           <div className="text-center py-20">
-            <h3 className="text-2xl font-bold text-gray-400 mb-4">No images found</h3>
-            <p className="text-gray-500">Try selecting a different category</p>
+            <h3 className="text-2xl font-bold text-gray-400 mb-4">{t('gallery.noImagesTitle')}</h3>
+            <p className="text-gray-500">{t('gallery.noImagesText')}</p>
           </div>
         ) : (
           <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
@@ -226,7 +233,7 @@ export default function ArtGallery({ isHomePage = false }: ArtGalleryProps) {
               className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-full font-medium transition-colors"
             >
               <Eye className="h-5 w-5" />
-              View All Gallery
+              {t('gallery.viewAllGallery')}
             </button>
           </motion.div>
         )}
