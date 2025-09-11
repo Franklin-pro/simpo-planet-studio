@@ -2,9 +2,11 @@ import { useState } from "react";
 import axios from "axios";
 import { Phone, Mail, MapPin, Clock, Send, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 import type { ChangeEvent, FormEvent } from 'react';
 
 const ContactSection = () => {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -31,12 +33,12 @@ const ContactSection = () => {
         throw new Error("Failed to send message");
       }
 
-      setMessage({ type: 'success', text: 'Message sent successfully!' });
+      setMessage({ type: 'success', text: t('contact.successMessage') });
       setForm({ name: "", email: "", phone: "", message: "" });
       setTimeout(() => setMessage({ type: '', text: '' }), 5000);
     } catch (err) {
       console.error(err);
-      setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
+      setMessage({ type: 'error', text: t('contact.errorMessage') });
       setTimeout(() => setMessage({ type: '', text: '' }), 5000);
     } finally {
       setIsSubmitting(false);
@@ -46,26 +48,26 @@ const ContactSection = () => {
   const contactInfo = [
     {
       icon: <Phone className="w-6 h-6" />,
-      title: "Phone",
+      title: t('contact.phone'),
       details: "(+250) 783 054 403",
       color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
     },
     {
       icon: <Mail className="w-6 h-6" />,
-      title: "Email",
+      title: t('contact.email'),
       details: "simpoplanet@gmail.com",
       color: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
     },
     {
       icon: <MapPin className="w-6 h-6" />,
-      title: "Address",
+      title: t('contact.address'),
       details: "Kigali, Rwanda, Remera-Giporoso, KN5rd",
       color: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: "Hours",
-      details: "Mon-Fri: 6AM-10PM | Sat-Sun: 8AM-8PM",
+      title: t('contact.hours'),
+      details: t('contact.hoursDetails'),
       color: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
     }
   ];
@@ -82,7 +84,7 @@ const ContactSection = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-sm font-medium mb-4"
           >
             <MessageCircle className="h-4 w-4" />
-            Get In Touch
+            {t('contact.badge')}
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -91,7 +93,7 @@ const ContactSection = () => {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
           >
-            Let's Start a <span className="text-red-600 dark:text-red-400">Conversation</span>
+            {t('contact.title')} <span className="text-red-600 dark:text-red-400">{t('contact.titleHighlight')}</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -100,7 +102,7 @@ const ContactSection = () => {
             transition={{ delay: 0.2 }}
             className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
-            Ready to take your music to the next level? We'd love to hear from you and discuss how we can help bring your vision to life.
+            {t('contact.subtitle')}
           </motion.p>
         </div>
 
@@ -115,10 +117,10 @@ const ContactSection = () => {
           >
             <div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Contact Information
+                {t('contact.contactInfo')}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-8">
-                Reach out to us through any of these channels. We're here to help you succeed.
+                {t('contact.contactInfoDesc')}
               </p>
             </div>
 
@@ -157,7 +159,7 @@ const ContactSection = () => {
             className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-200 dark:border-gray-700"
           >
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Send us a Message
+              {t('contact.formTitle')}
             </h3>
 
             {message.text && (
@@ -170,7 +172,7 @@ const ContactSection = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Name / Artist Name
+                    {t('contact.nameLabel')}
                   </label>
                   <input
                     type="text"
@@ -179,13 +181,13 @@ const ContactSection = () => {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
-                    placeholder="Your name"
+                    placeholder={t('contact.namePlaceholder')}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email
+                    {t('contact.emailLabel')}
                   </label>
                   <input
                     type="email"
@@ -194,14 +196,14 @@ const ContactSection = () => {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
-                    placeholder="your@email.com"
+                    placeholder={t('contact.emailPlaceholder')}
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Phone Number
+                  {t('contact.phoneLabel')}
                 </label>
                 <input
                   type="tel"
@@ -209,13 +211,13 @@ const ContactSection = () => {
                   value={form.phone}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
-                  placeholder="+250 xxx xxx xxx"
+                  placeholder={t('contact.phonePlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Message
+                  {t('contact.messageLabel')}
                 </label>
                 <textarea
                   name="message"
@@ -224,7 +226,7 @@ const ContactSection = () => {
                   required
                   rows={5}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all resize-none"
-                  placeholder="Tell us about your project, goals, or any questions you have..."
+                  placeholder={t('contact.messagePlaceholder')}
                 />
               </div>
 
@@ -236,12 +238,12 @@ const ContactSection = () => {
                 {isSubmitting ? (
                   <>
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Sending...
+                    {t('contact.sending')}
                   </>
                 ) : (
                   <>
                     <Send className="h-5 w-5" />
-                    Send Message
+                    {t('contact.sendButton')}
                   </>
                 )}
               </button>

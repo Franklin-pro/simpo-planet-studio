@@ -1,35 +1,33 @@
 import { Award, Users, Clock, Target, Music, Star, Heart } from "lucide-react";
 import about from "../assets/about.png";
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const AboutSection = () => {
+  const { t } = useTranslation();
+  
   const stats = [
-    { icon: <Users className="w-6 h-6" />, number: "70+", label: "Artists Trained" },
-    { icon: <Award className="w-6 h-6" />, number: "15+", label: "Years Experience" },
-    { icon: <Clock className="w-6 h-6" />, number: "24/7", label: "Support Available" },
-    { icon: <Target className="w-6 h-6" />, number: "95%", label: "Success Rate" },
+    { icon: <Users className="w-6 h-6" />, number: "70+", label: t('about.stats.artistsTrained') },
+    { icon: <Award className="w-6 h-6" />, number: "15+", label: t('about.stats.yearsExperience') },
+    { icon: <Clock className="w-6 h-6" />, number: "24/7", label: t('about.stats.supportAvailable') },
+    { icon: <Target className="w-6 h-6" />, number: "95%", label: t('about.stats.successRate') },
   ];
 
   const features = [
     {
       icon: <Music className="w-6 h-6" />,
-      title: "Professional Recording",
-      description: "State-of-the-art studio equipment and acoustics"
+      title: t('about.features.recording'),
+      description: t('about.features.recordingDesc')
     },
     {
       icon: <Star className="w-6 h-6" />,
-      title: "Artist Development",
-      description: "Comprehensive training and mentorship programs"
+      title: t('about.features.development'),
+      description: t('about.features.developmentDesc')
     },
-    // {
-    //   icon: <Globe className="w-6 h-6" />,
-    //   title: "Global Reach",
-    //   description: "International distribution and promotion networks"
-    // },
     {
       icon: <Heart className="w-6 h-6" />,
-      title: "Community Focus",
-      description: "Supporting local talent and cultural expression"
+      title: t('about.features.community'),
+      description: t('about.features.communityDesc')
     }
   ];
 
@@ -45,7 +43,7 @@ const AboutSection = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-sm font-medium mb-4"
           >
             <Heart className="h-4 w-4" />
-            About Our Label
+            {t('about.badge')}
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -54,7 +52,7 @@ const AboutSection = () => {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
           >
-            Shaping the Future of <span className="text-red-600 dark:text-red-400">East African Music</span>
+            {t('about.title')} <span className="text-red-600 dark:text-red-400">{t('about.titleHighlight')}</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -63,7 +61,7 @@ const AboutSection = () => {
             transition={{ delay: 0.2 }}
             className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
           >
-            Discover how we're revolutionizing the music industry in Rwanda and beyond
+            {t('about.subtitle')}
           </motion.p>
         </div>
 
@@ -78,18 +76,13 @@ const AboutSection = () => {
           >
             <div className="space-y-6">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Our Mission & Vision
+                {t('about.sectionTitle')}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                SimpoPlanet is a dynamic music label based in East Africa, Rwanda, with a mission to discover, 
-                nurture, and promote emerging talent in the music industry. Through our state-of-the-art Simpo Studio, 
-                we provide a creative space where new singers and music producers can grow, express themselves, 
-                and share their voices with the world.
+                {t('about.description1')}
               </p>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                At SimpoPlanet, we believe in the power of music to inspire and connect people. We are committed 
-                to supporting the next generation of artists by offering them professional guidance, high-quality 
-                production, and the exposure they need to reach a wider audience.
+                {t('about.description2')}
               </p>
             </div>
 
@@ -175,22 +168,21 @@ const AboutSection = () => {
         >
           <div className="bg-gradient-to-r dark:from-red-600/15 dark:to-red-700/10 from-red-600 to-red-700 rounded-2xl p-8 md:p-12">
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Ready to Start Your Musical Journey?
+              {t('about.ctaTitle')}
             </h3>
             <p className="text-red-100 mb-8 max-w-2xl mx-auto">
-              Join us on our journey to shape the future of music—one artist at a time. 
-              Let's create something amazing together.
+              {t('about.ctaText')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
               onClick={() => window.location.href = '/contacts'}
                className="px-8 py-3 bg-white text-red-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                Get Started Today
+                {t('about.ctaButton1')}
               </button>
               <button
                 onClick={() => window.location.href = '/abouts'}
                className="px-8 py-3 border border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
-                Learn More
+                {t('about.ctaButton2')}
               </button>
             </div>
           </div>

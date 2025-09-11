@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Award, Music, User, Mail, Calendar, Instagram, Twitter, Facebook, Youtube, ArrowLeft, ExternalLink } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Header from './Header';
 import Footer from './Footer';
 
@@ -35,6 +36,7 @@ function ProducerDetails() {
   const [producer, setProducer] = useState<Producer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchProducer = async () => {
@@ -47,14 +49,14 @@ function ProducerDetails() {
         setProducer(result.data);
       } catch (err) {
         console.error("Failed to fetch producer details:", err);
-        setError('Failed to load producer details. Please try again.');
+        setError(t('producers.errorMessage'));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchProducer();
-  }, [id]);
+  }, [id, t]);
 
   if (isLoading) {
     return (
@@ -63,7 +65,7 @@ function ProducerDetails() {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading producer details...</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('producers.loading')}</p>
           </div>
         </div>
       </>
@@ -77,10 +79,10 @@ function ProducerDetails() {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              {error || 'Producer Not Found'}
+              {error || t('producers.notFound')}
             </h1>
             <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline">
-              Back to Producers
+              {t('producers.backToProducers')}
             </Link>
           </div>
         </div>
@@ -100,7 +102,7 @@ function ProducerDetails() {
                   {/* Back Link */}
           <Link to="/" className="text-blue-600 mb-4 p-2 dark:text-blue-400 hover:underline inline-flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Back to Producers
+            {t('producers.backToProducers')}
           </Link>
             <div className="md:flex">
               {/* Left Column - Image */}
@@ -130,6 +132,7 @@ function ProducerDetails() {
 
                 {/* Bio */}
                 <div className="mb-6">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{t('producers.biography')}</h3>
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{producer.bio}</p>
                 </div>
 
@@ -140,8 +143,8 @@ function ProducerDetails() {
                       <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Experience</h3>
-                      <p className="text-gray-600 dark:text-gray-300">{producer.yearsExperience} years</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{t('producers.experience')}</h3>
+                      <p className="text-gray-600 dark:text-gray-300">{producer.yearsExperience} {t('producers.years')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -149,7 +152,7 @@ function ProducerDetails() {
                       <Mail className="h-5 w-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Contact</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{t('producers.contact')}</h3>
                       <a 
                         href={`mailto:${producer.contactEmail}`}
                         className="text-blue-600 dark:text-blue-400 hover:underline"
@@ -167,7 +170,7 @@ function ProducerDetails() {
                       <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                         <Music className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                       </div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Genres</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{t('producers.genres')}</h3>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {producer.genres.map((genre, index) => (
@@ -189,7 +192,7 @@ function ProducerDetails() {
                       <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
                         <Award className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                       </div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Skills</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{t('producers.skills')}</h3>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {producer.skills.map((skill, index) => (
@@ -207,7 +210,7 @@ function ProducerDetails() {
                 {/* Credits */}
                 {producer.credits && producer.credits.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Notable Credits</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('producers.credits')}</h3>
                     <div className="space-y-3">
                       {producer.credits.map((credit, index) => (
                         <div key={index} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -222,7 +225,7 @@ function ProducerDetails() {
                 {/* Social Media */}
                 {producer.socialMedia && (
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Connect</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('producers.socialMedia')}</h3>
                     <div className="flex flex-wrap gap-3">
                       {producer.socialMedia.instagram && (
                         <a

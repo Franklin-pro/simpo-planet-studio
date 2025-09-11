@@ -2,6 +2,7 @@ import { Instagram, Youtube, Twitter, Facebook, Music, Eye, ZoomIn } from "lucid
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 interface Artist {
   _id: string;
@@ -26,6 +27,7 @@ interface ArtistSectionProps {
 const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchArtists = async () => {
@@ -72,7 +74,7 @@ const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
             animate={{ opacity: 1, y: 0 }}
             className="text-6xl md:text-8xl font-bold mb-6"
           >
-            Our <span className="text-red-500">Artists</span>
+            {t('artists.title')} <span className="text-red-500">{t('artists.titleHighlight')}</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -80,7 +82,7 @@ const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
             transition={{ delay: 0.2 }}
             className="text-xl max-w-2xl mx-auto mb-12"
           >
-            Meet the incredible talent that defines our sound and vision
+            {t('artists.subtitle')}
           </motion.p>
         </div>
       </div>
@@ -90,8 +92,8 @@ const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
         {artists.length === 0 ? (
           <div className="text-center py-20">
             <Music className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-2xl font-bold text-gray-400 mb-4">No artists found</h3>
-            <p className="text-gray-500">Check back soon for our featured artists</p>
+            <h3 className="text-2xl font-bold text-gray-400 mb-4">{t('artists.noArtistsTitle')}</h3>
+            <p className="text-gray-500">{t('artists.noArtistsText')}</p>
           </div>
         ) : (
           <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
@@ -178,7 +180,7 @@ const ArtistSection = ({ isHomePage = false }: ArtistSectionProps) => {
               className="inline-flex text-white items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-full font-medium transition-colors"
             >
               <Eye className="h-5 w-5" />
-              View All Artists
+              {t('artists.viewAllArtists')}
             </Link>
           </motion.div>
         )}

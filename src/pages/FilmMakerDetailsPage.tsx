@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Mail, Phone, Calendar, Award, Film, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -30,6 +31,7 @@ const FilmMakerDetailsPage = () => {
   const [filmmaker, setFilmmaker] = useState<Filmmaker | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (id) {
@@ -59,7 +61,7 @@ const FilmMakerDetailsPage = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading filmmaker...</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('filmmakers.loading')}</p>
           </div>
         </div>
       </>
@@ -73,10 +75,10 @@ const FilmMakerDetailsPage = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              {error || 'Filmmaker Not Found'}
+              {error || t('filmmakers.notFound')}
             </h1>
             <Link to="/filmmakers" className="text-blue-600 hover:underline">
-              Back to Filmmakers
+              {t('filmmakers.backToFilmmakers')}
             </Link>
           </div>
         </div>
@@ -90,7 +92,7 @@ const FilmMakerDetailsPage = () => {
       <div className="max-w-7xl  mt-20 mx-auto px-4 sm:px-6 lg:px-8">
         <Link to="/filmmakers" className="text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
-          Back to Filmmakers
+          {t('filmmakers.backToFilmmakers')}
         </Link>
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
@@ -113,8 +115,8 @@ const FilmMakerDetailsPage = () => {
                     <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Experience</h3>
-                    <p className="text-gray-600 dark:text-gray-300">{filmmaker.experience} years</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('filmmakers.experience')}</h3>
+                    <p className="text-gray-600 dark:text-gray-300">{filmmaker.experience} {t('filmmakers.years')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -122,11 +124,11 @@ const FilmMakerDetailsPage = () => {
                     <Award className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Status</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('filmmakers.status')}</h3>
                     <span className={`px-3 py-1 rounded-full text-sm ${
                       filmmaker.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                     }`}>
-                      {filmmaker.isActive ? 'Active' : 'Inactive'}
+                      {filmmaker.isActive ? t('filmmakers.active') : t('filmmakers.inactive')}
                     </span>
                   </div>
                 </div>
@@ -138,7 +140,7 @@ const FilmMakerDetailsPage = () => {
                     <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                       <Film className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Portfolio</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('filmmakers.portfolio')}</h3>
                   </div>
                   <div className="space-y-3">
                     {filmmaker.portfolio.map((project, index) => (
@@ -157,7 +159,7 @@ const FilmMakerDetailsPage = () => {
                     <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
                       <User className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Contact Information</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('filmmakers.contactInfo')}</h3>
                   </div>
                   <div className="space-y-3">
                     {filmmaker.contact.email && (

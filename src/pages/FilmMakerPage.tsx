@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Film, ZoomIn, Calendar } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -18,6 +19,12 @@ const FilmMakerPage = () => {
   const [filmmakers, setFilmmakers] = useState<Filmmaker[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const { t, i18n } = useTranslation();
+
+  // Update filter when language changes
+  useEffect(() => {
+    setFilter(t('filmmakers.all'));
+  }, [i18n.language, t]);
 
   useEffect(() => {
     fetchFilmmakers();
@@ -35,8 +42,8 @@ const FilmMakerPage = () => {
     }
   };
 
-  const categories = ["All", ...new Set(filmmakers.map((f) => f.specialization))];
-  const filteredFilmmakers = filter === "All" ? filmmakers : filmmakers.filter((f) => f.specialization === filter);
+  const categories = [t('filmmakers.all'), ...new Set(filmmakers.map((f) => f.specialization))];
+  const filteredFilmmakers = filter === t('filmmakers.all') ? filmmakers : filmmakers.filter((f) => f.specialization === filter);
 
   if (loading) {
     return (
@@ -71,7 +78,7 @@ const FilmMakerPage = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-6xl md:text-8xl font-bold mb-6"
             >
-              Our <span className="text-red-500">Filmmakers</span>
+              {t('filmmakers.title')} <span className="text-red-500">{t('filmmakers.titleHighlight')}</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -79,7 +86,7 @@ const FilmMakerPage = () => {
               transition={{ delay: 0.2 }}
               className="text-xl dark:text-gray-300 max-w-2xl mx-auto mb-12"
             >
-              Meet the visionary creators behind stunning visual storytelling
+              {t('filmmakers.subtitle')}
             </motion.p>
 
             {/* Category Filters */}
@@ -111,8 +118,8 @@ const FilmMakerPage = () => {
           {filteredFilmmakers.length === 0 ? (
             <div className="text-center py-20">
               <Film className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-2xl font-bold text-gray-400 mb-4">No filmmakers found</h3>
-              <p className="text-gray-500">Try selecting a different category</p>
+              <h3 className="text-2xl font-bold text-gray-400 mb-4">{t('filmmakers.noFilmmakersTitle')}</h3>
+              <p className="text-gray-500">{t('filmmakers.noFilmmakersText')}</p>
             </div>
           ) : (
             <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
@@ -141,7 +148,7 @@ const FilmMakerPage = () => {
                             <div className="flex items-center gap-4 text-sm text-gray-300">
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-4 w-4" />
-                                <span>{filmmaker.experience} years</span>
+                                <span>{filmmaker.experience} {t('filmmakers.years')}</span>
                               </div>
                               <span className="px-2 py-1 bg-red-600 rounded-full text-xs">
                                 {filmmaker.specialization}

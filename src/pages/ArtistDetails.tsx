@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube, Disc, Music, Globe, Calendar, ArrowLeft, User, ExternalLink } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
@@ -27,6 +28,7 @@ const ArtistDetails = () => {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchArtist = async () => {
@@ -41,14 +43,14 @@ const ArtistDetails = () => {
         const data = await response.json();
         setArtist(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setError(err instanceof Error ? err.message : t('artists.errorMessage'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchArtist();
-  }, [id]);
+  }, [id, t]);
 
   if (loading) {
     return (
@@ -57,7 +59,7 @@ const ArtistDetails = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading artist details...</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('artists.loading')}</p>
           </div>
         </div>
         <Footer />
@@ -72,10 +74,10 @@ const ArtistDetails = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              {error || 'Artist Not Found'}
+              {error || t('artists.notFound')}
             </h1>
             <Link to="/artists" className="text-blue-600 dark:text-blue-400 hover:underline">
-              Back to Artists
+              {t('artists.backToArtists')}
             </Link>
           </div>
         </div>
@@ -90,9 +92,9 @@ const ArtistDetails = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
         <div className="max-w-6xl mx-auto px-4 mt-20 sm:px-6 lg:px-8">
           {/* Back Link */}
-          <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-flex items-center gap-2">
+          <Link to="/artists" className="text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Back to Artists
+            {t('artists.backToArtists')}
           </Link>
 
           {/* Main Content */}
@@ -125,6 +127,7 @@ const ArtistDetails = () => {
 
                 {/* Bio */}
                 <div className="mb-6">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{t('artists.biography')}</h3>
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{artist.bio}</p>
                 </div>
 
@@ -135,8 +138,8 @@ const ArtistDetails = () => {
                       <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Age</h3>
-                      <p className="text-gray-600 dark:text-gray-300">{artist.age} years</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{t('artists.age')}</h3>
+                      <p className="text-gray-600 dark:text-gray-300">{artist.age} {t('filmmakers.years')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -144,7 +147,7 @@ const ArtistDetails = () => {
                       <Music className="h-5 w-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Genre</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{t('producers.genres')}</h3>
                       <p className="text-gray-600 dark:text-gray-300">Music Artist</p>
                     </div>
                   </div>
@@ -153,7 +156,7 @@ const ArtistDetails = () => {
                       <Globe className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Location</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{t('contact.address')}</h3>
                       <p className="text-gray-600 dark:text-gray-300">Rwanda</p>
                     </div>
                   </div>
@@ -162,7 +165,7 @@ const ArtistDetails = () => {
                       <Calendar className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Joined</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{t('gallery.createdAt')}</h3>
                       <p className="text-gray-600 dark:text-gray-300">
                         {new Date(artist.createdAt).toLocaleDateString()}
                       </p>
@@ -172,7 +175,7 @@ const ArtistDetails = () => {
 
                 {/* Social Media */}
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Connect with {artist.name}</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('artists.socialLinks')}</h3>
                   <div className="flex flex-wrap gap-3">
                     {artist.socialLinks.facebook && (
                       <a

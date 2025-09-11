@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import { Phone, Play, Star, Music, Users, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import hero from '../assets/hero.png';
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <section id="home" className="min-h-screen bg-black text-white relative overflow-hidden">
@@ -26,8 +28,8 @@ const HeroSection = () => {
               className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-600/20 border border-red-500/30 rounded-full text-red-400 text-xs sm:text-sm font-medium"
             >
               <Star className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">East Africa's Premier Music Label</span>
-              <span className="sm:hidden">Premier Music Label</span>
+              <span className="hidden sm:inline">{t('hero.badge')}</span>
+              <span className="sm:hidden">{t('hero.badgeMobile')}</span>
             </motion.div>
 
             {/* Main Heading */}
@@ -38,9 +40,9 @@ const HeroSection = () => {
               className="space-y-3 sm:space-y-4"
             >
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight">
-                Simpo Planet
+                {t('hero.title')}
                 <br />
-                <span className="text-red-500">Studio</span>
+                <span className="text-red-500">{t('hero.titleHighlight')}</span>
               </h1>
               <div className="w-16 sm:w-20 md:w-24 h-1 bg-red-500 rounded-full mx-auto lg:mx-0"></div>
             </motion.div>
@@ -52,8 +54,7 @@ const HeroSection = () => {
               transition={{ delay: 0.2 }}
               className="text-base sm:text-lg md:text-xl text-gray-300 max-w-lg leading-relaxed mx-auto lg:mx-0"
             >
-              Discovering and nurturing exceptional talent across East Africa. 
-              Where creativity meets opportunity in the heart of Rwanda's music scene.
+              {t('hero.description')}
             </motion.p>
 
             {/* Stats */}
@@ -65,15 +66,15 @@ const HeroSection = () => {
             >
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-red-500">50+</div>
-                <div className="text-xs sm:text-sm text-gray-400">Artists</div>
+                <div className="text-xs sm:text-sm text-gray-400">{t('hero.stats.artists')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-red-500">100+</div>
-                <div className="text-xs sm:text-sm text-gray-400">Tracks</div>
+                <div className="text-xs sm:text-sm text-gray-400">{t('hero.stats.tracks')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-red-500">5+</div>
-                <div className="text-xs sm:text-sm text-gray-400">Years</div>
+                <div className="text-xs sm:text-sm text-gray-400">{t('hero.stats.years')}</div>
               </div>
             </motion.div>
             
@@ -92,8 +93,8 @@ const HeroSection = () => {
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   <Play className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="hidden sm:inline">JOIN STUDIO TODAY</span>
-                  <span className="sm:hidden">JOIN STUDIO</span>
+                  <span className="hidden sm:inline">{t('hero.buttons.joinStudio')}</span>
+                  <span className="sm:hidden">{t('hero.buttons.joinStudioMobile')}</span>
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </motion.button>
@@ -104,7 +105,7 @@ const HeroSection = () => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/musics')}
               >
-                Explore Music
+                {t('hero.buttons.exploreMusic')}
               </motion.button>
             </motion.div>
 
@@ -115,7 +116,7 @@ const HeroSection = () => {
               transition={{ delay: 0.5 }}
               className="pt-6 sm:pt-8 border-t border-gray-800"
             >
-              <p className="text-gray-400 text-xs sm:text-sm mb-2">Get in touch:</p>
+              <p className="text-gray-400 text-xs sm:text-sm mb-2">{t('hero.contact')}</p>
               <div className="flex items-center justify-center lg:justify-start gap-2 text-white">
                 <Phone size={16} className="text-red-500 sm:w-[18px] sm:h-[18px]" />
                 <span className="font-medium text-sm sm:text-base">(+250) 783 054 403</span>
@@ -162,7 +163,7 @@ const HeroSection = () => {
                 >
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="text-white text-xs sm:text-sm font-medium">Live Studio</span>
+                    <span className="text-white text-xs sm:text-sm font-medium">{t('hero.liveStudio')}</span>
                   </div>
                 </motion.div>
               </div>
