@@ -13,7 +13,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gray-900 text-white py-16">
+    <footer className="dark:bg-gray-900 dark:text-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
@@ -33,7 +33,7 @@ const Footer = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               />
             </div>
-            <p className="text-gray-400">
+            <p className="dark:dark:text-gray-400">
               Through our state-of-the-art Simpo Studio, we provide a creative space for new singers and music producers to grow and share their voices with the world.
             </p>
             <div className="flex space-x-4">
@@ -46,7 +46,7 @@ const Footer = () => {
                   whileHover={{ y: -3, color: "#ef4444" }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Icon className="w-6 h-6 text-gray-400" />
+                  <Icon className="w-6 h-6 dark:text-gray-400" />
                 </motion.a>
               ))}
             </div>
@@ -69,7 +69,7 @@ const Footer = () => {
                 >
                   <a
                     href={`#${link.toLowerCase().replace(' ', '-')}`}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="dark:text-gray-400 hover:text-red-500 transition-colors"
                   >
                     {link}
                   </a>
@@ -93,7 +93,7 @@ const Footer = () => {
                   whileHover={{ x: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <span className="text-gray-400 hover:text-red-500 cursor-pointer">
+                  <span className="dark:text-gray-400 hover:text-red-500 cursor-pointer">
                     {program}
                   </span>
                 </motion.li>
@@ -122,7 +122,7 @@ const Footer = () => {
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <item.icon className="w-4 h-4 text-red-500" />
-                  <span className="text-gray-400 whitespace-pre-line">{item.text}</span>
+                  <span className="dark:text-gray-400 whitespace-pre-line">{item.text}</span>
                 </motion.div>
               ))}
             </div>
@@ -137,7 +137,7 @@ const Footer = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="border-t border-gray-700 mt-12 pt-8 text-center"
         >
-          <p className="text-gray-400">
+          <p className="dark:text-gray-400">
             © {new Date().getFullYear()} Simpo Planet. All rights reserved.
           </p>
         </motion.div>

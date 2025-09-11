@@ -84,10 +84,10 @@ function Producers({ isHomePage = false }: ProducersProps) {
   }
 
   return (
-    <section className=" bg-black text-white">
+    <section className=" dark:bg-black bg-gray-100 dark:text-white text-gray-900">
       {/* Hero Section */}
       <div className="relative py-20 px-4">
-        <div className="absolute inset-0 bg-gradient-to-b from-red-900/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-b dark:from-red-900/20 to-transparent"></div>
         <div className="relative max-w-7xl mx-auto text-center">
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
@@ -100,7 +100,7 @@ function Producers({ isHomePage = false }: ProducersProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-gray-300 max-w-2xl mx-auto mb-12"
+            className="text-xl dark:text-gray-300 text-gray-900 max-w-2xl mx-auto mb-12"
           >
             Discover the masterminds behind the beats and melodies
           </motion.p>
@@ -119,7 +119,7 @@ function Producers({ isHomePage = false }: ProducersProps) {
                 className={`px-8 py-3 rounded-full font-medium transition-all duration-300 ${
                   activeCategory === category
                     ? "bg-red-600 text-white shadow-lg shadow-red-600/25"
-                    : "bg-white/10 text-gray-300 hover:bg-white/20 backdrop-blur-sm border border-white/20"
+                    : "dark:bg-white/10 bg-gray-500/20 dark:text-gray-300 text-black hover:bg-red-500/10  backdrop-blur-sm border cursor-pointer dark:border-white/20 border-gray-100"
                 }`}
               >
                 {category}
@@ -222,7 +222,7 @@ function Producers({ isHomePage = false }: ProducersProps) {
           >
             <button
               onClick={() => navigate('/producers')}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-full font-medium transition-colors"
+              className="inline-flex text-white items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-full font-medium transition-colors"
             >
               <Eye className="h-5 w-5" />
               View All Producers

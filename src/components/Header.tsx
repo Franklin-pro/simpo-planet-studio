@@ -1,36 +1,60 @@
-import { useState } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, X, ChevronDown, Sun, Moon } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import light from '../assets/SIMPO-Logo.jpeg';
 // import dark from '../assets/dark.jpeg';
 
-
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
   
   const isActive = (path: string) => location.pathname === path;
 
+  // Initialize theme from localStorage or system preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
+  // Toggle dark/light mode
+  const toggleTheme = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+    setIsDarkMode(!isDarkMode);
+  };
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm">
+    <header className="sticky top-0 left-0 right-0 z-50 dark:bg-black/95 bg-white backdrop-blur-sm shadow-md">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold text-white">
+          <div className="text-2xl font-bold dark:text-white">
             <img src={light} alt="Simpo Planet Logo" className="w-40 h-14 rounded-xl object-cover" />
           </div>
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6">
           
             <a
               href='/'
               className={`transition-colors ${
                 isActive('/') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
               Home
@@ -40,7 +64,7 @@ const Header = () => {
               className={`transition-colors ${
                 isActive('/abouts') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
               About us
@@ -50,7 +74,7 @@ const Header = () => {
               className={`transition-colors ${
                 isActive('/gallery') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
               Gallery
@@ -58,7 +82,7 @@ const Header = () => {
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-1 text-white hover:text-red-500 transition-colors"
+                className="flex items-center gap-1 dark:text-white hover:text-red-500 transition-colors"
               >
                 Talent
                 <ChevronDown className="h-4 w-4" />
@@ -91,7 +115,7 @@ const Header = () => {
               className={`transition-colors ${
                 isActive('/musics') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
               Musics
@@ -101,35 +125,55 @@ const Header = () => {
               className={`transition-colors ${
                 isActive('/contacts') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
               Contact Us
             </a>
+            
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-gray-700" />}
+            </button>
+            
             <a href='/login' className="bg-red-500 uppercase rounded-lg cursor-pointer text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors">
               Login
             </a>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Menu Button and Theme Toggle */}
+          <div className="flex items-center gap-4 md:hidden">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-gray-700" />}
+            </button>
+            
+            <button 
+              className="dark:text-white"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4 border-t border-gray-700 pt-4">
+          <nav className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4">
             <div className="flex flex-col space-y-4">
                  <a
               href="/"
               className={`transition-colors ${
                 isActive('/') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
              Home
@@ -139,7 +183,7 @@ const Header = () => {
               className={`transition-colors ${
                 isActive('/abouts') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
               About us
@@ -149,7 +193,7 @@ const Header = () => {
               className={`transition-colors ${
                 isActive('/musics') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
              Musics
@@ -159,7 +203,7 @@ const Header = () => {
                 className={`transition-colors text-left ${
                   isActive('/gallery') 
                     ? 'text-red-500 font-bold' 
-                    : 'text-white hover:text-red-500'
+                    : 'dark:text-white hover:text-red-500'
                 }`}
               >
                 Gallery
@@ -169,7 +213,7 @@ const Header = () => {
                 className={`transition-colors text-left ${
                   isActive('/artists') 
                     ? 'text-red-500 font-bold' 
-                    : 'text-white hover:text-red-500'
+                    : 'dark:text-white hover:text-red-500'
                 }`}
               >
                 Artists
@@ -179,7 +223,7 @@ const Header = () => {
                 className={`transition-colors text-left ${
                   isActive('/filmmakers') 
                     ? 'text-red-500 font-bold' 
-                    : 'text-white hover:text-red-500'
+                    : 'dark:text-white hover:text-red-500'
                 }`}
               >
                 Filmmakers
@@ -189,7 +233,7 @@ const Header = () => {
                 className={`transition-colors text-left ${
                   isActive('/producers') 
                     ? 'text-red-500 font-bold' 
-                    : 'text-white hover:text-red-500'
+                    : 'dark:text-white hover:text-red-500'
                 }`}
               >
                 Producers
@@ -199,14 +243,14 @@ const Header = () => {
               className={`transition-colors ${
                 isActive('/contacts') 
                   ? 'text-red-500 font-bold' 
-                  : 'text-white hover:text-red-500'
+                  : 'dark:text-white hover:text-red-500'
               }`}
             >
               Contact us
             </a>
               <a
                href="/login"
-               className="bg-red-500 uppercase rounded-md text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors w-fit">
+               className="bg-red-500 uppercase rounded-md dark:text-white px-6 py-2 border border-red-500 hover:bg-transparent hover:text-red-500 transition-colors w-fit">
                 Login
               </a>
             </div>
